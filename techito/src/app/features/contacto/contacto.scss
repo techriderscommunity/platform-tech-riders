@@ -1,0 +1,179 @@
+// ===================================================================
+// CONTACTO PAGE - Dark Navy Coherent Theme
+// ===================================================================
+// WCAG AA Compliance: ✓
+
+// Page wrapper — component host acts as the page container
+:host {
+  display: block;
+  padding: calc(var(--nav-height) + var(--page-block-padding)) var(--page-inline-padding) var(--page-block-padding);
+  background: var(--bg-canvas);
+	max-width: var(--page-content-max);
+	margin-inline: auto;
+}
+
+#contacto,
+#buzon-sugerencias {
+	width: 100%;
+	max-width: var(--page-content-max);
+  margin-inline: auto;
+	padding: var(--space-8) clamp(var(--space-4), 3vw, var(--space-8));
+	border-radius: var(--radius-xl);
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-default);
+	box-shadow: var(--shadow-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-5);
+
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+		margin: 0;
+    text-align: center;
+  }
+}
+
+#buzon-sugerencias {
+	margin-top: var(--space-8);
+}
+
+// Toaster animado para feedback de envío
+.toaster {
+	position: fixed;
+	left: 50%;
+	top: var(--space-10);
+	transform: translateX(-50%);
+	background: linear-gradient(135deg, var(--tr-blue) 0%, var(--tr-blue-dark) 100%);
+	color: var(--text-inverse);
+	font-weight: var(--font-weight-bold);
+	font-size: 1.08rem;
+	padding: var(--space-4) var(--space-8);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-lg);
+	z-index: 1000;
+	opacity: 0.97;
+	animation: fadeInOut 2.2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+	0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+	10% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+	80% { opacity: 1; transform: translateX(-50%) scale(1); }
+	100% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+}
+
+// Estilos para formularios de contacto y sugerencias
+.contact-form,
+.sugerencias-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--form-gap);
+	background: var(--bg-secondary);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-sm);
+	padding: var(--surface-padding);
+	width: 100%;
+	max-width: var(--form-max-width);
+	margin: 0 auto;
+	border: 1px solid var(--border-default);
+}
+
+.qs-desc {
+	max-width: 70ch;
+	margin: 0 auto;
+	margin-inline: auto;
+	text-align: center;
+	color: var(--text-secondary);
+	line-height: var(--line-height-relaxed);
+}
+
+.contact-form label,
+.sugerencias-form label {
+	font-weight: var(--font-weight-semibold);
+	color: var(--text-primary);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+	font-size: var(--font-size-sm);
+}
+
+.contact-form input,
+.contact-form textarea,
+.sugerencias-form input,
+.sugerencias-form textarea {
+	border: var(--input-border);
+	border-radius: var(--radius-md);
+	padding: var(--input-md-padding);
+	font-size: var(--font-size-base);
+	background: var(--input-background);
+	color: var(--input-text-color);
+	transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+	resize: vertical;
+	min-height: var(--control-min-height);
+}
+
+.contact-form textarea,
+.sugerencias-form textarea {
+	min-height: 132px;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder,
+.sugerencias-form input::placeholder,
+.sugerencias-form textarea::placeholder {
+	color: var(--input-placeholder-color);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.sugerencias-form input:focus,
+.sugerencias-form textarea:focus {
+	border: var(--input-focus-border);
+	box-shadow: var(--input-focus-box-shadow);
+	outline: none;
+}
+
+.contact-btn,
+.sugerencias-btn {
+	width: 100%;
+	background: var(--tr-blue);
+	color: var(--text-inverse);
+	font-weight: var(--font-weight-bold);
+	font-size: var(--font-size-lg);
+	border: none;
+	border-radius: var(--radius-md);
+	padding: var(--btn-md-padding);
+	min-height: var(--touch-target-min);
+	cursor: pointer;
+	box-shadow: var(--shadow-md);
+	transition: all var(--transition-fast);
+}
+
+.contact-btn:hover,
+.sugerencias-btn:hover {
+	background: var(--tr-blue-dark);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-lg);
+}
+
+.contact-btn:active,
+.sugerencias-btn:active {
+	transform: translateY(0);
+	box-shadow: var(--shadow-sm);
+}
+
+.contact-btn:disabled,
+.sugerencias-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+}
+
+@media (min-width: 768px) {
+	#contacto,
+	#buzon-sugerencias {
+		padding: var(--space-10) clamp(var(--space-6), 4vw, var(--space-12));
+	}
+}

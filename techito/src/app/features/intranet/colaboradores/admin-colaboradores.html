@@ -1,0 +1,150 @@
+<div class="admin-colaboradores">
+  <div class="page-header">
+    <a routerLink="/intranet/admin" class="btn-back">← Volver</a>
+    <h1>🤝 Gestión de Colaboradores</h1>
+    <p>Administra colaboradores externos y contratistas</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <span>Total Colaboradores</span>
+      <p>{{colaboradores().length}}</p>
+    </div>
+    <div class="stat">
+      <span>Proyectos Activos</span>
+      <p>10</p>
+    </div>
+    <div class="stat">
+      <span>Pagos Pendientes</span>
+      <p>1</p>
+    </div>
+  </div>
+
+  <!-- Action Button -->
+  <div class="action-bar">
+    <app-ui-button class="btn-primary" (click)="agregarColaborador()">➕ Agregar Colaborador</app-ui-button>
+  </div>
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+  </div>
+  }
+
+  <!-- Colaboradores Table -->
+  <div class="card">
+    <h2>Colaboradores Externos</h2>
+    <div class="table-responsive">
+      <table class="colaboradores-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Especialidad</th>
+            <th>Proyectos</th>
+            <th>Pagos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (colab of colaboradores(); track colab.id) {
+          <tr>
+            <td><strong>{{colab.nombre}}</strong></td>
+            <td>{{colab.email}}</td>
+            <td>{{colab.especialidad}}</td>
+            <td>{{colab.proyectos}}</td>
+            <td>
+              <span class="payments" [class]="colab.pagos_pendientes > 0 ? 'pending' : ''">
+                {{colab.pagos_pendientes > 0 ? colab.pagos_pendientes + ' pendiente(s)' : 'Al día'}}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class]="colab.estado">
+                {{colab.estado}}
+              </span>
+            </td>
+            <td>
+              <app-ui-button class="btn-sm view" (click)="verProyectos(colab.id)">👁️ Proyectos</app-ui-button>
+              <app-ui-button class="btn-sm edit" [disabled]="saving()" (click)="editarColaborador(colab.id)">
+                {{colab.estado === 'activo' ? '❌ Desactivar' : '✅ Reactivar'}}
+              </app-ui-button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (showCreateModal()) {
+  <app-ui-modal (close)="closeCreateModal()">
+    <span modal-title>Alta de colaborador</span>
+
+    <form class="modal-form" (submit)="submitCreateColaborador($event)">
+      <app-ui-text-field
+        label="Nombre"
+        name="nombre"
+        autocomplete="name"
+        [value]="formNombre()"
+        (valueChange)="formNombre.set($event)"
+        [required]="true"
+      ></app-ui-text-field>
+
+      <app-ui-text-field
+        label="Email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        [value]="formEmail()"
+        (valueChange)="formEmail.set($event)"
+        [required]="true"
+      ></app-ui-text-field>
+
+      <app-ui-text-field
+        label="Contraseña inicial"
+        type="password"
+        name="password"
+        autocomplete="new-password"
+        [value]="formPassword()"
+        (valueChange)="formPassword.set($event)"
+        [required]="true"
+      ></app-ui-text-field>
+
+      @if (modalError()) {
+      <p class="modal-error">{{ modalError() }}</p>
+      }
+
+      <div class="modal-actions">
+        <app-ui-button type="button" variant="secondary" [disabled]="saving()" (click)="closeCreateModal()">Cancelar</app-ui-button>
+        <app-ui-button type="submit" [disabled]="saving()">{{ saving() ? 'Guardando...' : 'Crear colaborador' }}</app-ui-button>
+      </div>
+    </form>
+  </app-ui-modal>
+  }
+
+  @if (showStatusModal() && selectedColaborador(); as colab) {
+  <app-ui-modal (close)="closeStatusModal()">
+    <span modal-title>Confirmar cambio de estado</span>
+
+    <div class="status-modal-body">
+      <p>
+        Vas a {{ colab.estado === 'activo' ? 'desactivar' : 'reactivar' }} al colaborador
+        <strong>{{ colab.nombre }}</strong>.
+      </p>
+
+      @if (modalError()) {
+      <p class="modal-error">{{ modalError() }}</p>
+      }
+
+      <div class="modal-actions">
+        <app-ui-button type="button" variant="secondary" [disabled]="saving()" (click)="closeStatusModal()">Cancelar</app-ui-button>
+        <app-ui-button type="button" [disabled]="saving()" (click)="confirmToggleEstado()">
+          {{ saving() ? 'Guardando...' : (colab.estado === 'activo' ? 'Desactivar' : 'Reactivar') }}
+        </app-ui-button>
+      </div>
+    </div>
+  </app-ui-modal>
+  }
+</div>

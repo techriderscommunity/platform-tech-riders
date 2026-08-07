@@ -1,0 +1,51 @@
+<div
+  class="ui-carousel"
+  [style.--ui-carousel-card-min]="cardMinWidth"
+  role="region"
+  [attr.aria-label]="ariaLabel"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (focusin)="onFocusIn()"
+  (focusout)="onFocusOut()"
+>
+  @if (hasMultipleItems) {
+  <button class="ui-carousel-btn ui-carousel-btn-left" type="button" aria-label="Anterior" (click)="prev()">
+    &#8592;
+  </button>
+  }
+
+  <div
+    #track
+    class="ui-carousel-track"
+    [class.ui-carousel-track-single]="items.length <= 1"
+    [class.ui-carousel-track-few]="items.length > 1 && items.length < 4"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    @for (item of items; track item.src + item.title) {
+    <article class="ui-carousel-slide">
+      @if (item.kind === 'video') {
+      <iframe
+        [src]="getSafeVideoUrl(item.src)"
+        [title]="item.title"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+      } @else {
+      <img [src]="item.src" [alt]="item.alt || item.title" loading="lazy" />
+      }
+
+      @if (showCaptions) {
+      <figcaption>{{ item.title }}</figcaption>
+      }
+    </article>
+    }
+  </div>
+
+  @if (hasMultipleItems) {
+  <button class="ui-carousel-btn ui-carousel-btn-right" type="button" aria-label="Siguiente" (click)="next()">
+    &#8594;
+  </button>
+  }
+</div>

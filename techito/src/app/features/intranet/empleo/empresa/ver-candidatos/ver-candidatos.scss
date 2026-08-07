@@ -1,0 +1,283 @@
+.ver-candidatos {
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  max-width: var(--page-content-max);
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: var(--space-8);
+
+  .btn-back {
+    background: none;
+    border: none;
+    color: var(--tr-blue);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+    text-decoration: none;
+    display: inline-block;
+
+    &:hover {
+      color: var(--primary-dark);
+    }
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin-bottom: var(--space-2);
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+}
+
+/* Candidatos Grid */
+.candidatos-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+.candidato-card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--surface-padding);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-default);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.candidato-header {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  position: relative;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tr-blue), var(--secondary-color));
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.candidato-info {
+  flex: 1;
+
+  h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .titulo {
+    color: var(--tr-blue);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ubicacion {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.match-badge {
+  background: linear-gradient(135deg, var(--tr-blue), var(--secondary-color));
+  color: var(--color-white);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.habilidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.skill-tag {
+  background: var(--bg-light);
+  color: var(--text-primary);
+  padding: var(--space-0-375) var(--space-0-75);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+.experiencia {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: var(--space-6);
+  flex: 1;
+}
+
+.candidato-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-6);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.fecha {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.estado-badge {
+  padding: var(--space-0-375) var(--space-0-875);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &.pendiente {
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
+  }
+
+  &.entrevista {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+  }
+
+  &.rechazado {
+    background: var(--badge-error-bg);
+    color: var(--badge-error-text);
+  }
+}
+
+/* Acciones */
+.candidato-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-direction: column;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--tr-blue);
+  color: var(--color-white);
+  min-height: var(--touch-target-min);
+  padding: var(--btn-md-padding);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+
+  &:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.estado-select {
+  width: 100%;
+  min-height: var(--control-min-height);
+  padding: var(--input-md-padding);
+  border: var(--input-border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+
+  &:focus {
+    outline: none;
+    border: var(--input-focus-border);
+    box-shadow: var(--input-focus-box-shadow);
+  }
+}
+
+.btn-text {
+  background: none;
+  padding: var(--space-2);
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: var(--accent-error);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+
+  p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .candidatos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .candidato-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary,
+  .estado-select {
+    width: auto;
+    flex: 1 1 12rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidato-header {
+    flex-wrap: wrap;
+  }
+
+  .candidatos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,0 +1,153 @@
+<div class="dashboard-junior">
+  <div class="welcome-section">
+    <h1>¡Bienvenido {{nombreUsuario()}}!</h1>
+    <p class="subtitle">Especialización: {{especializacion()}}</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">❤️</div>
+      <div class="stat-content">
+        <h3>{{stats().ofertasGuardadas}}</h3>
+        <p>Ofertas Guardadas</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📤</div>
+      <div class="stat-content">
+        <h3>{{stats().solicitudesEnviadas}}</h3>
+        <p>Solicitudes Enviadas</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3>{{stats().enProceso}}</h3>
+        <p>En Proceso</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">💬</div>
+      <div class="stat-content">
+        <h3>{{stats().mensajes}}</h3>
+        <p>Mensajes Nuevos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ofertas Recomendadas -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Ofertas Recomendadas</h2>
+      <a routerLink="/intranet/junior/my-offers" class="link-secondary">Ver todas →</a>
+    </div>
+
+    <div class="ofertas-list">
+      @for (oferta of ofertasRecomendadas(); track $index) {
+      <div class="oferta-item">
+        <div class="oferta-header">
+          <div>
+            <h3>{{oferta.titulo}}</h3>
+            <p class="empresa">{{oferta.empresa}}</p>
+          </div>
+          <button class="btn-favorite" [class.guardada]="oferta.guardada">♥</button>
+        </div>
+        <div class="oferta-meta">
+          <span>💰 {{oferta.salario}}</span>
+          <span>📍 {{oferta.ubicacion}}</span>
+        </div>
+        <app-ui-button class="btn-primary">Ver oferta</app-ui-button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Mis Cursos -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Mis Cursos</h2>
+      <a routerLink="/intranet/junior/my-courses" class="link-secondary">Ver todos →</a>
+    </div>
+
+    <div class="cursos-list">
+      @for (curso of misCursos(); track $index) {
+      <div class="curso-item">
+        <div class="curso-info">
+          <div>
+            <h3>{{curso.titulo}}</h3>
+            <p class="profesor">Profesor: {{curso.profesor}}</p>
+          </div>
+          <span class="badge" [class]="curso.estado">{{curso.estado}}</span>
+        </div>
+        <div class="progreso-container">
+          <div class="progreso-bar">
+            <div class="progreso-fill" [style.width.%]="curso.progreso"></div>
+          </div>
+          <span class="progreso-text">{{curso.progreso}}%</span>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Próximos Eventos -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Próximos Eventos</h2>
+    </div>
+
+    <div class="eventos-list">
+      @for (evento of ultimosEventos(); track $index) {
+      <div class="evento-item">
+        <div class="evento-icon" [class]="evento.tipo">
+          @if (evento.tipo === 'workshop') {
+          <span>🎓</span>
+          }
+          @if (evento.tipo === 'mentoría') {
+          <span>👥</span>
+          }
+          @if (evento.tipo === 'networking') {
+          <span>🤝</span>
+          }
+        </div>
+        <div class="evento-info">
+          <h3>{{evento.titulo}}</h3>
+          <p class="fecha">{{evento.fecha}}</p>
+        </div>
+        <app-ui-button class="btn-small">Más info</app-ui-button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Acciones Rápidas -->
+  <div class="acciones-rapidas">
+    <a routerLink="/intranet/junior/edit-profile" class="accion-card">
+      <span class="icono">✏️</span>
+      <div>
+        <h3>Editar Perfil</h3>
+        <p>Actualiza tu información y habilidades</p>
+      </div>
+    </a>
+
+    <a routerLink="/intranet/junior/my-offers" class="accion-card">
+      <span class="icono">💼</span>
+      <div>
+        <h3>Ver Ofertas</h3>
+        <p>Explora todas las oportunidades</p>
+      </div>
+    </a>
+
+    <a routerLink="/intranet/junior/my-courses" class="accion-card">
+      <span class="icono">📚</span>
+      <div>
+        <h3>Mis Cursos</h3>
+        <p>Continúa tu aprendizaje</p>
+      </div>
+    </a>
+  </div>
+</div>

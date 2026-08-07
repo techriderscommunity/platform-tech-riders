@@ -1,0 +1,102 @@
+.ui-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ui-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--ui-carousel-card-min), 1fr);
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-1);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scrollbar-width: none;
+  flex: 1;
+  padding-bottom: var(--space-2);
+}
+
+.ui-carousel-track.ui-carousel-track-single {
+  grid-auto-columns: minmax(var(--ui-carousel-card-min), 560px);
+}
+
+.ui-carousel-track.ui-carousel-track-few {
+  grid-auto-columns: minmax(var(--ui-carousel-card-min), 420px);
+}
+
+.ui-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-carousel-slide {
+  position: relative;
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  aspect-ratio: 4 / 3;
+
+  img,
+  iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    background: var(--bg-canvas);
+  }
+
+  figcaption {
+    position: absolute;
+    inset: auto 0 0;
+    background: linear-gradient(transparent, var(--bg-canvas-alpha-85));
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-2) var(--space-3);
+    pointer-events: none;
+  }
+}
+
+.ui-carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  flex: 0 0 auto;
+}
+
+.ui-carousel-btn:hover {
+  border-color: var(--tr-blue-alpha-35);
+  background: var(--bg-muted);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .ui-carousel {
+    gap: var(--space-2);
+  }
+
+  .ui-carousel-track {
+    grid-auto-columns: minmax(220px, 78vw);
+  }
+
+  .ui-carousel-btn {
+    width: 34px;
+    height: 34px;
+  }
+}

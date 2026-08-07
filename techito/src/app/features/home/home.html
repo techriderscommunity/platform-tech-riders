@@ -1,0 +1,174 @@
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Comunidad · Tecnología · Conocimiento</span>
+    <h1 class="hero-title">Somos <span class="highlight">TechRiders</span></h1>
+    <p class="hero-subtitle">
+      Acercamos las últimas tendencias en tecnología, desarrollo de software, cloud,
+      inteligencia artificial y transformación digital a estudiantes, profesionales
+      y entusiastas del sector. A través de charlas, talleres, podcasts y eventos,
+      fomentamos el aprendizaje continuo, el intercambio de experiencias y el
+      networking entre personas que comparten una misma pasión: la tecnología.
+      Porque las mejores oportunidades nacen cuando conectamos conocimiento, ideas y personas.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/tutorials" class="btn btn-primary">Explore tutorials</a>
+      <a routerLink="/about-us" class="btn btn-secondary">About us</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="hero-stats">
+      @for (stat of stats; track stat.label) {
+      <div class="hero-stat">
+        <span class="hero-stat-icon">{{ stat.icon }}</span>
+        <span class="hero-stat-value">{{ stat.value }}</span>
+        <span class="hero-stat-label">{{ stat.label }}</span>
+      </div>
+      }
+    </div>
+
+    <!-- Role cards -->
+    <div class="hero-roles">
+      @for (role of roles; track role.title) {
+      <div class="role-card">
+        <span class="role-card-icon">{{ role.icon }}</span>
+        <h3 class="role-card-title">{{ role.title }}</h3>
+        <p class="role-card-subtitle">{{ role.subtitle }}</p>
+        <p class="role-card-desc">{{ role.desc }}</p>
+        <a [routerLink]="role.link" class="btn btn-outline-blue btn-sm">{{ role.cta }}</a>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===== Nuestra Historia ===== -->
+<section class="history">
+  <div class="history-inner">
+    <div class="history-img">
+      <img src="assets/Tetxito/osito.png" alt="Techito — mascota de TechRiders" loading="lazy" />
+    </div>
+    <div class="history-text">
+      <span class="section-label">Nuestra Historia</span>
+      <p>
+        Tech Riders nace de una idea muy sencilla: acercar la realidad profesional a las aulas
+        y ayudar a que el alumnado llegue mejor preparado al mundo laboral.
+      </p>
+      <p>
+        Todo comenzó en <strong>2013</strong> en <strong>Tajamar (Madrid)</strong>, donde se creó el
+        <strong>Microsoft Student Tech Club</strong>, un espacio en el que estudiantes y profesionales
+        de la tecnología se reunían para aprender, compartir conocimiento y descubrir las últimas
+        tendencias del sector.
+      </p>
+      <p>
+        Durante años, la comunidad fue creciendo gracias a la participación de alumnado, docentes
+        y profesionales que dedicaban parte de su tiempo a compartir experiencias reales y acercar
+        al mundo académico lo que estaba ocurriendo dentro de las empresas.
+      </p>
+    </div>
+    <div class="history-text">
+      <p>
+        Sin embargo, el verano de 2021 comenzó una nueva etapa. Nació
+        <strong>Techito</strong> y con él <strong>Tech Riders</strong>, una iniciativa impulsada por antiguos alumnos,
+        profesionales y apasionados de la tecnología que querían dar un paso más allá. La visión era clara:
+        construir una comunidad abierta donde aprender tecnología fuese tan importante como crear
+        conexiones, compartir experiencias reales y ayudar a otras personas a crecer profesionalmente.
+      </p>
+      <p>
+        Aquella evolución fue el origen de <strong>Tech Riders tal y como lo conocemos hoy</strong>.
+        Una comunidad que mantiene sus raíces en Tajamar Tech, pero que amplía su alcance mucho más allá
+        de un centro educativo.
+      </p>
+      <p>
+        <strong>Tech Riders no pertenece a Tajamar</strong>, aunque está impulsado y apoyado por
+        <strong>Tajamar Tech</strong>, compartiendo una misma misión: acercar el mundo profesional
+        al alumnado y fomentar el aprendizaje continuo dentro de la comunidad tecnológica.
+      </p>
+      <p>
+        Tech Riders es una comunidad abierta, diversa e inclusiva donde estudiantes,
+        profesionales, empresas y centros de formación colaboran para compartir conocimiento,
+        oportunidades y experiencias.
+      </p>
+      <p> Porque Tech Riders no es una marca, ni una empresa, ni una organización cerrada. </p>
+      <blockquote>
+        <strong>Tech Riders somos todos.</strong>
+      </blockquote>
+      <p> Y lo mejor de nuestra historia es que todavía se sigue escribiendo. </p>
+      <p>
+        <strong>Cualquiera puede convertirse en un Tech Rider.</strong> 🏍️💙
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMUNIDAD ===== -->
+<section class="community-hub">
+  <div class="community-inner">
+    <div class="section-header">
+      <span class="section-label">Comunidad</span>
+      <h2 class="section-heading">Networking y próximos encuentros</h2>
+      <p class="section-subheading">
+        Participa en la actividad de la comunidad, reserva tu plaza y conecta con profesionales en los próximos eventos TechRiders.
+      </p>
+    </div>
+
+    <div class="community-grid">
+      <article class="community-panel community-events">
+        <h3 class="community-title">Próximos eventos</h3>
+
+        @if (loadingEventos()) {
+        <div class="community-feedback">Cargando eventos...</div>
+        } @else if (proximosEventos().length === 0) {
+        <div class="community-empty">
+          <span class="proximamente-icon">📅</span>
+          <p>Estamos cerrando nuevas fechas. <a routerLink="/contact">Escríbenos</a> para mantenerte al día.</p>
+        </div>
+        } @else {
+        <div class="community-events-list">
+          @for (evento of proximosEventos(); track evento.id) {
+          <a class="evento-card" [href]="evento.url" target="_blank" rel="noopener noreferrer">
+            <div class="evento-card-top">
+              <span class="evento-estado-badge">PRÓXIMO</span>
+              <span class="evento-categoria-tag">{{ evento.categoria }}</span>
+            </div>
+            <h4 class="evento-titulo">{{ evento.titulo }}</h4>
+            <p class="evento-ubicacion">📍 {{ evento.ubicacion }}</p>
+            <span class="evento-link-cta">Ver detalle y registro →</span>
+          </a>
+          }
+        </div>
+        }
+      </article>
+
+      <aside class="community-panel community-register">
+        <h3 class="community-title">Registro directo</h3>
+        <p class="community-register-text">Reserva tu plaza desde nuestro calendario oficial de Luma.</p>
+        <div class="luma-shell">
+          <iframe
+            src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
+            title="Calendario de eventos TechRiders en Luma"
+            loading="lazy"
+            frameborder="0"
+            allowfullscreen=""
+            aria-hidden="false"
+            tabindex="0"
+          ></iframe>
+        </div>
+      </aside>
+    </div>
+
+    <div class="community-carousel-block">
+      <h3 class="community-title">Comunidad en acción</h3>
+      <app-ui-media-carousel
+        [items]="eventosPasadosSlides"
+        ariaLabel="Fotos de eventos pasados"
+        [autoplay]="true"
+        [autoplayDelayMs]="3500"
+        [showCaptions]="true"
+        cardMinWidth="240px"
+      ></app-ui-media-carousel>
+    </div>
+  </div>
+</section>

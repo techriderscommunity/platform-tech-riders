@@ -1,0 +1,271 @@
+.dashboard-empresa {
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  max-width: var(--page-content-max);
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+
+  h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 800;
+  }
+}
+
+.empty-copy {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-10);
+}
+
+.stat-card {
+  border-left: 4px solid;
+
+  &.blue { border-color: var(--tr-blue); }
+  &.green { border-color: var(--accent-success); }
+  &.orange { border-color: var(--accent-warning); }
+  &.purple { border-color: var(--badge-purple-text); }
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+}
+
+.stat-content {
+  h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+}
+
+/* Dashboard Sections */
+.dashboard-section {
+  @extend .card !optional;
+  margin-bottom: var(--space-8);
+  padding: var(--surface-padding);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+
+  h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+}
+
+/* Ofertas List */
+.ofertas-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.oferta-item {
+  @extend .card-secondary !optional;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--surface-padding);
+  transition: all var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--tr-blue);
+  }
+}
+
+.oferta-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  h3 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+
+.oferta-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.candidatos-count {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Candidatos List */
+.candidatos-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.candidato-item {
+  @extend .card-secondary !optional;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--surface-padding);
+  transition: all var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--tr-blue);
+  }
+}
+
+.candidato-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tr-blue), var(--secondary-color));
+  color: var(--text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.candidato-info {
+  flex: 1;
+
+  h3 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+}
+
+.candidato-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.fecha {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Badges */
+.badge {
+  &.activa {
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+  }
+
+  &.borrador {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+  }
+}
+
+.badge-estado {
+  &.pendiente {
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
+  }
+
+  &.entrevista {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+  }
+}
+
+.btn-small {
+  @extend .btn !optional;
+  @extend .btn-sm !optional;
+  background: var(--bg-secondary);
+  color: var(--tr-blue);
+  text-decoration: none;
+  border: 1px solid var(--tr-blue);
+  transition: all var(--transition-base);
+
+  &:hover {
+    background: var(--tr-blue);
+    color: var(--text-inverse);
+  }
+}
+
+.link-secondary {
+  color: var(--tr-blue);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  &:hover {
+    color: var(--tr-blue-dark);
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .oferta-item,
+  .candidato-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .oferta-stats {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+

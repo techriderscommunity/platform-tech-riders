@@ -1,0 +1,58 @@
+<div class="admin-sesiones-separadas">
+  <div class="page-header">
+    <a routerLink="/intranet/admin" class="btn-back">← Volver</a>
+    <h1>Gestión de Sesiones</h1>
+    <p>Calendario interactivo de sesiones con visualización de superposiciones por categoría.</p>
+  </div>
+
+  <!-- Sección de Introducción -->
+  <div class="intro-section">
+    <div class="panel intro">
+      <h2>📅 Calendario Multi-Track</h2>
+      <p>Visualiza todas las sesiones organizadas por <strong>categoría</strong> (#FPTour, #TajamarTech, #TechRiders, #Colaboradores).</p>
+      <p>Los eventos <strong>se superponen horizontalmente</strong> si comparten rango horario — así ves conflictos a primera vista.</p>
+    </div>
+
+    <div class="session-types">
+      <article class="type-card">
+        <h3>🎯 Sesiones dentro de evento</h3>
+        <p>Relacionadas con un evento padre: agenda, bloque horario y capacidad.</p>
+        <ul>
+          <li>Agenda por evento</li>
+          <li>Orden y duración</li>
+          <li>Ponente y sala</li>
+        </ul>
+      </article>
+
+      <article class="type-card">
+        <h3>🧩 Sesiones independientes</h3>
+        <p>Actividades que existen fuera de un evento: talleres, mentoring o clases sueltas.</p>
+        <ul>
+          <li>Ciclo de vida propio</li>
+          <li>Publicación directa</li>
+          <li>Asistencia autónoma</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+
+  <!-- Calendario de Eventos -->
+  <app-calendar-eventos></app-calendar-eventos>
+
+  <!-- Sección de Acciones -->
+  <div class="panel actions">
+    <h2>⚙️ Próximas Mejoras</h2>
+    <p>Se añadirán funcionalidades de gestión avanzada:</p>
+    <ul>
+      <li>✏️ Crear y editar sesiones directamente desde el calendario</li>
+      <li>🔗 Enlazar sesiones con eventos</li>
+      <li>🏷️ Filtros por categoría y estado</li>
+      <li>📊 Análisis de ocupación y conflictos</li>
+    </ul>
+    <div class="action-buttons">
+      <a routerLink="/intranet/admin/events" class="btn-link">Ir a Gestión de Eventos →</a>
+      <a href="javascript:void(0)" class="btn-link secondary">Crear Nueva Sesión</a>
+    </div>
+  </div>
+</div>
+

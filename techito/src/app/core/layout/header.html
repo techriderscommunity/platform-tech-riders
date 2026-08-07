@@ -1,0 +1,60 @@
+<header id="navbar" role="banner" [class.scrolled]="isScrolled()">
+  <nav id="main-nav" aria-label="Navegación principal">
+    <!-- Logo -->
+    <a class="nav-logo" routerLink="/">
+      <img class="nav-logo-img" [src]="isDarkMode() ? 'assets/logo-dark.png' : 'assets/logo-light.png'" alt="TechRiders"
+        width="36" height="36">
+    </a>
+
+    <!-- Desktop links (center) -->
+    <ul class="nav-links" role="list">
+      <li><a class="nav-link" routerLink="/" routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}">Inicio</a></li>
+      <li><a class="nav-link nav-link-emphasis" routerLink="/join" routerLinkActive="active">Join</a></li>
+      <li><a class="nav-link" routerLink="/about-us" routerLinkActive="active">About Us</a></li>
+      <li><a class="nav-link" routerLink="/tutorials" routerLinkActive="active">Tutorials</a></li>
+      <li><a class="nav-link" routerLink="/events" routerLinkActive="active">Events</a></li>
+      <li><a class="nav-link" routerLink="/orienta-tech" routerLinkActive="active">OrientaTech</a></li>
+      <li><a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a></li>
+      @if (isLoggedIn()) {
+      <li><a class="nav-link" routerLink="/intranet" routerLinkActive="active">Intranet</a></li>
+      }
+    </ul>
+
+    <!-- Actions (right) -->
+    <div class="nav-actions">
+      @if (!isLoggedIn()) {
+      <button class="btn-login nav-action-btn" (click)="goToLogin()" type="button">Iniciar sesión</button>
+      } @else {
+      <button class="btn-login nav-action-btn" (click)="logout()" type="button">Salir</button>
+      }
+      <button class="btn-theme-toggle" (click)="toggleTheme()"
+        [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'" type="button">
+        {{ isDarkMode() ? '☀️' : '🌙' }}
+      </button>
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger" [class.open]="mobileMenuOpen()" (click)="toggleMobileMenu()" aria-label="Menú"
+        type="button">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+</header>
+
+<!-- Mobile overlay — OUTSIDE <header> to escape backdrop-filter containing block -->
+<div class="nav-mobile-overlay" [class.open]="mobileMenuOpen()" role="dialog" aria-label="Menú móvil">
+  <a class="nav-mobile-link" routerLink="/" (click)="closeMobileMenu()">Inicio</a>
+  <a class="nav-mobile-link" routerLink="/join" (click)="closeMobileMenu()">Join</a>
+  <a class="nav-mobile-link" routerLink="/about-us" (click)="closeMobileMenu()">About Us</a>
+  <a class="nav-mobile-link" routerLink="/orienta-tech" (click)="closeMobileMenu()">OrientaTech</a>
+  <a class="nav-mobile-link" routerLink="/tutorials" (click)="closeMobileMenu()">Tutorials</a>
+  <a class="nav-mobile-link" routerLink="/events" (click)="closeMobileMenu()">Events</a>
+  <a class="nav-mobile-link" routerLink="/contact" (click)="closeMobileMenu()">Contact</a>
+  @if (isLoggedIn()) {
+  <a class="nav-mobile-link" routerLink="/intranet" (click)="closeMobileMenu()">Intranet</a>
+  <button class="nav-mobile-cta" (click)="logout(); closeMobileMenu()">Cerrar sesión</button>
+  } @else {
+  <button class="nav-mobile-cta" (click)="goToLogin()">Iniciar sesión</button>
+  }
+</div>

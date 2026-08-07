@@ -1,0 +1,89 @@
+{
+  "name": "techito",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "start:e2e": "ng serve --host 127.0.0.1 --port 4300 --configuration development",
+    "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:unit:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "audit:shared-ui": "node ./tools/audit-shared-ui.mjs",
+    "enforce:shared-ui": "node ./tools/audit-shared-ui.mjs --strict",
+    "e2e": "playwright test",
+    "verify:precommit": "npm run -s enforce:shared-ui && npm run -s test:unit:ci && npm run -s e2e",
+    "e2e:headed": "playwright test --headed",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
+    "e2e:install": "playwright install chromium",
+    "storybook": "ng run techito:storybook",
+    "build-storybook": "ng run techito:build-storybook",
+    "sync-content": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./tools/sync-content.ps1",
+    "serve:ssr:techito": "node dist/techito/server/server.mjs"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "20.3.25",
+    "@angular/compiler": "20.3.25",
+    "@angular/core": "20.3.25",
+    "@angular/forms": "20.3.25",
+    "@angular/platform-browser": "20.3.25",
+    "@angular/platform-server": "20.3.25",
+    "@angular/router": "20.3.25",
+    "@angular/ssr": "20.3.31",
+    "@swimlane/ngx-charts": "^23.0.1",
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.4.5",
+    "express": "^5.1.0",
+    "gray-matter": "^4.0.3",
+    "rehype": "^13.0.2",
+    "rehype-external-links": "^3.0.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.15.1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "20.3.31",
+    "@angular/build": "20.3.31",
+    "@angular/animations": "20.3.25",
+    "@angular/cli": "20.3.31",
+    "@angular/compiler-cli": "20.3.25",
+    "@angular/platform-browser-dynamic": "20.3.25",
+    "@playwright/test": "^1.61.1",
+    "@storybook/addon-a11y": "9.1.20",
+    "@storybook/angular": "9.1.20",
+    "@types/express": "^5.0.1",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^20.19.41",
+    "jasmine-core": "~5.8.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "storybook": "9.1.20",
+    "typescript": "~5.8.2"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

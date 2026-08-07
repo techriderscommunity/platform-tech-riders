@@ -1,0 +1,81 @@
+﻿<div class="staff-dashboard">
+	<h1>Panel de Staff</h1>
+	<div class="filters">
+		<app-ui-select
+			label="Filtrar por periodo"
+			[options]="periodSelectOptions"
+			[value]="selectedPeriod()"
+			(valueChange)="selectedPeriod.set($event)"
+		></app-ui-select>
+	</div>
+
+	<div class="counters">
+		<div class="counter">
+			<span class="count">{{ totalTalks() }}</span>
+			<span class="label">Charlas impartidas</span>
+		</div>
+		<div class="counter">
+			<span class="count">{{ uniqueTopics() }}</span>
+			<span class="label">Temáticas</span>
+		</div>
+		<div class="counter">
+			<span class="count">{{ uniqueSpeakers() }}</span>
+			<span class="label">Ponentes</span>
+		</div>
+		<div class="counter">
+			<span class="count">{{ avgRating() }}</span>
+			<span class="label">Valoración media</span>
+		</div>
+	</div>
+
+	<div class="charts">
+		<div class="chart">
+			<h2>Charlas por temática</h2>
+							  <ngx-charts-pie-chart
+								  [results]="topicChartData()"
+								  scheme="vivid"
+								  [labels]="true"
+								  [legend]="true"
+								  [explodeSlices]="false"
+								  [animations]="true"
+								  [labelFormatting]="formatPercentLabel">
+							  </ngx-charts-pie-chart>
+		</div>
+		<div class="chart">
+			  <h2>Charlas por ponente</h2>
+					  <ngx-charts-pie-chart
+						  [results]="speakerChartData()"
+						  scheme="vivid"
+						  [labels]="true"
+						  [legend]="true"
+						  [explodeSlices]="false"
+						  [animations]="true"
+						  [labelFormatting]="formatPercentLabel">
+					  </ngx-charts-pie-chart>
+		</div>
+	</div>
+
+	<div class="talks-list">
+		<h2>Listado de charlas</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Fecha</th>
+					<th>Temática</th>
+					<th>Ponente</th>
+					<th>Valoración</th>
+				</tr>
+			</thead>
+			<tbody>
+			@for (talk of filteredTalks(); track $index) {
+				<tr>
+					<td>{{ talk.date }}</td>
+					<td>{{ talk.topic }}</td>
+					<td>{{ talk.speaker }}</td>
+					<td>{{ talk.rating }}</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</div>
+</div>

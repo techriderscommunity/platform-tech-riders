@@ -1,0 +1,82 @@
+<div class="admin-sesiones">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver a Intranet</a>
+    <h1>{{ context().title }}</h1>
+    <p>{{ context().subtitle }}</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <span>Eventos Totales</span>
+      <p>{{eventos().length}}</p>
+    </div>
+    <div class="stat">
+      <span>Programados</span>
+        <p>{{eventosProgramados()}}</p>
+    </div>
+    <div class="stat">
+      <span>Total Asistentes</span>
+      <p>{{totalAsistentes()}}</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+  <p>Cargando eventos...</p>
+  }
+  @if (error()) {
+  <p>{{ error() }}</p>
+  }
+
+  <!-- Action Button -->
+  <div class="action-bar">
+    <app-ui-button type="button" class="btn-primary" (click)="crearEvento()">{{ context().createLabel }}</app-ui-button>
+  </div>
+
+  @if (loading()) {
+  <div class="feedback loading">Cargando eventos...</div>
+  }
+
+  @if (error()) {
+  <div class="feedback error">{{ error() }}</div>
+  }
+
+  @if (!loading() && !error() && eventos().length === 0) {
+  <div class="empty-state">
+    <h2>No hay eventos registrados</h2>
+    <p>Empieza creando el primer evento para el calendario de la comunidad.</p>
+  </div>
+  }
+
+  <!-- Eventos Cards -->
+  <div class="eventos-grid">
+    @for (evento of eventos(); track evento.id) {
+    <article class="evento-card">
+      <div class="evento-header">
+        <h3>{{evento.titulo}}</h3>
+        <span
+          class="estado-badge"
+          [class.pendiente]="evento.estado === 'Pendiente'"
+          [class.realizada]="evento.estado === 'Realizada'"
+          [class.cancelada]="evento.estado === 'Cancelada'"
+        >{{evento.estado}}</span>
+      </div>
+
+      <div class="evento-details">
+        <p><strong>🏫 Centro:</strong> {{evento.centro}}</p>
+        <p><strong>📅 Fecha:</strong> {{evento.fecha}}</p>
+        <p><strong>🏷️ Categoria:</strong> {{evento.categoria}}</p>
+        <p><strong>👥 Asistentes:</strong> {{evento.numAlumnos}}</p>
+      </div>
+
+      <div class="evento-actions">
+        <app-ui-button type="button" variant="secondary" class="btn-sm view" (click)="verAsistentes(evento.id)">👁️ Asistentes</app-ui-button>
+        <app-ui-button type="button" variant="secondary" class="btn-sm edit" (click)="editarEvento(evento.id)">✏️ Editar</app-ui-button>
+        @if (evento.estado === 'Pendiente') {
+        <app-ui-button type="button" variant="secondary" class="btn-sm delete" (click)="cancelarEvento(evento.id)">❌ Cancelar</app-ui-button>
+        }
+      </div>
+    </article>
+    }
+  </div>
+</div>

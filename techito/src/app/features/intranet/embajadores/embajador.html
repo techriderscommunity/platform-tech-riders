@@ -1,0 +1,72 @@
+<div class="embajador-dashboard">
+    <div class="embajador-header">
+        <h1>Embajadores activos</h1>
+        <div class="embajador-filtros">
+                        <app-ui-text-field
+                            label="Buscar"
+                            type="text"
+                            name="search-embajador"
+                            placeholder="Buscar por nombre..."
+                            [value]="searchName()"
+                            (valueChange)="searchName.set($event)"
+                        ></app-ui-text-field>
+                        <app-ui-select
+                            label="Estado"
+                            [options]="estadoOptions"
+                            [value]="searchStatus()"
+                            (valueChange)="searchStatus.set($event)"
+                        ></app-ui-select>
+                        <app-ui-button (click)="addEmbajador()" class="add-btn">Añadir nuevo embajador</app-ui-button>
+        </div>
+    </div>
+
+    @if (loading()) {
+    <p>Cargando embajadores...</p>
+    }
+    @if (error()) {
+    <p>{{ error() }}</p>
+    }
+
+    <div class="embajador-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Telefóno</th>
+                    <th>Categoría</th>
+                    <th>Sesiones</th>
+                    <th>Ultm. 3 Meses</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (embajador of embajadoresFiltrados(); track embajador.email) {
+                <tr>
+                    <td>{{ embajador.nombre }}</td>
+                    <td>{{ embajador.email }}</td>
+                    <td>{{ embajador.telefono || '-' }}</td>
+                    <td>{{ embajador.categoria }}</td>
+                    <td>{{ embajador.totalSesiones }}</td>
+                    <td>{{ formatUltimaActividad(embajador.ultimaActividad) }}</td>
+                    <td [ngClass]="{'estado-activo': normalizarEstado(embajador.estado) === 'activo','estado-pendiente': normalizarEstado(embajador.estado) === 'pendiente','estado-desactivado': normalizarEstado(embajador.estado) === 'desactivado'}">{{ embajador.estado }}</td>
+                    <td>
+                        @if (normalizarEstado(embajador.estado) === 'pendiente') {
+                            <app-ui-button type="button" variant="secondary" title="Activar" (click)="activarEmbajador(embajador.nombre)">✔️</app-ui-button>
+                        } @else {
+                            @if (normalizarEstado(embajador.estado) === 'activo') {
+                            <app-ui-button type="button" variant="secondary" title="Editar" (click)="editarEmbajador(embajador.nombre)">✏️</app-ui-button>
+                            <app-ui-button type="button" variant="secondary" title="Dar de baja" (click)="darDeBajaEmbajador(embajador.nombre)" class="icon-baja">❌</app-ui-button>
+                            }
+                            @if (normalizarEstado(embajador.estado) === 'desactivado') {
+                            <app-ui-button type="button" variant="secondary" title="Reactivar" (click)="reactivarEmbajador(embajador.nombre)">🔄</app-ui-button>
+                            }
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

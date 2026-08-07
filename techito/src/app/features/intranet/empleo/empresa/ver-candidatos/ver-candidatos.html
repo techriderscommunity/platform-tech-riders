@@ -1,0 +1,69 @@
+<div class="ver-candidatos">
+  <div class="page-header">
+    <a routerLink="/intranet/empresa" class="btn-back">← Volver</a>
+    <h1>Candidatos de la Oferta</h1>
+    <p class="subtitle">Gestiona y contacta con tus candidatos</p>
+  </div>
+
+  @if (loading()) {
+  <p>Cargando candidatos...</p>
+  }
+  @if (error()) {
+  <p>{{ error() }}</p>
+  }
+  @if (!ofertaId()) {
+  <p>Selecciona una oferta para ver sus candidatos.</p>
+  }
+
+  <!-- Candidatos Grid -->
+  <div class="candidatos-grid">
+    @for (candidato of candidatos(); track candidato.id) {
+    <div class="candidato-card">
+      <div class="candidato-header">
+        <div class="avatar">{{ getInitials(candidato.nombreJunior) }}</div>
+        <div class="candidato-info">
+          <h3>{{candidato.nombreJunior}}</h3>
+          <p class="titulo">{{candidato.emailJunior}}</p>
+          <p class="ubicacion">🆔 {{candidato.juniorId}}</p>
+        </div>
+        <div class="match-badge">{{candidato.estado}}</div>
+      </div>
+
+      <div class="candidato-meta">
+        <span class="fecha">Candidatura: {{candidato.fechaSolicitud}}</span>
+        <span class="estado-badge" [class]="candidato.estado">
+          @if (candidato.estado === 'pendiente') {
+          <span>⏳ Pendiente</span>
+          }
+          @if (candidato.estado === 'entrevista') {
+          <span>📞 Entrevista</span>
+          }
+          @if (candidato.estado === 'rechazado') {
+          <span>❌ Rechazado</span>
+          }
+        </span>
+      </div>
+
+      <div class="candidato-actions">
+        <app-ui-button class="btn-primary" (click)="contactarCandidato(candidato.nombreJunior)">
+          💬 Contactar
+        </app-ui-button>
+        <app-ui-select
+          class="estado-select"
+          [options]="estadoOptions"
+          [value]="candidato.estado"
+          (valueChange)="cambiarEstado(candidato.id, $event)"
+        ></app-ui-select>
+        <app-ui-button class="btn-text" (click)="rechazarCandidato(candidato.id)">Rechazar</app-ui-button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Sin candidatos -->
+  @if (candidatos().length === 0) {
+  <div class="empty-state">
+    <p>No hay candidatos en esta oferta</p>
+  </div>
+  }
+</div>

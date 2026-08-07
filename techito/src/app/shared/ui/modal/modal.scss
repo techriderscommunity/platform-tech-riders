@@ -1,0 +1,91 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+}
+
+.ui-modal-shell {
+  position: fixed;
+  inset: 0;
+  padding: calc(var(--nav-height) + var(--space-6)) var(--page-inline-padding) var(--space-8);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.ui-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at 15% 20%, var(--modal-backdrop-accent-1) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, var(--modal-backdrop-accent-2) 0%, transparent 40%),
+    linear-gradient(180deg, var(--modal-backdrop-base), var(--modal-backdrop-base));
+}
+
+.ui-modal {
+  position: relative;
+  width: min(100%, 680px);
+  padding: var(--surface-padding);
+  background: var(--modal-surface);
+  border: 1px solid var(--modal-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--modal-shadow);
+  backdrop-filter: blur(8px);
+  max-height: calc(100vh - var(--nav-height) - var(--space-8));
+  overflow-y: auto;
+}
+
+.ui-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.ui-modal-header h2 {
+  color: var(--text-primary);
+  font-size: clamp(1.45rem, 2.5vw, 1.8rem);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0;
+}
+
+.ui-modal-close {
+  appearance: none;
+  background: var(--modal-control-bg);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.ui-modal-close:hover,
+.ui-modal-close:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--primary-light);
+  background: var(--modal-control-hover-bg);
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .ui-modal-shell {
+    padding-top: calc(var(--nav-height) + var(--space-3));
+    padding-inline: var(--space-3);
+  }
+
+  .ui-modal {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .ui-modal-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

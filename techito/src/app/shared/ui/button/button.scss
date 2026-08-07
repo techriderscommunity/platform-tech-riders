@@ -1,0 +1,51 @@
+.ui-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-mid) 100%);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  font-size: 1.08rem;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--btn-md-padding);
+  min-height: var(--touch-target-min);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  text-shadow: 0 1px 2px var(--black-alpha-28);
+}
+
+.ui-btn:hover {
+  background: linear-gradient(135deg, var(--primary-mid) 0%, var(--primary-light) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.ui-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.ui-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ui-btn.ui-btn-secondary {
+  background: var(--modal-control-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  text-shadow: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.ui-btn.ui-btn-secondary:hover {
+  background: var(--modal-control-hover-bg);
+  border-color: var(--primary-light);
+}
+
+@media (max-width: 640px) {
+  .ui-btn {
+    font-size: 1rem;
+  }
+}

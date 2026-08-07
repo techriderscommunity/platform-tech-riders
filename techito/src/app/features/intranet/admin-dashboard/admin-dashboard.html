@@ -1,0 +1,85 @@
+<div class="admin-dashboard">
+  <div class="page-header">
+    <h1>👨‍💼 Panel de Administración</h1>
+    <p>Gestión centralizada de usuarios, contenido y configuración</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <h3>Usuarios Totales</h3>
+      <p class="stat-number">{{stats().totalUsuarios}}</p>
+      <span class="stat-info">+12 este mes</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <h3>Superadmins</h3>
+      <p class="stat-number">{{stats().superadmins}}</p>
+      <span class="stat-info">activos</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <h3>Eventos</h3>
+      <p class="stat-number">{{stats().eventos}}</p>
+      <span class="stat-info">publicados</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🧩</div>
+      <h3>Sesiones</h3>
+      <p class="stat-number">{{stats().sesiones}}</p>
+      <span class="stat-info">totales</span>
+    </div>
+  </div>
+
+  <div class="navigation-note">
+    <strong>Navegacion centralizada:</strong>
+    <span>usa el menu de la izquierda para cambiar de modulo. Este panel muestra solo estado y actividad.</span>
+  </div>
+
+  <!-- Últimas Acciones -->
+  <div class="recent-actions">
+    <h2>Últimas Acciones</h2>
+    <table class="actions-table">
+      <thead>
+        <tr>
+          <th>Acción</th>
+          <th>Detalles</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (accion of ultimasAcciones(); track $index) {
+        <tr>
+          <td>{{accion.accion}}</td>
+          <td>{{accion.empresa || accion.nombre || accion.staff}}</td>
+          <td>{{accion.fecha}}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- System Health -->
+  <div class="system-health">
+    <h2>⚙️ Estado del Sistema</h2>
+    <div class="health-grid">
+      <div class="health-item">
+        <span>Servidores</span>
+        <p class="status online">{{systemeHealth().servers}}</p>
+      </div>
+      <div class="health-item">
+        <span>Base de Datos</span>
+        <p class="status online">{{systemeHealth().database}}</p>
+      </div>
+      <div class="health-item">
+        <span>Cargas</span>
+        <p class="status">{{systemeHealth().uploads}}</p>
+      </div>
+      <div class="health-item">
+        <span>CPU</span>
+        <p class="status">{{systemeHealth().cpu}}</p>
+      </div>
+    </div>
+  </div>
+</div>

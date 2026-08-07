@@ -1,0 +1,216 @@
+<section class="unete-hero">
+  <div class="unete-hero-content">
+    <h1>🚀 ¡Únete al movimiento Tech!</h1>
+    <p>¿Eres un todoterreno de la tecnología o diriges un centro educativo? ¡Tenemos un lugar para ti!</p>
+  </div>
+</section>
+
+<!-- TABS: CANDIDATOS vs CENTROS -->
+<section class="unete-tabs">
+  <button
+    class="tab-btn"
+    [class.activo]="rolActivo() === 'candidato'"
+    (click)="seleccionarRol('candidato')"
+  >
+    👩‍💻 Candidato / Voluntario
+  </button>
+  <button
+    class="tab-btn"
+    [class.activo]="rolActivo() === 'centro'"
+    (click)="seleccionarRol('centro')"
+  >
+    🎓 Centro Formador
+  </button>
+</section>
+
+<!-- SECCIÓN CANDIDATOS -->
+@if (rolActivo() === 'candidato') {
+  <section class="rol-section candidato-section" [@fadeIn]>
+    <div class="rol-content">
+      <h2>¿Por qué ser Candidato / Voluntario?</h2>
+      <ul class="rol-list">
+        <li>✨ Compartir tu pasión por la tecnología e inspirar a futuras generaciones</li>
+        <li>🤝 Conocer una comunidad tech increíble (gente con flow, de verdad)</li>
+        <li>📚 Acceso a recursos, talleres y eventos exclusivos</li>
+        <li>🎯 Ayudarte a crecer profesional y personalmente</li>
+        <li>🌍 Colaborar en misiones que tienen impacto real</li>
+        <li>☕ ¡Y mil cosas más que descubrirás en el camino!</li>
+      </ul>
+    </div>
+
+    <div class="rol-carrusel">
+      <h3>Mira quiénes ya están en la tribu 📸</h3>
+      <div class="carrusel">
+        <button class="carrusel-btn carrusel-btn-left" aria-label="Anterior" (click)="scrollCarrusel(-1)">&#8592;</button>
+        <div class="carrusel-track" #carruselTrack>
+          <img src="../../assets/Tetxito/techito_bici.jpg" alt="Tech Riders Bici" />
+          <img src="../../assets/Tetxito/techito_montania.jpg" alt="Tech Riders Montaña" />
+          <img src="../../assets/Tetxito/techito_cervezas.jpg" alt="Tech Riders Cervezas" />
+          <img src="../../assets/Tetxito/techito_helado.jpg" alt="Tech Riders Helado" />
+        </div>
+        <button class="carrusel-btn carrusel-btn-right" aria-label="Siguiente" (click)="scrollCarrusel(1)">&#8594;</button>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- SECCIÓN CENTROS -->
+@if (rolActivo() === 'centro') {
+  <section class="rol-section centro-section" [@fadeIn]>
+    <div class="rol-content">
+      <h2>¿Por qué colaborar con Tech Riders?</h2>
+      <ul class="rol-list">
+        <li>🔬 Acerca la tecnología real y actual a tu alumnado</li>
+        <li>💡 Despierta vocaciones STEM en tus estudiantes</li>
+        <li>👨‍💼 Conecta con profesionales y referentes del sector tech</li>
+        <li>🎓 Fomenta el aprendizaje práctico y colaborativo</li>
+        <li>🏆 Destaca tu centro por estar a la vanguardia de la innovación</li>
+        <li>🎉 ¡Es totalmente gratis! (sí, leíste bien 👀)</li>
+      </ul>
+    </div>
+  </section>
+}
+
+<!-- FEEDBACK DE EMBAJADORES Y CENTROS -->
+<section class="feedback-section">
+  <h2>Lo que dicen nuestros colaboradores 💬</h2>
+  <p class="feedback-intro">Historias reales de gente como tú que ya es parte de Tech Riders</p>
+
+  <div class="feedback-grid">
+    <div class="feedback-card">
+      <div class="feedback-avatar">👩‍💻</div>
+      <strong>Laura Martínez</strong>
+      <span class="feedback-rol">Candidata 2024</span>
+      <p>"Ser candidata me ayudó a crecer profesional y conocer gente increíble. ¡Mejor decisión del año!"</p>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-avatar">🧑‍💼</div>
+      <strong>Pablo Gómez</strong>
+      <span class="feedback-rol">Embajador & Mentor</span>
+      <p>"La comunidad de Tech Riders siempre está dispuesta a apoyar. La energía aquí es insuperable."</p>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-avatar">📢</div>
+      <strong>Ana Ruiz</strong>
+      <span class="feedback-rol">Speaker & Candidata</span>
+      <p>"Participar en Tech Riders me abrió puertas que no sabía que existían. ¡Gracias, tribu!"</p>
+    </div>
+
+    <div class="feedback-card">
+      <div class="feedback-avatar">🏫</div>
+      <strong>Centro Educativo X</strong>
+      <span class="feedback-rol">Colaborador 2023</span>
+      <p>"Las sesiones de Tech Riders fueron la bomba. Nuestros estudiantes todavía hablan de ello 🚀"</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO DE INSCRIPCIÓN -->
+<section class="proceso-section">
+  <h2>Cómo funciona la inscripción 📋</h2>
+  <p class="proceso-intro">3 pasos simples para que seas parte de la revolución</p>
+
+  <div class="pasos-container">
+    <div class="paso">
+      <div class="paso-numero">1️⃣</div>
+      <div class="paso-content">
+        <h3>Rellena la solicitud</h3>
+        <p>Cuéntanos quién eres, qué haces y por qué quieres colaborar con nosotros. ¡Sin rodeos!</p>
+      </div>
+    </div>
+
+    <div class="paso-separator">→</div>
+
+    <div class="paso">
+      <div class="paso-numero">2️⃣</div>
+      <div class="paso-content">
+        <h3>El staff revisa (en serio)</h3>
+        <p>Alguien del equipo Tech Riders analizará tu solicitud y se asegurará de que encajas con nosotros.</p>
+      </div>
+    </div>
+
+    <div class="paso-separator">→</div>
+
+    <div class="paso">
+      <div class="paso-numero">3️⃣</div>
+      <div class="paso-content">
+        <h3>¡Te damos la bienvenida! 🎉</h3>
+        <p>Te llegará un correo para completar tu registro y empezar a colaborar. ¡Bienvenido a la tribu!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULARIO UNIFICADO -->
+<section class="solicitud-form-section">
+  <h2>¡Vamos, cuéntanos! 📝</h2>
+
+  <form class="solicitud-form" (submit)="onSubmit($event)">
+    <app-ui-text-field
+      label="Nombre completo"
+      type="text"
+      name="nombre"
+      [value]="formulario().nombre"
+      (valueChange)="updateNombre($event)"
+      placeholder="¿Cómo te llamas?"
+      [required]="true"
+    ></app-ui-text-field>
+
+    <app-ui-text-field
+      label="Email"
+      type="email"
+      name="email"
+      [value]="formulario().email"
+      (valueChange)="updateEmail($event)"
+      placeholder="Tu email para contactarte"
+      [required]="true"
+    ></app-ui-text-field>
+
+    @if (rolActivo() === 'centro') {
+      <app-ui-text-field
+        label="Nombre de tu centro"
+        type="text"
+        name="organizacion"
+        [value]="formulario().organizacion"
+        (valueChange)="updateOrganizacion($event)"
+        placeholder="¿Cómo se llama tu centro?"
+        [required]="true"
+      ></app-ui-text-field>
+    }
+
+    <app-ui-textarea
+      [label]="rolActivo() === 'candidato' ? '¿Por qué quieres colaborar con Tech Riders?' : '¿Qué esperas de una sesión con Tech Riders?'"
+      name="motivacion"
+      [value]="formulario().motivacion"
+      (valueChange)="updateMotivacion($event)"
+      [placeholder]="rolActivo() === 'candidato' ? 'Cuéntanos tu historia, tus motivaciones, lo que sea...' : 'Qué tipo de sesión te interesa, nivel del alumnado, etc...'"
+      [rows]="4"
+      [required]="true"
+    ></app-ui-textarea>
+
+    @if (error()) {
+      <div class="error-message">{{ error() }}</div>
+    }
+
+    <app-ui-button type="submit" [disabled]="loading()">
+      {{ loading() ? '⏳ Enviando...' : '🚀 ¡Únete ya!' }}
+    </app-ui-button>
+
+    @if (enviado()) {
+      <div class="toaster toaster-exito">
+        ✨ ¡Solicitud enviada! Pronto nos ponemos en contacto. ¡Gracias por creer en Tech Riders! 🙌
+      </div>
+    }
+  </form>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="cta-content">
+    <h2>¿Alguna duda?</h2>
+    <p>Si tienes preguntas sobre cómo colaborar con nosotros, escríbenos a través del formulario de contacto.</p>
+    <a routerLink="/contact" class="btn btn-primary">Ir a Contacto 📧</a>
+  </div>
+</section>

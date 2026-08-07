@@ -1,0 +1,111 @@
+<section class="eventos-page">
+  <div class="eventos-inner">
+    <header class="eventos-header">
+      <span class="section-label">Eventos</span>
+      <h1>Participación comunitaria TechRiders</h1>
+      <p>
+        Descubre próximos encuentros, histórico de talks, galerías y calendario de actividades para conectar con la comunidad.
+      </p>
+    </header>
+
+    <section class="eventos-panel">
+      <div class="panel-head">
+        <h2>Próximos eventos</h2>
+      </div>
+
+      @if (loadingEventos()) {
+      <p class="panel-feedback">Cargando próximos eventos...</p>
+      } @else if (proximosEventos().length === 0) {
+      <p class="panel-feedback">No hay eventos publicados por ahora. <a routerLink="/contact">Contáctanos</a> para más información.</p>
+      } @else {
+      <div class="eventos-grid">
+        @for (evento of proximosEventos(); track evento.id) {
+        <a class="evento-card" [href]="evento.url" target="_blank" rel="noopener noreferrer">
+          <div class="evento-card-top">
+            <span class="evento-estado-badge">PRÓXIMO</span>
+            <span class="evento-categoria-tag">{{ evento.categoria }}</span>
+          </div>
+          <h3>{{ evento.titulo }}</h3>
+          <p>📍 {{ evento.ubicacion }}</p>
+          <span class="evento-link-cta">Ver detalle y registro →</span>
+        </a>
+        }
+      </div>
+      }
+    </section>
+
+    <section class="eventos-panel">
+      <div class="panel-head">
+        <h2>Histórico de talks, webinars y meetups</h2>
+        <a class="panel-link" [href]="talksPodcastUrl" target="_blank" rel="noopener noreferrer">Canal completo</a>
+      </div>
+      @if (loadingTalks()) {
+      <p class="panel-feedback">Cargando últimos vídeos del podcast...</p>
+      }
+      <app-ui-media-carousel
+        [items]="talksHistorico()"
+        ariaLabel="Histórico de talks"
+        [showCaptions]="true"
+        [autoplay]="true"
+        cardMinWidth="270px"
+      ></app-ui-media-carousel>
+    </section>
+
+    <section class="eventos-panel">
+      <div class="panel-head">
+        <h2>Galerías de eventos</h2>
+      </div>
+
+      <div class="galerias-list">
+        @for (galeria of galerias; track galeria.title) {
+        <article class="galeria-group">
+          <h3>{{ galeria.title }}</h3>
+          <p>{{ galeria.subtitle }}</p>
+          <div class="galeria-grid">
+            @for (item of galeria.items; track item.src + item.alt) {
+            <figure>
+              <img [src]="item.src" [alt]="item.alt" loading="lazy" />
+            </figure>
+            }
+          </div>
+        </article>
+        }
+      </div>
+    </section>
+
+    <section class="eventos-panel">
+      <div class="panel-head">
+        <h2>Calendario de eventos</h2>
+      </div>
+      <div class="calendar-shell">
+        <iframe
+          src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
+          title="Calendario de eventos TechRiders"
+          loading="lazy"
+          frameborder="0"
+          allowfullscreen=""
+          aria-hidden="false"
+          tabindex="0"
+        ></iframe>
+      </div>
+    </section>
+
+    <section class="eventos-panel">
+      <div class="panel-head">
+        <h2>Eventos pasados</h2>
+      </div>
+      @if (eventosPasados().length === 0) {
+      <p class="panel-feedback">El histórico de eventos pasados estará disponible próximamente.</p>
+      } @else {
+      <ul class="eventos-pasados-list">
+        @for (evento of eventosPasados(); track evento.id) {
+        <li>
+          <span>{{ evento.titulo }}</span>
+          <span class="meta">{{ evento.categoria }} · {{ evento.ubicacion }}</span>
+        </li>
+        }
+      </ul>
+      }
+    </section>
+  </div>
+</section>

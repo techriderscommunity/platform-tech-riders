@@ -1,0 +1,43 @@
+<div class="admin-auditoria">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver a Intranet</a>
+    <h1>Administracion · Auditoria</h1>
+    <p>Seguimiento de cambios y actividad operativa en todos los modulos de la Intranet.</p>
+  </div>
+
+  <section class="card">
+    <h2>Ultimos movimientos</h2>
+    @if (loading()) {
+    <p>Cargando auditoria...</p>
+    }
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Modulo</th>
+          <th>Accion</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (!loading() && rows().length === 0) {
+        <tr>
+          <td colspan="5">Sin movimientos de auditoria.</td>
+        </tr>
+        }
+        @for (row of rows(); track row.fecha + row.usuario) {
+        <tr>
+          <td>{{ row.fecha }}</td>
+          <td>{{ row.usuario }}</td>
+          <td>{{ row.modulo }}</td>
+          <td>{{ row.accion }}</td>
+          <td>
+            <span class="badge" [class.warning]="row.resultado === 'warning'">{{ row.resultado }}</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

@@ -1,0 +1,59 @@
+<section class="perfil-area">
+<h2>Área privada de Tech Rider</h2>
+<div class="perfil-datos">
+<button type="button" class="perfil-foto-trigger" (click)="abrirModalFoto()" aria-label="Cambiar foto de perfil" title="Cambiar foto">
+<img [src]="foto()" alt="Foto de perfil" class="perfil-foto" />
+</button>
+<div class="perfil-info">
+<app-ui-text-field label="Nombre" type="text" name="perfil-nombre" [value]="nombre()" (valueChange)="nombre.set($event)"></app-ui-text-field>
+<app-ui-text-field label="Email" type="email" name="perfil-email" [value]="email()" (valueChange)="email.set($event)"></app-ui-text-field>
+<app-ui-textarea label="Feedback visible" name="perfil-feedback" [rows]="2" [value]="feedback()" (valueChange)="feedback.set($event)"></app-ui-textarea>
+<!-- El botón de cambiar foto se elimina, ahora se hace pinchando en la foto -->
+<div class="perfil-actions">
+<button (click)="cambiarPassword()">Cambiar contraseña</button>
+<button (click)="guardarCambios()">Guardar cambios</button>
+</div>
+</div>
+</div>
+<!-- Modal real para subir foto -->
+@if (mostrarModalFoto()) {
+<div class="modal-foto">
+<div class="modal-foto-content">
+<h3>Cambiar foto de perfil</h3>
+<app-ui-file-input label="Selecciona imagen" accept="image/*" (fileSelected)="onFotoSeleccionadaArchivo($event)"></app-ui-file-input>
+@if (fotoPreview()) {
+<div class="foto-preview">
+<img [src]="fotoPreview()" alt="Preview" />
+</div>
+}
+<button (click)="guardarFoto()">Guardar</button>
+<button (click)="cerrarModalFoto()">Cancelar</button>
+</div>
+</div>
+}
+<div class="perfil-charlas">
+<h3>Mis charlas</h3>
+<ul>
+@for (charla of charlas(); track charla.titulo) {
+<li>
+<strong>{{ charla.titulo }}:</strong>
+{{ charla.estado === 'impartida' ? 'Impartida' : 'Pendiente' }} el {{ charla.fecha }} en {{ charla.centro }}
+<span class="charla-estado" [ngClass]="charla.estado">{{ charla.estado | titlecase }}</span>
+@if (charla.valoracion) {
+<span class="charla-valoracion">Valoración: {{ '⭐'.repeat(charla.valoracion) }}</span>
+}
+</li>
+}
+</ul>
+</div>
+<div class="perfil-valoraciones">
+<h3>Valoraciones de profesores</h3>
+<ul>
+@for (val of valoraciones(); track val.centro) {
+<li>
+<strong>{{ val.centro }}:</strong> "{{ val.texto }}"
+</li>
+}
+</ul>
+</div>
+</section>

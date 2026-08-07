@@ -1,0 +1,41 @@
+<app-ui-modal (close)="closeLogin($event)">
+	<span modal-title>Inicia sesión en Techito</span>
+
+	<form class="login-form" (submit)="onSubmit($event)" #loginForm="ngForm">
+		<app-ui-text-field
+			label="Email"
+			type="email"
+			name="email"
+			autocomplete="email"
+			[value]="email()"
+			(valueChange)="email.set($event)"
+			[required]="true"
+		></app-ui-text-field>
+		<app-ui-text-field
+			label="Contraseña"
+			type="password"
+			name="password"
+			autocomplete="current-password"
+			[value]="password()"
+			(valueChange)="password.set($event)"
+			[required]="true"
+		></app-ui-text-field>
+		<app-ui-button type="submit">Entrar</app-ui-button>
+	</form>
+
+	@if (error()) {
+	<div class="login-error">{{ error() }}</div>
+	}
+
+	<div class="login-divider">o</div>
+	<div class="login-social">
+		<app-ui-button type="button" variant="secondary" class="social-btn google">
+			<img src="../../assets/google.svg" alt="Google" />
+			Accede con Google
+		</app-ui-button>
+		<app-ui-button type="button" variant="secondary" class="social-btn microsoft">
+			<img src="../../assets/microsoft.svg" alt="Microsoft" />
+			Accede con Microsoft
+		</app-ui-button>
+	</div>
+</app-ui-modal>

@@ -1,0 +1,112 @@
+<div class="dashboard-empresa">
+  <div class="dashboard-header">
+    <h1>Panel de Control - {{nombreEmpresa()}}</h1>
+    <a routerLink="/intranet/company/manage-offers" class="btn-primary">+ Nueva Oferta</a>
+  </div>
+
+  @if (loading()) {
+  <div class="feedback-banner info" role="status" aria-live="polite">Cargando dashboard...</div>
+  }
+
+  @if (error()) {
+  <div class="feedback-banner error" role="alert" aria-live="assertive">
+    <span>{{error()}}</span>
+    <app-ui-button class="btn-small" type="button" (click)="reintentarCarga()">Reintentar</app-ui-button>
+  </div>
+  }
+
+  <!-- Stats Cards -->
+  @if (!loading() && !error()) {
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon">📋</div>
+      <div class="stat-content">
+        <h3>{{stats().ofertasActivas}}</h3>
+        <p>Ofertas Activas</p>
+      </div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <h3>{{stats().candidatosTotal}}</h3>
+        <p>Candidatos Totales</p>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <h3>{{stats().enProceso}}</h3>
+        <p>En Proceso</p>
+      </div>
+    </div>
+
+    <div class="stat-card purple">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{stats().contratados}}</h3>
+        <p>Contratados</p>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Últimas Ofertas -->
+  @if (!loading() && !error()) {
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Últimas Ofertas</h2>
+      <a routerLink="/intranet/company/manage-offers" class="link-secondary">Ver todas →</a>
+    </div>
+
+    <div class="ofertas-list">
+      @if (ultimasOfertas().length === 0) {
+      <p class="empty-copy">Todavía no hay ofertas recientes.</p>
+      }
+      @for (oferta of ultimasOfertas(); track oferta.id) {
+      <div class="oferta-item">
+        <div class="oferta-info">
+          <h3>{{oferta.titulo}}</h3>
+          <span class="badge" [class]="oferta.estado">{{oferta.estado}}</span>
+        </div>
+        <div class="oferta-stats">
+          <span class="candidatos-count">{{oferta.candidatos}} candidatos</span>
+          <a [routerLink]="['/intranet/company/view-candidates', oferta.id]" class="btn-small">Ver candidatos</a>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+  }
+
+  <!-- Últimos Candidatos -->
+  @if (!loading() && !error()) {
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Últimos Candidatos</h2>
+      <a routerLink="/intranet/company/view-candidates" class="link-secondary">Ver todos →</a>
+    </div>
+
+    <div class="candidatos-list">
+      @if (ultimosCandidatos().length === 0) {
+      <p class="empty-copy">Todavía no hay candidatos recientes.</p>
+      }
+      @for (candidato of ultimosCandidatos(); track candidato.id) {
+      <div class="candidato-item">
+        <div class="candidato-avatar">{{(candidato.nombre || '?').charAt(0)}}</div>
+        <div class="candidato-info">
+          <h3>{{candidato.nombre}}</h3>
+          <p>{{candidato.puesto}}</p>
+        </div>
+        <div class="candidato-meta">
+          <span class="badge-estado" [class]="candidato.estado">{{candidato.estado}}</span>
+          <span class="fecha">{{candidato.fecha}}</span>
+        </div>
+        <a [routerLink]="['/intranet/company/view-candidates', candidato.id]" class="btn-small">Ver perfil</a>
+      </div>
+      }
+    </div>
+  </section>
+  }
+</div>

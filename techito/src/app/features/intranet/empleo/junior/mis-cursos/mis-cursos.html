@@ -1,0 +1,39 @@
+<div class="mis-cursos">
+  <div class="page-header">
+    <h1>Mis Cursos</h1>
+    <p class="subtitle">Continúa aprendiendo y mejora tus habilidades</p>
+  </div>
+
+  <!-- Cursos Grid -->
+  <div class="cursos-grid">
+    @for (curso of cursos(); track curso.id) {
+    <div class="curso-card">
+      <div class="curso-header">
+        <div>
+          <h3>{{curso.titulo}}</h3>
+          <p class="instructor">Nivel: {{curso.nivel}}</p>
+        </div>
+      </div>
+
+      <p class="descripcion">{{curso.descripcion}}</p>
+
+      <div class="curso-meta">
+        <span class="meta-item">⏱️ {{curso.duracion}}</span>
+      </div>
+
+      <div class="curso-actions">
+        <a class="btn-primary" [href]="curso.url" target="_blank" rel="noopener noreferrer">
+          Ver Curso
+        </a>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Empty State -->
+  @if (cursos().length === 0) {
+  <div class="empty-state">
+    <p>No hay cursos disponibles todavía</p>
+  </div>
+  }
+</div>

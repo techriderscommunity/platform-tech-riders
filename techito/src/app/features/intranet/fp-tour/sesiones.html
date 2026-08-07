@@ -1,0 +1,88 @@
+<div class="sesiones-dashboard">
+  <h1>{{ context().title }}</h1>
+  <p>{{ context().subtitle }}</p>
+  @if (loading()) {
+  <p>Cargando sesiones...</p>
+  }
+  @if (error()) {
+  <p>{{ error() }}</p>
+  }
+  <div class="sesiones-filtros">
+    <app-ui-text-field
+      label="Centro"
+      type="text"
+      name="filtro-centro"
+      [value]="filtroCentro()"
+      (valueChange)="filtroCentro.set($event)"
+      placeholder="Filtrar centro"
+    ></app-ui-text-field>
+    <app-ui-text-field
+      label="Fecha"
+      type="date"
+      name="filtro-fecha"
+      [value]="filtroFecha()"
+      (valueChange)="filtroFecha.set($event)"
+    ></app-ui-text-field>
+    <app-ui-select
+      label="Categoría"
+      [options]="categoriasOptions()"
+      [value]="filtroCategoria()"
+      (valueChange)="filtroCategoria.set($event)"
+    ></app-ui-select>
+    <app-ui-select
+      label="Estado"
+      [options]="estadoOptions"
+      [value]="filtroEstado()"
+      (valueChange)="filtroEstado.set($event)"
+    ></app-ui-select>
+    <app-ui-text-field
+      label="Alumnos min"
+      type="number"
+      name="filtro-min"
+      [value]="filtroAlumnosMin() !== null ? '' + filtroAlumnosMin() : ''"
+      (valueChange)="filtroAlumnosMin.set($event ? +$event : null)"
+      placeholder="Alumnos min"
+    ></app-ui-text-field>
+    <app-ui-text-field
+      label="Alumnos max"
+      type="number"
+      name="filtro-max"
+      [value]="filtroAlumnosMax() !== null ? '' + filtroAlumnosMax() : ''"
+      (valueChange)="filtroAlumnosMax.set($event ? +$event : null)"
+      placeholder="Alumnos max"
+    ></app-ui-text-field>
+  </div>
+  <div class="sesiones-tabla">
+  <table>
+    <thead>
+      <tr>
+        <th>Centro</th>
+        <th>Fecha</th>
+        <th>Categoría</th>
+        <th>Estado</th>
+        <th>Alumnos</th>
+        <th>Embajador asignado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (sesion of sesionesFiltradas(); track sesion.id) {
+      <tr>
+        <td>{{ sesion.centro }}</td>
+        <td>{{ sesion.fecha }}</td>
+        <td>{{ sesion.categoria }}</td>
+        <td>{{ sesion.estado }}</td>
+        <td>{{ sesion.numAlumnos }}</td>
+        <td>
+          @if (getEmbajadorNombre(sesion.embajadorAsignadoId)) {
+          <span>{{ getEmbajadorNombre(sesion.embajadorAsignadoId) }}</span>
+          }
+          @if (!getEmbajadorNombre(sesion.embajadorAsignadoId)) {
+          <span class="no-embajador">No asignado</span>
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="admin-configuracion">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver a Intranet</a>
+    <h1>Administracion · Configuracion</h1>
+    <p>Parametros transversales de Intranet para categorias, estados y reglas operativas.</p>
+  </div>
+
+  <section class="summary-grid">
+    <article>
+      <span>Bloques de configuracion</span>
+      <p>{{ items().length }}</p>
+    </article>
+    <article>
+      <span>En revision</span>
+      <p>{{ inRevisionCount() }}</p>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Catalogo de configuracion</h2>
+    @if (feedback()) {
+    <p class="feedback">{{ feedback() }}</p>
+    }
+    @if (loading()) {
+    <p>Cargando configuracion...</p>
+    }
+    @if (error()) {
+    <p>{{ error() }}</p>
+    }
+    <table>
+      <thead>
+        <tr>
+          <th>Clave</th>
+          <th>Modulo</th>
+          <th>Valor</th>
+          <th>Estado</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (!loading() && items().length === 0) {
+        <tr>
+          <td colspan="5">No hay configuracion registrada.</td>
+        </tr>
+        }
+        @for (item of items(); track item.key) {
+        <tr>
+          <td>{{ item.key }}</td>
+          <td>
+            <input
+              class="table-input"
+              type="text"
+              [value]="item.modulo"
+              (input)="updateModulo(item.key, $any($event.target).value)"
+            />
+          </td>
+          <td>
+            <input
+              class="table-input"
+              type="text"
+              [value]="item.valor"
+              (input)="updateValor(item.key, $any($event.target).value)"
+            />
+          </td>
+          <td>
+            <select
+              class="table-select"
+              [value]="item.estado"
+              (change)="updateEstado(item.key, $any($event.target).value)"
+            >
+              <option value="activo">activo</option>
+              <option value="revision">revision</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="save-btn" [disabled]="isSaving(item.key)" (click)="saveRow(item)">
+              {{ isSaving(item.key) ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

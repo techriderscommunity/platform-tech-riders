@@ -1,0 +1,27 @@
+.ui-select-field {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.ui-select-input {
+  width: 100%;
+  min-height: var(--control-min-height);
+  border: var(--input-border);
+  border-radius: var(--input-border-radius);
+  padding: var(--input-md-padding);
+  font-size: 0.96rem;
+  background: var(--input-background);
+  color: var(--input-text-color);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-family: var(--font-family-base);
+}
+
+.ui-select-input:focus {
+  border-color: var(--primary-light);
+  box-shadow: var(--input-focus-box-shadow);
+  outline: none;
+}

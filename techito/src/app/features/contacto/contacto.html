@@ -1,0 +1,37 @@
+<section id="contacto">
+  <h2>Contacto</h2>
+  <p class="qs-desc">¿Tienes dudas o preguntas sobre Tech Riders? ¡Cuéntanos! Rellena el formulario y te respondemos volando 🚀</p>
+  <form class="contact-form" (submit)="onSubmitContacto($event)">
+  <app-ui-text-field
+    label="Nombre"
+    type="text"
+    name="nombre"
+    [value]="contacto().nombre"
+    (valueChange)="updateContactoNombre($event)"
+    placeholder="¿Cómo te llamas?"
+    [required]="true"
+  ></app-ui-text-field>
+  <app-ui-text-field
+    label="Email"
+    type="email"
+    name="email"
+    [value]="contacto().email"
+    (valueChange)="updateContactoEmail($event)"
+    placeholder="Tu email fresquito"
+    [required]="true"
+  ></app-ui-text-field>
+  <app-ui-textarea
+    label="Mensaje"
+    name="mensaje"
+    [value]="contacto().mensaje"
+    (valueChange)="updateContactoMensaje($event)"
+    placeholder="Escribe tu mensaje con flow..."
+    [rows]="4"
+    [required]="true"
+  ></app-ui-textarea>
+  <app-ui-button type="submit">¡Enviar mensaje!</app-ui-button>
+    @if (enviadoContacto()) {
+    <div class="toaster toaster-contacto">¡Mensaje enviado! 🚀</div>
+    }
+  </form>
+</section>

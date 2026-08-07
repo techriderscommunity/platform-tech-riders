@@ -1,0 +1,12 @@
+<label class="ui-textarea-field">
+  <span class="ui-textarea-label">{{ label }}</span>
+  <textarea
+    class="ui-textarea-input"
+    [name]="name"
+    [placeholder]="placeholder"
+    [rows]="rows"
+    [required]="required"
+    [ngModel]="value"
+    (ngModelChange)="valueChange.emit($event)"
+  ></textarea>
+</label>

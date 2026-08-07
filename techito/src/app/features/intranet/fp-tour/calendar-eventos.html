@@ -1,0 +1,105 @@
+<div class="calendar-eventos">
+  <!-- Header -->
+  <div class="calendar-header">
+    <div class="header-top">
+      <h2>{{ context().title }}</h2>
+      <p class="subtitle">{{ context().subtitle }}</p>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls">
+      <app-ui-button class="btn-nav" (click)="mesAnterior()">◀ Anterior</app-ui-button>
+      <span class="mes-actual">{{ mesActual() }}</span>
+      <app-ui-button class="btn-nav" (click)="mesSiguiente()">Siguiente ▶</app-ui-button>
+    </div>
+
+  <!-- Estadísticas -->
+    <div class="stats-row">
+      <div class="stat">
+        <span>Total Eventos</span>
+        <p>{{ totalEventos() }}</p>
+      </div>
+      <div class="stat">
+        <span>Sesiones Este Mes</span>
+        <p>{{ sesionesEstesMes() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado: Cargando -->
+  @if (loading()) {
+  <div class="feedback loading">⏳ Cargando calendario...</div>
+  }
+
+  <!-- Estado: Error -->
+  @if (error()) {
+  <div class="feedback error">{{ error() }}</div>
+  }
+
+  <!-- Calendario: Sesiones por Día -->
+  @if (!loading() && !error()) {
+  <div class="calendario-sesiones">
+    <!-- Título explicativo -->
+    <div class="timeline-legend">
+      <p>📅 <strong>{{ context().legend }}</strong> — Cada fila es un día, bloques horizontales = sesiones organizadas por hora</p>
+    </div>
+
+    <!-- Cada día con sus sesiones -->
+    @for (dia of eventosAgrupados(); track dia.fecha) {
+    <div class="dia-sesiones">
+      <!-- Encabezado del día -->
+      <div class="dia-header">
+        <span class="fecha-badge">
+          {{ dia.fecha | date:'EEE, d MMM yyyy':undefined:'es' }}
+        </span>
+      </div>
+
+      <!-- Sesiones en este día -->
+      <div class="dia-eventos">
+        <!-- Línea de referencia horaria -->
+        <div class="timeline-ref">
+          @for (hora of [0, 3, 6, 9, 12, 15, 18, 21]; track hora) {
+          <div class="hora-marker" [style.left.%]="(hora / 24) * 100">
+            <span>{{ hora }}:00</span>
+          </div>
+          }
+        </div>
+
+        <!-- Bloques de sesiones -->
+        <div class="sesiones-fila">
+          @for (sesionEnCarril of dia.sesionesEnCarril; track sesionEnCarril.sesion.id) {
+          <div class="sesion-bloque"
+            [style.left.%]="sesionEnCarril.posicionX"
+            [style.width.%]="sesionEnCarril.ancho"
+            [style.top]="(sesionEnCarril.carril * 70) + 'px'"
+            [style.backgroundColor]="getColorCategoria(sesionEnCarril.evento.categoria)"
+            [style.borderColor]="getColorCategoriaBorde(sesionEnCarril.evento.categoria)"
+            [title]="sesionEnCarril.sesion.titulo + ' (' + sesionEnCarril.sesion.horaInicio + '-' + sesionEnCarril.sesion.horaFin + ')'">
+            <div class="sesion-contenido">
+              <h4>{{ sesionEnCarril.sesion.titulo }}</h4>
+              <p class="hora">⏰ {{ sesionEnCarril.sesion.horaInicio }} - {{ sesionEnCarril.sesion.horaFin }}</p>
+              @if (sesionEnCarril.sesion.ponente) {
+              <p class="ponente">🎤 {{ sesionEnCarril.sesion.ponente }}</p>
+              }
+              @if (sesionEnCarril.sesion.sala) {
+              <p class="sala">🚪 {{ sesionEnCarril.sesion.sala }}</p>
+              }
+              <p class="evento-padre">📌 {{ sesionEnCarril.evento.titulo }}</p>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Estado: Sin sesiones este mes -->
+    @if (eventosAgrupados().length === 0) {
+    <div class="empty-state">
+      <h3>📭 No hay sesiones registradas</h3>
+      <p>Crea un evento con sesiones para que aparezcan en el calendario.</p>
+    </div>
+    }
+  </div>
+  }
+</div>

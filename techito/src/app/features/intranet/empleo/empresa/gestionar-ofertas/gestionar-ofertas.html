@@ -1,0 +1,165 @@
+<div class="gestionar-ofertas">
+  <!-- Vista Lista -->
+  @if (vistaActual() === 'lista') {
+  <div class="ofertas-vista">
+    <div class="page-header">
+      <div>
+        <h1>Gestionar Ofertas</h1>
+        <p class="subtitle">Crea y administra tus ofertas de empleo</p>
+      </div>
+      <app-ui-button class="btn-primary" (click)="mostrarCrearOferta()">+ Nueva Oferta</app-ui-button>
+    </div>
+
+    <div class="ofertas-grid">
+      @if (loading()) {
+      <p>Cargando ofertas...</p>
+      }
+      @if (error()) {
+      <p>{{ error() }}</p>
+      }
+      @for (oferta of ofertas(); track oferta.id) {
+      <div class="oferta-card">
+        <div class="oferta-header">
+          <h3>{{oferta.titulo}}</h3>
+          <span class="badge" [class]="oferta.estado">{{oferta.estado}}</span>
+        </div>
+
+        <div class="oferta-details">
+          <div class="detail-item">
+            <span class="icon">📍</span>
+            <span>{{oferta.ubicacion}} ({{oferta.modalidad}})</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">💰</span>
+            <span>{{oferta.salario}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">⏰</span>
+            <span>{{oferta.modalidad}}</span>
+          </div>
+        </div>
+
+        <div class="oferta-stats">
+          <span class="stat">🏢 {{oferta.empresa}}</span>
+          @if (oferta.fechaPublicacion) {
+          <span class="stat">📅 {{oferta.fechaPublicacion}}</span>
+          }
+        </div>
+
+        <div class="oferta-actions">
+          @if (oferta.estado === 'borrador') {
+          <app-ui-button class="btn-outline" (click)="publicarOferta(oferta.id)">Publicar</app-ui-button>
+          }
+          <a [routerLink]="['/intranet/company/view-candidates']" [queryParams]="{ ofertaId: oferta.id }" class="btn-outline">Ver candidatos</a>
+          <app-ui-button class="btn-text" (click)="archivarOferta(oferta.id)">Archivar</app-ui-button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Vista Crear Oferta -->
+  @if (vistaActual() === 'crear') {
+  <div class="crear-oferta-vista">
+    <div class="page-header">
+      <div>
+        <app-ui-button class="btn-back" (click)="volverALista()">← Volver</app-ui-button>
+        <h1>Crear Nueva Oferta</h1>
+      </div>
+    </div>
+
+    <div class="formulario-oferta">
+      <div class="form-section">
+        <h3>Información Básica</h3>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Título del puesto *"
+            type="text"
+            name="oferta-titulo"
+            [value]="nuevaOferta().titulo"
+            (valueChange)="updateNuevaOferta('titulo', $event)"
+            placeholder="Ej: Desarrollador Frontend Junior"
+          ></app-ui-text-field>
+        </div>
+
+        <div class="form-group">
+          <app-ui-textarea
+            label="Descripción del puesto *"
+            name="oferta-descripcion"
+            [value]="nuevaOferta().descripcion"
+            (valueChange)="updateNuevaOferta('descripcion', $event)"
+            [rows]="6"
+            placeholder="Describe las responsabilidades y funciones del puesto..."
+          ></app-ui-textarea>
+        </div>
+
+        <div class="form-group">
+          <app-ui-textarea
+            label="Requisitos *"
+            name="oferta-requisitos"
+            [value]="nuevaOferta().requisitos"
+            (valueChange)="updateNuevaOferta('requisitos', $event)"
+            [rows]="6"
+            placeholder="Conocimientos técnicos, experiencia, soft skills..."
+          ></app-ui-textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Detalles de la Oferta</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <app-ui-text-field
+              label="Ubicación *"
+              type="text"
+              name="oferta-ubicacion"
+              [value]="nuevaOferta().ubicacion"
+              (valueChange)="updateNuevaOferta('ubicacion', $event)"
+              placeholder="Madrid, Barcelona, etc."
+            ></app-ui-text-field>
+          </div>
+
+          <div class="form-group">
+            <app-ui-select
+              label="Modalidad *"
+              [options]="modalidadOptions"
+              [value]="nuevaOferta().modalidad"
+              (valueChange)="updateNuevaOferta('modalidad', $event)"
+            ></app-ui-select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <app-ui-text-field
+              label="Rango salarial *"
+              type="text"
+              name="oferta-salario"
+              [value]="nuevaOferta().salario"
+              (valueChange)="updateNuevaOferta('salario', $event)"
+              placeholder="24.000 - 30.000€"
+            ></app-ui-text-field>
+          </div>
+
+          <div class="form-group">
+            <app-ui-select
+              label="Tipo de contrato *"
+              [options]="tipoOptions"
+              [value]="nuevaOferta().tipo"
+              (valueChange)="updateNuevaOferta('tipo', $event)"
+            ></app-ui-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-ui-button class="btn-secondary" (click)="volverALista()">Cancelar</app-ui-button>
+        <app-ui-button class="btn-primary" (click)="guardarOferta()">Guardar como borrador</app-ui-button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

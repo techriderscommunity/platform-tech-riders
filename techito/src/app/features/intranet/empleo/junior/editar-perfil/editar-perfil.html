@@ -1,0 +1,211 @@
+<div class="editar-perfil">
+  <div class="page-header">
+    <h1>Editar Mi Perfil</h1>
+    <p class="subtitle">Mantén tu perfil actualizado para atraer a las mejores oportunidades</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [class.activo]="tabActiva() === 'publico'" (click)="tabActiva.set('publico')">
+      👤 Perfil Público
+    </button>
+    <button class="tab" [class.activo]="tabActiva() === 'privado'" (click)="tabActiva.set('privado')">
+      🔒 Datos Privados
+    </button>
+  </div>
+
+  <!-- Perfil Público -->
+  @if (tabActiva() === 'publico') {
+  <div class="tab-content">
+    <div class="formulario">
+      <div class="form-section">
+        <h3>Información Básica</h3>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Nombre Completo"
+            type="text"
+            name="junior-nombre"
+            [value]="perfilPublico().nombre"
+            (valueChange)="updatePerfilPublico('nombre', $event)"
+          ></app-ui-text-field>
+        </div>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Título Profesional"
+            type="text"
+            name="junior-titulo"
+            [value]="perfilPublico().titulo"
+            (valueChange)="updatePerfilPublico('titulo', $event)"
+            placeholder="Ej: Desarrollador Frontend"
+          ></app-ui-text-field>
+        </div>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Ubicación"
+            type="text"
+            name="junior-ubicacion"
+            [value]="perfilPublico().ubicacion"
+            (valueChange)="updatePerfilPublico('ubicacion', $event)"
+          ></app-ui-text-field>
+        </div>
+
+        <div class="form-group">
+          <app-ui-textarea
+            label="Resumen Profesional"
+            name="junior-resumen"
+            [value]="perfilPublico().resumen"
+            (valueChange)="updatePerfilPublico('resumen', $event)"
+            [rows]="6"
+            placeholder="Cuéntales quién eres y qué buscas..."
+          ></app-ui-textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Habilidades Técnicas</h3>
+
+        <div class="habilidades-container">
+          <div class="habilidades-actuales">
+            @for (hab of perfilPublico().habilidades; track hab) {
+            <div class="habilidad-tag">
+              {{hab}}
+              <button type="button" class="remove-btn" (click)="eliminarHabilidad(hab)">×</button>
+            </div>
+            }
+          </div>
+
+          <div class="agregar-habilidad">
+            <app-ui-select
+              [options]="habilidadesOptions()"
+              [value]="nuevaHabilidad()"
+              (valueChange)="nuevaHabilidad.set($event)"
+            ></app-ui-select>
+            <app-ui-button type="button" class="btn-small" (click)="agregarHabilidad()">+ Agregar</app-ui-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Experiencia</h3>
+
+        <div class="form-group">
+          <app-ui-textarea
+            label="Resumen de Experiencia"
+            name="junior-experiencia"
+            [value]="perfilPublico().experiencia"
+            (valueChange)="updatePerfilPublico('experiencia', $event)"
+            [rows]="4"
+          ></app-ui-textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-ui-button class="btn-primary" (click)="guardarCambios('perfil público')">Guardar Cambios</app-ui-button>
+      </div>
+    </div>
+  </div>
+
+  }
+
+  <!-- Datos Privados -->
+  @if (tabActiva() === 'privado') {
+  <div class="tab-content">
+    <div class="formulario">
+      <div class="form-section">
+        <h3>Información de Contacto</h3>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Email"
+            type="email"
+            name="junior-email"
+            [value]="perfilPrivado().email"
+          ></app-ui-text-field>
+          <small>Tu email no se puede cambiar</small>
+        </div>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Teléfono"
+            type="tel"
+            name="junior-telefono"
+            [value]="perfilPrivado().telefono"
+            (valueChange)="updatePerfilPrivado('telefono', $event)"
+          ></app-ui-text-field>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Información Personal</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <app-ui-text-field
+              label="Edad"
+              type="number"
+              name="junior-edad"
+              [value]="'' + perfilPrivado().edad"
+              (valueChange)="updatePerfilPrivado('edad', +$event)"
+            ></app-ui-text-field>
+          </div>
+
+          <div class="form-group">
+            <app-ui-select
+              label="Disponibilidad"
+              [options]="disponibilidadOptions"
+              [value]="perfilPrivado().disponibilidad"
+              (valueChange)="updatePerfilPrivado('disponibilidad', $event)"
+            ></app-ui-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Formación Académica</h3>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Grado/Título"
+            type="text"
+            name="junior-grado"
+            [value]="perfilPrivado().gradoAcademico"
+            (valueChange)="updatePerfilPrivado('gradoAcademico', $event)"
+          ></app-ui-text-field>
+        </div>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Universidad/Centro"
+            type="text"
+            name="junior-universidad"
+            [value]="perfilPrivado().universidad"
+            (valueChange)="updatePerfilPrivado('universidad', $event)"
+          ></app-ui-text-field>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Datos Laborales</h3>
+
+        <div class="form-group">
+          <app-ui-text-field
+            label="Pretensión Salarial"
+            type="text"
+            name="junior-pretension"
+            [value]="perfilPrivado().pretensionSalarial"
+            (valueChange)="updatePerfilPrivado('pretensionSalarial', $event)"
+            placeholder="24.000 - 30.000€"
+          ></app-ui-text-field>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-ui-button class="btn-primary" (click)="guardarCambios('datos privados')">Guardar Cambios</app-ui-button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

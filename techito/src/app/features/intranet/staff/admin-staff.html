@@ -1,0 +1,129 @@
+<div class="admin-staff">
+  <div class="page-header">
+    <a routerLink="/intranet/admin" class="btn-back">← Volver</a>
+    <h1>Panel Staff Superadmin</h1>
+    <p>Gobierno de usuarios, roles y estado operativo de intranet.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <span>Total Staff</span>
+      <p>{{staff().length}}</p>
+    </div>
+    <div class="stat">
+      <span>Activos</span>
+        <p>{{activeCount()}}</p>
+    </div>
+    <div class="stat">
+      <span>Superadmins activos</span>
+      <p>{{superAdminCount()}}</p>
+    </div>
+  </div>
+
+  <!-- Action Button -->
+  <div class="action-bar">
+    <app-ui-button class="btn-primary" (click)="agregarStaff()">➕ Alta de usuario (siguiente fase)</app-ui-button>
+    <app-ui-button class="btn-secondary" (click)="loadGovernanceData()">↻ Recargar</app-ui-button>
+  </div>
+
+  <div class="governance-links card">
+    <h2>Módulos de gobierno (Iteración B)</h2>
+    <div class="link-grid">
+      <a routerLink="/intranet/staff/fp-tour" class="link-card">
+        <strong>FP Tour</strong>
+        <span>Gestión de eventos</span>
+      </a>
+      <a routerLink="/intranet/staff/sessions" class="link-card">
+        <strong>Sesiones</strong>
+        <span>CRUD de sesiones</span>
+      </a>
+      <a routerLink="/intranet/staff/ambassadors" class="link-card">
+        <strong>Embajadores</strong>
+        <span>Alta y actualización</span>
+      </a>
+      <a routerLink="/intranet/staff/collaborators" class="link-card">
+        <strong>Colaboradores</strong>
+        <span>Gestión operativa</span>
+      </a>
+      <a routerLink="/intranet/staff/offers" class="link-card">
+        <strong>Ofertas</strong>
+        <span>Gobierno de empleabilidad</span>
+      </a>
+      <a routerLink="/intranet/staff/candidates" class="link-card">
+        <strong>Candidatos</strong>
+        <span>Seguimiento de postulaciones</span>
+      </a>
+    </div>
+  </div>
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+    <app-ui-button class="btn-sm" type="button" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
+  @if (loading()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>Cargando datos de gobierno...</span>
+  </div>
+  }
+
+  <!-- Staff Table -->
+  <div class="card">
+    <h2>Usuarios y permisos</h2>
+    <div class="table-responsive">
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol principal</th>
+            <th>Roles asignados</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (miembro of staff(); track miembro.id) {
+          <tr>
+            <td><strong>{{miembro.nombre}}</strong></td>
+            <td>{{miembro.email}}</td>
+            <td>
+              <select [value]="miembro.rolPrincipal" (change)="onPrimaryRoleChange(miembro.id, $event)">
+                @for (role of roleCatalog(); track role) {
+                <option [value]="role">{{role}}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <div class="role-list">
+                @for (role of roleCatalog(); track role) {
+                <label class="role-item">
+                  <input
+                    type="checkbox"
+                    [checked]="isRoleAssigned(miembro, role)"
+                    (change)="toggleRole(miembro.id, role, $any($event.target).checked)" />
+                  <span class="role-badge" [class]="role">{{role}}</span>
+                </label>
+                }
+              </div>
+            </td>
+            <td>
+              <span class="badge" [class]="miembro.estado">
+                {{miembro.estado}}
+              </span>
+            </td>
+            <td>
+              <app-ui-button class="btn-sm delete" [disabled]="savingUserId() === miembro.id" (click)="desactivarStaff(miembro.id)">
+                {{miembro.estado === 'activo' ? '❌ Desactivar' : '✅ Reactivar'}}
+              </app-ui-button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

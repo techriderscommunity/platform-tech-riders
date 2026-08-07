@@ -1,0 +1,6 @@
+<label class="ui-file-field">
+  @if (label) {
+    <span class="ui-file-label">{{ label }}</span>
+  }
+  <input class="ui-file-input" type="file" [accept]="accept" (change)="onFileChange($event)" />
+</label>

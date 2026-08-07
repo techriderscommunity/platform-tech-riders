@@ -1,0 +1,98 @@
+<div class="mis-ofertas">
+  <div class="page-header">
+    <h1>Mis Ofertas de Empleo</h1>
+    <p class="subtitle">Explora todas las oportunidades que tenemos para ti</p>
+  </div>
+
+  <!-- Filtros y Ordenamiento -->
+  <div class="filtros-container">
+    <div class="filtros">
+      <button class="filtro-btn" [class.activo]="filtroActual() === 'todas'" (click)="filtroActual.set('todas')">
+        Todas
+      </button>
+      <button class="filtro-btn" [class.activo]="filtroActual() === 'guardada'" (click)="filtroActual.set('guardada')">
+        ❤️ Guardadas
+      </button>
+      <button class="filtro-btn" [class.activo]="filtroActual() === 'solicitada'" (click)="filtroActual.set('solicitada')">
+        📤 Solicitadas
+      </button>
+      <button class="filtro-btn" [class.activo]="filtroActual() === 'en_proceso'" (click)="filtroActual.set('en_proceso')">
+        ⏳ En Proceso
+      </button>
+    </div>
+
+    <div class="ordenamiento">
+      <app-ui-select
+        label="Ordenar"
+        [options]="ordenarOptions"
+        [value]="ordenar()"
+        (valueChange)="ordenar.set($event)"
+      ></app-ui-select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="feedback-banner info" role="status" aria-live="polite">Cargando ofertas...</div>
+  }
+  @if (error()) {
+    <div class="feedback-banner error" role="alert" aria-live="assertive">{{ error() }}</div>
+    }
+    @if (info()) {
+    <div class="feedback-banner info" role="status" aria-live="polite">{{ info() }}</div>
+  }
+
+  <!-- Ofertas Grid -->
+  <div class="ofertas-grid">
+    @for (oferta of ofertasFiltradas(); track oferta.id) {
+    <div class="oferta-card">
+      <div class="oferta-header">
+        <div>
+          <h3>{{oferta.titulo}}</h3>
+          <p class="empresa">{{oferta.empresa}}</p>
+        </div>
+        <div class="match-badge">{{oferta.modalidad}}</div>
+      </div>
+
+      <div class="oferta-meta">
+        <span class="meta-item">
+          <span class="icon">💰</span>
+          {{oferta.salario}}
+        </span>
+        <span class="meta-item">
+          <span class="icon">📍</span>
+          {{oferta.ubicacion}}
+        </span>
+        <span class="meta-item">
+          <span class="icon">⏰</span>
+          {{oferta.modalidad}}
+        </span>
+      </div>
+
+      <div class="oferta-footer">
+        <span class="fecha">{{oferta.fechaPublicacion}}</span>
+        <div class="estado-badge" [class]="oferta.estado">
+          <span>{{oferta.estado}}</span>
+        </div>
+      </div>
+
+      <div class="oferta-actions">
+        <app-ui-button class="btn-outline" (click)="enviarSolicitud(oferta.id)">
+          Solicitar
+        </app-ui-button>
+        <app-ui-button class="btn-primary" (click)="guardarOferta(oferta.id)">
+          Guardar
+        </app-ui-button>
+        <app-ui-button class="btn-text" (click)="eliminarOferta(oferta.id)">Eliminar</app-ui-button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Sin ofertas -->
+  @if (ofertasFiltradas().length === 0) {
+  <div class="empty-state">
+    <p>No hay ofertas que coincidan con tus filtros</p>
+    <app-ui-button class="btn-primary" (click)="filtroActual.set('todas')">Ver todas las ofertas</app-ui-button>
+  </div>
+  }
+</div>

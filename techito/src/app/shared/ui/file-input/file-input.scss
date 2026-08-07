@@ -1,0 +1,20 @@
+.ui-file-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ui-file-input {
+  width: 100%;
+  min-height: var(--control-min-height);
+  border: var(--input-border);
+  border-radius: var(--input-border-radius);
+  padding: var(--input-md-padding);
+  font-size: 0.96rem;
+  background: var(--input-background);
+  color: var(--input-text-color);
+  font-family: var(--font-family-base);
+}

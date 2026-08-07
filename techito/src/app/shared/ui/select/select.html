@@ -1,0 +1,10 @@
+<label class="ui-select-field">
+  @if (label) {
+    <span class="ui-select-label">{{ label }}</span>
+  }
+  <select class="ui-select-input" [ngModel]="value" (ngModelChange)="valueChange.emit($event)">
+    @for (option of options; track option.value) {
+      <option [value]="option.value">{{ option.label }}</option>
+    }
+  </select>
+</label>

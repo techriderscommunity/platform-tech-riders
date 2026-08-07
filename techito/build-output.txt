@@ -1,0 +1,83 @@
+
+> techito@0.0.0 build:dev
+> ng build --configuration development
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[33mΓ¥»[39m Building...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[32mΓ£ö[39m Building...
+[35mBrowser bundles[39m     
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mchunk-AAYLOI3Q.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m960.78 kB[39m[2m | [22m
+[32mchunk-SHIGWR32.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m276.21 kB[39m[2m | [22m
+[32mmain.js[39m             [2m | [22m[2mmain[22m                  [2m | [22m[36m224.04 kB[39m[2m | [22m
+[32mchunk-5UX7XAZT.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m180.65 kB[39m[2m | [22m
+[32mchunk-QYGXA5TL.js[39m   [2m | [22m[2m-[22m                     [2m | [22m [36m92.84 kB[39m[2m | [22m
+[32mstyles.css[39m          [2m | [22m[2mstyles[22m                [2m | [22m [36m26.44 kB[39m[2m | [22m
+[32mchunk-5NKVKFPR.js[39m   [2m | [22m[2m-[22m                     [2m | [22m  [36m2.15 kB[39m[2m | [22m
+[32mchunk-OP7XLGUE.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m751 bytes[39m[2m | [22m
+[32mchunk-LRV6E4A2.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m169 bytes[39m[2m | [22m
+
+[1m [22m                   [2m | [22m[1mInitial total[22m         [2m | [22m  [1m1.76 MB[22m
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mchunk-BYFX3JCP.js[39m   [2m | [22m[2m-[22m                     [2m | [22m[36m218.16 kB[39m[2m | [22m
+[32mchunk-HMOXBO75.js[39m   [2m | [22m[2madmin-gestion-sesiones[22m[2m | [22m [36m62.92 kB[39m[2m | [22m
+[32mchunk-3HM22WM6.js[39m   [2m | [22m[2mconocimiento[22m          [2m | [22m [36m51.75 kB[39m[2m | [22m
+[32mchunk-CPF2FI2Z.js[39m   [2m | [22m[2morienta-tech[22m          [2m | [22m [36m45.99 kB[39m[2m | [22m
+[32mchunk-E3Z37X5L.js[39m   [2m | [22m[2mhome[22m                  [2m | [22m [36m43.44 kB[39m[2m | [22m
+[32mchunk-JS4SWF6Q.js[39m   [2m | [22m[2mgestionar-ofertas[22m     [2m | [22m [36m37.17 kB[39m[2m | [22m
+[32mchunk-5Z5UD4IF.js[39m   [2m | [22m[2meditar-perfil[22m         [2m | [22m [36m37.05 kB[39m[2m | [22m
+[32mchunk-VWAMOPSZ.js[39m   [2m | [22m[2mdashboard-junior[22m      [2m | [22m [36m35.11 kB[39m[2m | [22m
+[32mchunk-F3QMZY3X.js[39m   [2m | [22m[2mperfil-candidato[22m      [2m | [22m [36m30.72 kB[39m[2m | [22m
+[32mchunk-RYWUEPES.js[39m   [2m | [22m[2mmis-ofertas[22m           [2m | [22m [36m27.23 kB[39m[2m | [22m
+[32mchunk-RF5MXWGJ.js[39m   [2m | [22m[2mver-candidatos[22m        [2m | [22m [36m25.36 kB[39m[2m | [22m
+[32mchunk-6XXXARAT.js[39m   [2m | [22m[2madmin-dashboard[22m       [2m | [22m [36m24.84 kB[39m[2m | [22m
+[32mchunk-LMWU2G6Z.js[39m   [2m | [22m[2madmin-sesiones[22m        [2m | [22m [36m24.80 kB[39m[2m | [22m
+[32mchunk-V326D3KC.js[39m   [2m | [22m[2mquienes-somos[22m         [2m | [22m [36m24.57 kB[39m[2m | [22m
+[32mchunk-ONOREFEA.js[39m   [2m | [22m[2mcandidato[22m             [2m | [22m [36m23.82 kB[39m[2m | [22m
+[2m...and 12 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+
+[35mServer bundles[39m      
+[1mInitial chunk files[22m [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mserver.mjs[39m          [2m | [22m[2mserver[22m                [2m | [22m  [36m2.53 MB[39m[2m | [22m
+[32mmain.server.mjs[39m     [2m | [22m[2mmain.server[22m           [2m | [22m  [36m1.14 MB[39m[2m | [22m
+[32mchunk-6HNOHY2F.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m942.94 kB[39m[2m | [22m
+[32mpolyfills.server.mjs[39m[2m | [22m[2mpolyfills.server[22m      [2m | [22m[36m493.23 kB[39m[2m | [22m
+[32mchunk-KLHM333Y.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m276.42 kB[39m[2m | [22m
+[32mchunk-KBIUIAE4.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m176.02 kB[39m[2m | [22m
+[32mchunk-TE44LGPB.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m [36m93.98 kB[39m[2m | [22m
+[32mchunk-3II4UTYF.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m  [36m2.81 kB[39m[2m | [22m
+[32mchunk-NCCQRDOO.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m  [36m2.19 kB[39m[2m | [22m
+[32mchunk-T2KOBY73.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m  [36m2.01 kB[39m[2m | [22m
+[32mchunk-7EEQNUP6.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m786 bytes[39m[2m | [22m
+[32mchunk-ICYJFB74.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m204 bytes[39m[2m | [22m
+
+[1mLazy chunk files[22m    [2m | [22m[1mNames[22m                 [2m | [22m [1mRaw size[22m
+[32mchunk-4BJS3D75.mjs[39m  [2m | [22m[2m-[22m                     [2m | [22m[36m218.23 kB[39m[2m | [22m
+[32mchunk-YR2GKMGH.mjs[39m  [2m | [22m[2madmin-gestion-sesiones[22m[2m | [22m [36m63.00 kB[39m[2m | [22m
+[32mchunk-P6VSRVK7.mjs[39m  [2m | [22m[2mconocimiento[22m          [2m | [22m [36m51.82 kB[39m[2m | [22m
+[32mchunk-XVBLQEDA.mjs[39m  [2m | [22m[2morienta-tech[22m          [2m | [22m [36m46.06 kB[39m[2m | [22m
+[32mchunk-FL62X2OG.mjs[39m  [2m | [22m[2mhome[22m                  [2m | [22m [36m43.51 kB[39m[2m | [22m
+[32mchunk-F5FD6IK3.mjs[39m  [2m | [22m[2mxhr2[22m                  [2m | [22m [36m40.11 kB[39m[2m | [22m
+[32mchunk-5QAFQH3E.mjs[39m  [2m | [22m[2mxhr2[22m                  [2m | [22m [36m40.04 kB[39m[2m | [22m
+[32mchunk-GRR42KWX.mjs[39m  [2m | [22m[2mgestionar-ofertas[22m     [2m | [22m [36m37.25 kB[39m[2m | [22m
+[32mchunk-ULSZXIXJ.mjs[39m  [2m | [22m[2meditar-perfil[22m         [2m | [22m [36m37.13 kB[39m[2m | [22m
+[32mchunk-II6BN7BX.mjs[39m  [2m | [22m[2mdashboard-junior[22m      [2m | [22m [36m35.19 kB[39m[2m | [22m
+[32mchunk-UDL6M3ZI.mjs[39m  [2m | [22m[2mperfil-candidato[22m      [2m | [22m [36m30.79 kB[39m[2m | [22m
+[32mchunk-OBDFP2JZ.mjs[39m  [2m | [22m[2mmis-ofertas[22m           [2m | [22m [36m27.30 kB[39m[2m | [22m
+[32mchunk-7KCDAIDD.mjs[39m  [2m | [22m[2mver-candidatos[22m        [2m | [22m [36m25.45 kB[39m[2m | [22m
+[32mchunk-2GSVOJJC.mjs[39m  [2m | [22m[2madmin-dashboard[22m       [2m | [22m [36m24.92 kB[39m[2m | [22m
+[32mchunk-YGJ7I47C.mjs[39m  [2m | [22m[2madmin-sesiones[22m        [2m | [22m [36m24.87 kB[39m[2m | [22m
+[2m...and 14 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+[35mPrerendered 23 static routes.[39m
+Application bundle generation complete. [38.004 seconds] - 2026-05-24T23:32:11.602Z
+
+Output location: c:\repo\techriders\techito\dist\techito
+
