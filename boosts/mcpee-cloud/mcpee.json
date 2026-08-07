@@ -1,0 +1,1095 @@
+{
+  "schemaVersion": "1.0",
+  "name": "mcpee-cloud",
+  "version": "0.1.0",
+  "type": "boost",
+  "domain": "cloud",
+  "description": "MCPEE Cloud Boost for Azure and AWS with enterprise architecture, IaC, identity, networking, security, data, operations, resilience and DevOps capabilities.",
+  "capabilities": [
+    {
+      "id": "cloud.architecture.well-architected",
+      "title": "Multi-Cloud Well-Architected Review",
+      "agent": "agents/arch.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/azure-well-architected-review",
+        "skills/aws-well-architected-review"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "document-search",
+        "knowledge-graph"
+      ],
+      "specs": [
+        "specs/cloud.architecture.well-architected.md"
+      ],
+      "prompts": [
+        "prompts/cloud.architecture.well-architected.prompt.md"
+      ],
+      "evals": [
+        "evals/cloud.architecture.well-architected.eval.json"
+      ],
+      "examples": [
+        "examples/cloud.architecture.well-architected.example.md"
+      ]
+    },
+    {
+      "id": "cloud.security.threat-modeling",
+      "title": "Multi-Cloud Threat Modeling and Security Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/github-actions-hardening"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "threat-modeling",
+        "security-review",
+        "document-search"
+      ],
+      "specs": [
+        "specs/cloud.security.threat-modeling.md"
+      ],
+      "prompts": [
+        "prompts/cloud.security.threat-modeling.prompt.md"
+      ],
+      "evals": [
+        "evals/cloud.security.threat-modeling.eval.json"
+      ],
+      "examples": [
+        "examples/cloud.security.threat-modeling.example.md"
+      ]
+    },
+    {
+      "id": "cloud.reliability.disaster-recovery",
+      "title": "Multi-Cloud Reliability and Disaster Recovery",
+      "agent": "agents/project-architecture-planner.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/azure-resource-health-diagnose",
+        "skills/aws-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/kubernetes-manifests.instructions.md"
+      ],
+      "providerNeeds": [
+        "reliability-analysis",
+        "disaster-recovery-planning",
+        "telemetry"
+      ],
+      "specs": [
+        "specs/cloud.reliability.disaster-recovery.md"
+      ],
+      "prompts": [
+        "prompts/cloud.reliability.disaster-recovery.prompt.md"
+      ],
+      "evals": [
+        "evals/cloud.reliability.disaster-recovery.eval.json"
+      ],
+      "examples": [
+        "examples/cloud.reliability.disaster-recovery.example.md"
+      ]
+    },
+    {
+      "id": "cloud.devops.cicd",
+      "title": "Cloud DevOps and CI/CD Review",
+      "agent": "agents/devops-expert.agent.md",
+      "skills": [
+        "skills/github-actions-hardening",
+        "skills/github-actions-efficiency",
+        "skills/azure-devops-cli"
+      ],
+      "instructions": [
+        "instructions/github-actions-ci-cd-best-practices.instructions.md",
+        "instructions/azure-devops-pipelines.instructions.md"
+      ],
+      "providerNeeds": [
+        "repository-analysis",
+        "pipeline-analysis",
+        "security-review"
+      ],
+      "specs": [
+        "specs/cloud.devops.cicd.md"
+      ],
+      "prompts": [
+        "prompts/cloud.devops.cicd.prompt.md"
+      ],
+      "evals": [
+        "evals/cloud.devops.cicd.eval.json"
+      ],
+      "examples": [
+        "examples/cloud.devops.cicd.example.md"
+      ]
+    },
+    {
+      "id": "azure.iac.generate",
+      "title": "Azure Infrastructure as Code Generation",
+      "agent": "agents/azure-iac-generator.agent.md",
+      "skills": [
+        "skills/import-infrastructure-as-code",
+        "skills/azure-deployment-preflight"
+      ],
+      "instructions": [
+        "instructions/azure-verified-modules-bicep.instructions.md",
+        "instructions/azure-verified-modules-terraform.instructions.md",
+        "instructions/terraform-azure.instructions.md"
+      ],
+      "providerNeeds": [
+        "infrastructure-as-code",
+        "dependency-analysis",
+        "document-search"
+      ],
+      "specs": [
+        "specs/azure.iac.generate.md"
+      ],
+      "prompts": [
+        "prompts/azure.iac.generate.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.iac.generate.eval.json"
+      ],
+      "examples": [
+        "examples/azure.iac.generate.example.md"
+      ]
+    },
+    {
+      "id": "azure.governance.policy-review",
+      "title": "Azure Governance and Policy Review",
+      "agent": "agents/azure-policy-analyzer.agent.md",
+      "skills": [
+        "skills/audit-integrity",
+        "skills/azure-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/azure-naming.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "resource-inventory",
+        "policy-analysis",
+        "document-search"
+      ],
+      "specs": [
+        "specs/azure.governance.policy-review.md"
+      ],
+      "prompts": [
+        "prompts/azure.governance.policy-review.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.governance.policy-review.eval.json"
+      ],
+      "examples": [
+        "examples/azure.governance.policy-review.example.md"
+      ]
+    },
+    {
+      "id": "azure.identity.rbac-entra",
+      "title": "Azure Identity, RBAC and Entra Design",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-role-selector",
+        "skills/cloud-design-patterns"
+      ],
+      "instructions": [
+        "instructions/azure-naming.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "identity-design",
+        "rbac-analysis",
+        "security-review"
+      ],
+      "specs": [
+        "specs/azure.identity.rbac-entra.md"
+      ],
+      "prompts": [
+        "prompts/azure.identity.rbac-entra.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.identity.rbac-entra.eval.json"
+      ],
+      "examples": [
+        "examples/azure.identity.rbac-entra.example.md"
+      ]
+    },
+    {
+      "id": "azure.networking.vnet-connectivity",
+      "title": "Azure Networking, VNet and Connectivity",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-architecture-autopilot",
+        "skills/azure-resource-visualizer"
+      ],
+      "instructions": [
+        "instructions/kubernetes-manifests.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "network-topology",
+        "private-connectivity",
+        "traffic-analysis"
+      ],
+      "specs": [
+        "specs/azure.networking.vnet-connectivity.md"
+      ],
+      "prompts": [
+        "prompts/azure.networking.vnet-connectivity.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.networking.vnet-connectivity.eval.json"
+      ],
+      "examples": [
+        "examples/azure.networking.vnet-connectivity.example.md"
+      ]
+    },
+    {
+      "id": "azure.security.posture",
+      "title": "Azure Security Posture and Hardening",
+      "agent": "agents/azure-policy-analyzer.agent.md",
+      "skills": [
+        "skills/azure-well-architected-review",
+        "skills/audit-integrity"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/azure-naming.instructions.md"
+      ],
+      "providerNeeds": [
+        "security-review",
+        "compliance-check",
+        "remediation-plan"
+      ],
+      "specs": [
+        "specs/azure.security.posture.md"
+      ],
+      "prompts": [
+        "prompts/azure.security.posture.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.security.posture.eval.json"
+      ],
+      "examples": [
+        "examples/azure.security.posture.example.md"
+      ]
+    },
+    {
+      "id": "azure.compute.vm-vmss",
+      "title": "Azure Compute VM and VMSS Architecture",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-architecture-autopilot",
+        "skills/azure-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/containerization-docker-best-practices.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "compute-sizing",
+        "availability-design",
+        "cost-review"
+      ],
+      "specs": [
+        "specs/azure.compute.vm-vmss.md"
+      ],
+      "prompts": [
+        "prompts/azure.compute.vm-vmss.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.compute.vm-vmss.eval.json"
+      ],
+      "examples": [
+        "examples/azure.compute.vm-vmss.example.md"
+      ]
+    },
+    {
+      "id": "azure.kubernetes.aks-operations",
+      "title": "Azure Kubernetes Service Operations",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-resource-health-diagnose",
+        "skills/cloud-design-patterns"
+      ],
+      "instructions": [
+        "instructions/kubernetes-manifests.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "kubernetes-operations",
+        "cluster-security",
+        "autoscaling-analysis"
+      ],
+      "specs": [
+        "specs/azure.kubernetes.aks-operations.md"
+      ],
+      "prompts": [
+        "prompts/azure.kubernetes.aks-operations.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.kubernetes.aks-operations.eval.json"
+      ],
+      "examples": [
+        "examples/azure.kubernetes.aks-operations.example.md"
+      ]
+    },
+    {
+      "id": "azure.serverless.functions-logicapps",
+      "title": "Azure Serverless Functions and Logic Apps",
+      "agent": "agents/azure-logic-apps-expert.agent.md",
+      "skills": [
+        "skills/azure-architecture-autopilot",
+        "skills/cloud-design-patterns"
+      ],
+      "instructions": [
+        "instructions/azure-functions-csharp.instructions.md",
+        "instructions/azure-functions-typescript.instructions.md",
+        "instructions/azure-logic-apps-power-automate.instructions.md"
+      ],
+      "providerNeeds": [
+        "serverless-design",
+        "workflow-analysis",
+        "resilience-patterns"
+      ],
+      "specs": [
+        "specs/azure.serverless.functions-logicapps.md"
+      ],
+      "prompts": [
+        "prompts/azure.serverless.functions-logicapps.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.serverless.functions-logicapps.eval.json"
+      ],
+      "examples": [
+        "examples/azure.serverless.functions-logicapps.example.md"
+      ]
+    },
+    {
+      "id": "azure.data.platform",
+      "title": "Azure Data Platform Architecture",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/azure-architecture-autopilot"
+      ],
+      "instructions": [
+        "instructions/terraform-azure.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "data-architecture",
+        "consistency-modeling",
+        "security-review"
+      ],
+      "specs": [
+        "specs/azure.data.platform.md"
+      ],
+      "prompts": [
+        "prompts/azure.data.platform.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.data.platform.eval.json"
+      ],
+      "examples": [
+        "examples/azure.data.platform.example.md"
+      ]
+    },
+    {
+      "id": "azure.storage.design",
+      "title": "Azure Storage Architecture and Lifecycle",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-architecture-autopilot",
+        "skills/azure-pricing"
+      ],
+      "instructions": [
+        "instructions/terraform-azure.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "storage-tiering",
+        "lifecycle-design",
+        "cost-optimization"
+      ],
+      "specs": [
+        "specs/azure.storage.design.md"
+      ],
+      "prompts": [
+        "prompts/azure.storage.design.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.storage.design.eval.json"
+      ],
+      "examples": [
+        "examples/azure.storage.design.example.md"
+      ]
+    },
+    {
+      "id": "azure.messaging.integration",
+      "title": "Azure Messaging and Integration Patterns",
+      "agent": "agents/azure-logic-apps-expert.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/azure-architecture-autopilot"
+      ],
+      "instructions": [
+        "instructions/azure-logic-apps-power-automate.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "messaging-patterns",
+        "event-driven-design",
+        "integration-reliability"
+      ],
+      "specs": [
+        "specs/azure.messaging.integration.md"
+      ],
+      "prompts": [
+        "prompts/azure.messaging.integration.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.messaging.integration.eval.json"
+      ],
+      "examples": [
+        "examples/azure.messaging.integration.example.md"
+      ]
+    },
+    {
+      "id": "azure.observability.monitoring",
+      "title": "Azure Observability and Monitoring",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/appinsights-instrumentation",
+        "skills/azure-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "telemetry-design",
+        "alerting-strategy",
+        "incident-readiness"
+      ],
+      "specs": [
+        "specs/azure.observability.monitoring.md"
+      ],
+      "prompts": [
+        "prompts/azure.observability.monitoring.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.observability.monitoring.eval.json"
+      ],
+      "examples": [
+        "examples/azure.observability.monitoring.example.md"
+      ]
+    },
+    {
+      "id": "azure.cost.optimization",
+      "title": "Azure Cost Optimization and FinOps",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/az-cost-optimize",
+        "skills/azure-pricing"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/terraform-azure.instructions.md"
+      ],
+      "providerNeeds": [
+        "cost-analysis",
+        "rightsizing",
+        "finops-governance"
+      ],
+      "specs": [
+        "specs/azure.cost.optimization.md"
+      ],
+      "prompts": [
+        "prompts/azure.cost.optimization.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.cost.optimization.eval.json"
+      ],
+      "examples": [
+        "examples/azure.cost.optimization.example.md"
+      ]
+    },
+    {
+      "id": "azure.api-management.design",
+      "title": "Azure API Management and Gateway Design",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/azure-architecture-autopilot"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "api-governance",
+        "security-policy-design",
+        "integration-patterns"
+      ],
+      "specs": [
+        "specs/azure.api-management.design.md"
+      ],
+      "prompts": [
+        "prompts/azure.api-management.design.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.api-management.design.eval.json"
+      ],
+      "examples": [
+        "examples/azure.api-management.design.example.md"
+      ]
+    },
+    {
+      "id": "aws.architecture.review",
+      "title": "AWS Enterprise Architecture Review",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-well-architected-review",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/terraform.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "resource-inventory",
+        "dependency-analysis",
+        "document-search"
+      ],
+      "specs": [
+        "specs/aws.architecture.review.md"
+      ],
+      "prompts": [
+        "prompts/aws.architecture.review.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.architecture.review.eval.json"
+      ],
+      "examples": [
+        "examples/aws.architecture.review.example.md"
+      ]
+    },
+    {
+      "id": "aws.governance.multi-account",
+      "title": "AWS Multi-Account Governance and Control",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-resource-query",
+        "skills/aws-well-architected-review"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "governance-design",
+        "organizational-controls",
+        "compliance-review"
+      ],
+      "specs": [
+        "specs/aws.governance.multi-account.md"
+      ],
+      "prompts": [
+        "prompts/aws.governance.multi-account.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.governance.multi-account.eval.json"
+      ],
+      "examples": [
+        "examples/aws.governance.multi-account.example.md"
+      ]
+    },
+    {
+      "id": "aws.identity.iam",
+      "title": "AWS IAM and Identity Architecture",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-resource-query",
+        "skills/cloud-design-patterns"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "identity-design",
+        "least-privilege",
+        "security-review"
+      ],
+      "specs": [
+        "specs/aws.identity.iam.md"
+      ],
+      "prompts": [
+        "prompts/aws.identity.iam.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.identity.iam.eval.json"
+      ],
+      "examples": [
+        "examples/aws.identity.iam.example.md"
+      ]
+    },
+    {
+      "id": "aws.networking.vpc-connectivity",
+      "title": "AWS VPC and Connectivity Architecture",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/kubernetes-manifests.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "network-topology",
+        "private-connectivity",
+        "traffic-analysis"
+      ],
+      "specs": [
+        "specs/aws.networking.vpc-connectivity.md"
+      ],
+      "prompts": [
+        "prompts/aws.networking.vpc-connectivity.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.networking.vpc-connectivity.eval.json"
+      ],
+      "examples": [
+        "examples/aws.networking.vpc-connectivity.example.md"
+      ]
+    },
+    {
+      "id": "aws.security.posture",
+      "title": "AWS Security Posture and Hardening",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-well-architected-review",
+        "skills/aws-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "security-review",
+        "compliance-check",
+        "remediation-plan"
+      ],
+      "specs": [
+        "specs/aws.security.posture.md"
+      ],
+      "prompts": [
+        "prompts/aws.security.posture.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.security.posture.eval.json"
+      ],
+      "examples": [
+        "examples/aws.security.posture.example.md"
+      ]
+    },
+    {
+      "id": "aws.compute.ec2-autoscaling",
+      "title": "AWS Compute and Auto Scaling",
+      "agent": "agents/aws-cloud-expert.agent.md",
+      "skills": [
+        "skills/aws-resource-query",
+        "skills/aws-cost-optimize"
+      ],
+      "instructions": [
+        "instructions/containerization-docker-best-practices.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "compute-sizing",
+        "availability-design",
+        "cost-review"
+      ],
+      "specs": [
+        "specs/aws.compute.ec2-autoscaling.md"
+      ],
+      "prompts": [
+        "prompts/aws.compute.ec2-autoscaling.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.compute.ec2-autoscaling.eval.json"
+      ],
+      "examples": [
+        "examples/aws.compute.ec2-autoscaling.example.md"
+      ]
+    },
+    {
+      "id": "aws.kubernetes.eks-operations",
+      "title": "AWS EKS Operations and Governance",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-resource-health-diagnose",
+        "skills/cloud-design-patterns"
+      ],
+      "instructions": [
+        "instructions/kubernetes-manifests.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "kubernetes-operations",
+        "cluster-security",
+        "autoscaling-analysis"
+      ],
+      "specs": [
+        "specs/aws.kubernetes.eks-operations.md"
+      ],
+      "prompts": [
+        "prompts/aws.kubernetes.eks-operations.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.kubernetes.eks-operations.eval.json"
+      ],
+      "examples": [
+        "examples/aws.kubernetes.eks-operations.example.md"
+      ]
+    },
+    {
+      "id": "aws.serverless.architecture",
+      "title": "AWS Serverless Architecture and Delivery",
+      "agent": "agents/aws-serverless-architect.agent.md",
+      "skills": [
+        "skills/aws-cdk-python-setup",
+        "skills/aws-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/aws-appsync.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "infrastructure-as-code",
+        "serverless-patterns",
+        "document-search"
+      ],
+      "specs": [
+        "specs/aws.serverless.architecture.md"
+      ],
+      "prompts": [
+        "prompts/aws.serverless.architecture.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.serverless.architecture.eval.json"
+      ],
+      "examples": [
+        "examples/aws.serverless.architecture.example.md"
+      ]
+    },
+    {
+      "id": "aws.data.rds-dynamodb",
+      "title": "AWS Data Architecture for RDS and DynamoDB",
+      "agent": "agents/aws-cloud-expert.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/terraform.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "data-architecture",
+        "consistency-modeling",
+        "security-review"
+      ],
+      "specs": [
+        "specs/aws.data.rds-dynamodb.md"
+      ],
+      "prompts": [
+        "prompts/aws.data.rds-dynamodb.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.data.rds-dynamodb.eval.json"
+      ],
+      "examples": [
+        "examples/aws.data.rds-dynamodb.example.md"
+      ]
+    },
+    {
+      "id": "aws.storage.s3-efs",
+      "title": "AWS Storage Architecture for S3 and EFS",
+      "agent": "agents/aws-cloud-expert.agent.md",
+      "skills": [
+        "skills/aws-cost-optimize",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/terraform.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "storage-tiering",
+        "lifecycle-design",
+        "cost-optimization"
+      ],
+      "specs": [
+        "specs/aws.storage.s3-efs.md"
+      ],
+      "prompts": [
+        "prompts/aws.storage.s3-efs.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.storage.s3-efs.eval.json"
+      ],
+      "examples": [
+        "examples/aws.storage.s3-efs.example.md"
+      ]
+    },
+    {
+      "id": "aws.messaging.event-driven",
+      "title": "AWS Messaging and Event-Driven Integration",
+      "agent": "agents/aws-serverless-architect.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/aws-appsync.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "messaging-patterns",
+        "event-driven-design",
+        "integration-reliability"
+      ],
+      "specs": [
+        "specs/aws.messaging.event-driven.md"
+      ],
+      "prompts": [
+        "prompts/aws.messaging.event-driven.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.messaging.event-driven.eval.json"
+      ],
+      "examples": [
+        "examples/aws.messaging.event-driven.example.md"
+      ]
+    },
+    {
+      "id": "aws.observability.cloudwatch-xray",
+      "title": "AWS Observability with CloudWatch and Tracing",
+      "agent": "agents/aws-incident-triage.agent.md",
+      "skills": [
+        "skills/aws-cloudwatch-investigation",
+        "skills/aws-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "telemetry-design",
+        "alerting-strategy",
+        "incident-readiness"
+      ],
+      "specs": [
+        "specs/aws.observability.cloudwatch-xray.md"
+      ],
+      "prompts": [
+        "prompts/aws.observability.cloudwatch-xray.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.observability.cloudwatch-xray.eval.json"
+      ],
+      "examples": [
+        "examples/aws.observability.cloudwatch-xray.example.md"
+      ]
+    },
+    {
+      "id": "aws.cost.optimization",
+      "title": "AWS Cost Optimization and FinOps",
+      "agent": "agents/aws-cloud-expert.agent.md",
+      "skills": [
+        "skills/aws-cost-optimize",
+        "skills/aws-resource-query"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/terraform.instructions.md"
+      ],
+      "providerNeeds": [
+        "cost-analysis",
+        "rightsizing",
+        "finops-governance"
+      ],
+      "specs": [
+        "specs/aws.cost.optimization.md"
+      ],
+      "prompts": [
+        "prompts/aws.cost.optimization.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.cost.optimization.eval.json"
+      ],
+      "examples": [
+        "examples/aws.cost.optimization.example.md"
+      ]
+    },
+    {
+      "id": "aws.operations.incident-triage",
+      "title": "AWS Incident Triage and Recovery",
+      "agent": "agents/aws-incident-triage.agent.md",
+      "skills": [
+        "skills/aws-cloudwatch-investigation",
+        "skills/aws-resource-health-diagnose"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "logs-analysis",
+        "incident-response",
+        "telemetry"
+      ],
+      "specs": [
+        "specs/aws.operations.incident-triage.md"
+      ],
+      "prompts": [
+        "prompts/aws.operations.incident-triage.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.operations.incident-triage.eval.json"
+      ],
+      "examples": [
+        "examples/aws.operations.incident-triage.example.md"
+      ]
+    },
+    {
+      "id": "azure.operations.incident-triage",
+      "title": "Azure Incident Triage and Recovery",
+      "agent": "agents/azure-principal-architect.agent.md",
+      "skills": [
+        "skills/azure-resource-health-diagnose",
+        "skills/azure-well-architected-review"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/security-and-owasp.instructions.md"
+      ],
+      "providerNeeds": [
+        "logs-analysis",
+        "incident-response",
+        "telemetry"
+      ],
+      "specs": [
+        "specs/azure.operations.incident-triage.md"
+      ],
+      "prompts": [
+        "prompts/azure.operations.incident-triage.prompt.md"
+      ],
+      "evals": [
+        "evals/azure.operations.incident-triage.eval.json"
+      ],
+      "examples": [
+        "examples/azure.operations.incident-triage.example.md"
+      ]
+    },
+    {
+      "id": "aws.reliability.disaster-recovery",
+      "title": "AWS Reliability and Disaster Recovery",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/aws-resource-health-diagnose",
+        "skills/aws-well-architected-review"
+      ],
+      "instructions": [
+        "instructions/devops-core-principles.instructions.md",
+        "instructions/terraform.instructions.md"
+      ],
+      "providerNeeds": [
+        "reliability-analysis",
+        "disaster-recovery-planning",
+        "resilience-testing"
+      ],
+      "specs": [
+        "specs/aws.reliability.disaster-recovery.md"
+      ],
+      "prompts": [
+        "prompts/aws.reliability.disaster-recovery.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.reliability.disaster-recovery.eval.json"
+      ],
+      "examples": [
+        "examples/aws.reliability.disaster-recovery.example.md"
+      ]
+    },
+    {
+      "id": "aws.api-gateway.design",
+      "title": "AWS API Gateway Design and Management",
+      "agent": "agents/aws-principal-architect.agent.md",
+      "skills": [
+        "skills/cloud-design-patterns",
+        "skills/aws-well-architected-review"
+      ],
+      "instructions": [
+        "instructions/security-and-owasp.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "api-governance",
+        "security-policy-design",
+        "integration-patterns"
+      ],
+      "specs": [
+        "specs/aws.api-gateway.design.md"
+      ],
+      "prompts": [
+        "prompts/aws.api-gateway.design.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.api-gateway.design.eval.json"
+      ],
+      "examples": [
+        "examples/aws.api-gateway.design.example.md"
+      ]
+    },
+    {
+      "id": "aws.devops.cicd",
+      "title": "AWS DevOps and CI/CD",
+      "agent": "agents/devops-expert.agent.md",
+      "skills": [
+        "skills/github-actions-hardening",
+        "skills/github-actions-efficiency"
+      ],
+      "instructions": [
+        "instructions/github-actions-ci-cd-best-practices.instructions.md",
+        "instructions/devops-core-principles.instructions.md"
+      ],
+      "providerNeeds": [
+        "repository-analysis",
+        "pipeline-analysis",
+        "security-review"
+      ],
+      "specs": [
+        "specs/aws.devops.cicd.md"
+      ],
+      "prompts": [
+        "prompts/aws.devops.cicd.prompt.md"
+      ],
+      "evals": [
+        "evals/aws.devops.cicd.eval.json"
+      ],
+      "examples": [
+        "examples/aws.devops.cicd.example.md"
+      ]
+    }
+  ]
+}

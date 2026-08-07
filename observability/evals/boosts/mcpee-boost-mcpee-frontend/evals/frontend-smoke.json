@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "suite": "frontend-smoke",
+  "description": "Smoke evals to validate expert frontend boost coverage and artifact integrity.",
+  "cases": [
+    {
+      "id": "architecture",
+      "agentName": "FrontendPrincipalArchitect",
+      "agent": "agents/frontend-principal-architect.agent.md",
+      "prompt": "prompts/frontend-architecture-review.prompt.md",
+      "skill": "skills/frontend-architecture-review/SKILL.md",
+      "spec": "specs/frontend-architecture.spec.md"
+    },
+    {
+      "id": "architecture-adr",
+      "agentName": "FrontendPrincipalArchitect",
+      "agent": "agents/frontend-principal-architect.agent.md",
+      "prompt": "prompts/create-frontend-adr.prompt.md",
+      "skill": "skills/frontend-architecture-review/SKILL.md",
+      "spec": "specs/frontend-architecture.spec.md"
+    },
+    {
+      "id": "angular",
+      "agentName": "AngularExpertAgent",
+      "agent": "agents/angular-expert.agent.md",
+      "prompt": "prompts/generate-angular-feature.prompt.md",
+      "skill": "skills/angular-production-review/SKILL.md",
+      "spec": "specs/angular-modern.spec.md"
+    },
+    {
+      "id": "react",
+      "agentName": "ReactExpertAgent",
+      "agent": "agents/react-expert.agent.md",
+      "prompt": "prompts/generate-react-feature.prompt.md",
+      "skill": "skills/react-production-review/SKILL.md",
+      "spec": "specs/react-modern.spec.md"
+    },
+    {
+      "id": "design-system",
+      "agentName": "DesignSystemArchitectAgent",
+      "agent": "agents/design-system-architect.agent.md",
+      "prompt": "prompts/design-system-plan.prompt.md",
+      "skill": "skills/design-system-governance/SKILL.md",
+      "spec": "specs/design-system.spec.md"
+    },
+    {
+      "id": "testing",
+      "agentName": "TestingStrategistAgent",
+      "agent": "agents/testing-strategist.agent.md",
+      "prompt": "prompts/define-testing-strategy.prompt.md",
+      "skill": "skills/frontend-testing-strategy/SKILL.md",
+      "spec": "specs/quality-gates.spec.md"
+    },
+    {
+      "id": "accessibility",
+      "agentName": "AccessibilityAuditorAgent",
+      "agent": "agents/accessibility-auditor.agent.md",
+      "prompt": "prompts/audit-accessibility.prompt.md",
+      "skill": "skills/accessibility-wcag-aa/SKILL.md",
+      "spec": "specs/design-system.spec.md"
+    },
+    {
+      "id": "performance",
+      "agentName": "PerformanceAuditorAgent",
+      "agent": "agents/performance-auditor.agent.md",
+      "prompt": "prompts/audit-performance.prompt.md",
+      "skill": "skills/performance-core-web-vitals/SKILL.md",
+      "spec": "specs/quality-gates.spec.md"
+    },
+    {
+      "id": "observability",
+      "agentName": "PerformanceAuditorAgent",
+      "agent": "agents/performance-auditor.agent.md",
+      "prompt": "prompts/audit-observability.prompt.md",
+      "skill": "skills/frontend-observability-telemetry/SKILL.md",
+      "spec": "specs/observability.spec.md"
+    },
+    {
+      "id": "security-auth",
+      "agentName": "FrontendCodeReviewAgent",
+      "agent": "agents/frontend-code-review.agent.md",
+      "prompt": "prompts/audit-security-auth.prompt.md",
+      "skill": "skills/security-auth-frontend/SKILL.md",
+      "spec": "specs/security-auth.spec.md"
+    },
+    {
+      "id": "microfrontends",
+      "agentName": "MicrofrontendArchitectAgent",
+      "agent": "agents/microfrontend-architect.agent.md",
+      "prompt": "prompts/microfrontend-decision.prompt.md",
+      "skill": "skills/microfrontend-decision/SKILL.md",
+      "spec": "specs/microfrontends.spec.md"
+    },
+    {
+      "id": "modernization",
+      "agentName": "FrontendMigrationModernizationAgent",
+      "agent": "agents/migration-modernization.agent.md",
+      "prompt": "prompts/frontend-modernization-plan.prompt.md",
+      "skill": "skills/frontend-modernization-migration/SKILL.md",
+      "spec": "specs/frontend-architecture.spec.md"
+    },
+    {
+      "id": "code-review",
+      "agentName": "FrontendCodeReviewAgent",
+      "agent": "agents/frontend-code-review.agent.md",
+      "prompt": "prompts/code-review-frontend.prompt.md",
+      "skill": "skills/frontend-code-review/SKILL.md",
+      "spec": "specs/quality-gates.spec.md"
+    }
+  ]
+}

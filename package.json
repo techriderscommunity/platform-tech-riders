@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "mcp-efficiency-engine": "^0.1.14",
+    "mcpee-backend": "^0.1.4",
+    "mcpee-cloud": "^0.1.4",
+    "mcpee-dba": "^1.0.1",
+    "mcpee-frontend": "^1.0.1",
+    "mcpee-uxdesign": "^1.0.0"
+  },
+  "allowScripts": {
+    "mcp-efficiency-engine@0.1.14": true
+  }
+}

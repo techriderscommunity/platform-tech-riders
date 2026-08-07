@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "name": "mcpee-frontend",
+  "version": "1.0.0",
+  "type": "boost",
+  "domain": "frontend",
+  "description": "Frontend Expert Boost package catalog for Angular, React, accessibility, performance, testing and architecture workflows.",
+  "catalog": {
+    "agents": "agents/",
+    "instructions": "instructions/",
+    "prompts": "prompts/",
+    "skills": "skills/",
+    "specs": "specs/",
+    "references": "references/",
+    "templates": "templates/",
+    "examples": "examples/",
+    "docs": "docs/",
+    "plugin": "plugin.json"
+  },
+  "coreSpecs": [
+    "specs/frontend-architecture.spec.md",
+    "specs/angular-modern.spec.md",
+    "specs/react-modern.spec.md",
+    "specs/design-system.spec.md",
+    "specs/security-auth.spec.md",
+    "specs/quality-gates.spec.md",
+    "specs/microfrontends.spec.md",
+    "specs/observability.spec.md"
+  ],
+  "coreSkillSet": [
+    "skills/frontend-architecture-review/SKILL.md",
+    "skills/angular-production-review/SKILL.md",
+    "skills/react-production-review/SKILL.md",
+    "skills/design-system-governance/SKILL.md",
+    "skills/accessibility-wcag-aa/SKILL.md",
+    "skills/performance-core-web-vitals/SKILL.md",
+    "skills/frontend-testing-strategy/SKILL.md",
+    "skills/frontend-code-review/SKILL.md",
+    "skills/security-auth-frontend/SKILL.md",
+    "skills/microfrontend-decision/SKILL.md",
+    "skills/frontend-modernization-migration/SKILL.md",
+    "skills/frontend-observability-telemetry/SKILL.md"
+  ],
+  "notes": [
+    "This file is intentionally lightweight and references existing artifact families.",
+    "Agent and use-case mapping is documented in README and examples/use-cases.md."
+  ]
+}

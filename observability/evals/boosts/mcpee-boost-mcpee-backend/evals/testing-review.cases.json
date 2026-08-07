@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "capability": "backend.testing.review",
+  "description": "Evaluation cases for this capability.",
+  "qualityDimensions": [
+    "grounding",
+    "specCoverage",
+    "actionability",
+    "riskPrioritization",
+    "tokenEfficiency"
+  ],
+  "cases": [
+    {
+      "id": "case-001",
+      "title": "Low-signal test suite with flaky integration tests",
+      "input": "Review a backend project with high unit-test count but low branch coverage, frequent flaky tests, and missing contract tests for public APIs.",
+      "expected": {
+        "mustInclude": [
+          "evidence",
+          "impact",
+          "recommendations",
+          "test strategy"
+        ],
+        "mustNotInclude": [
+          "unsupported assumptions"
+        ]
+      },
+      "reasoning": "Verifies that testing reviews improve confidence and stability rather than maximizing test count only."
+    }
+  ]
+}

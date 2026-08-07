@@ -1,0 +1,120 @@
+name: Release & Publish NPM
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      npm_version:
+        description: "Version especifica a publicar (ej. 0.2.0). Si se omite, se autoajusta."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Resolve publish version
+        id: version
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          REQUESTED_VERSION="${{ github.event.inputs.npm_version || '' }}"
+
+          version_exists() {
+            npm view "$PACKAGE_NAME@$1" version >/dev/null 2>&1
+          }
+
+          if [ -n "$REQUESTED_VERSION" ]; then
+            TARGET_VERSION="$REQUESTED_VERSION"
+            MODE="explicit"
+          else
+            TARGET_VERSION="$BASE_VERSION"
+            MODE="auto"
+          fi
+
+          if [ "$MODE" = "explicit" ]; then
+            if version_exists "$TARGET_VERSION"; then
+              echo "Requested version $TARGET_VERSION is already published in npm."
+              exit 1
+            fi
+          else
+            CANDIDATE="$TARGET_VERSION"
+            while version_exists "$CANDIDATE"; do
+              CANDIDATE=$(node -e "const parts = process.argv[1].split('.').map(Number); if (parts.length !== 3 || parts.some(Number.isNaN)) { process.exit(2); } parts[2] += 1; process.stdout.write(parts.join('.'));" "$CANDIDATE") || {
+                echo "Cannot auto-bump non x.y.z version: $CANDIDATE"
+                exit 1
+              }
+            done
+            TARGET_VERSION="$CANDIDATE"
+          fi
+
+          CHANGED=false
+          if [ "$TARGET_VERSION" != "$BASE_VERSION" ]; then
+            npm version "$TARGET_VERSION" --no-git-tag-version
+            CHANGED=true
+          fi
+
+          echo "version=$TARGET_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$TARGET_VERSION" >> "$GITHUB_OUTPUT"
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure NPM token is configured
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "Missing NODE_AUTH_TOKEN/NPM_TOKEN secret. Configure repository secret NPM_TOKEN."
+            exit 1
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Remove Python cache artifacts from workspace
+        run: |
+          find . -type d -name "__pycache__" -prune -exec rm -rf {} +
+          find . -type f -name "*.pyc" -delete
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Record package.json sync requirement
+        if: steps.version.outputs.changed == 'true'
+        run: |
+          echo "package.json was bumped in CI to publish an available npm version (${{ steps.version.outputs.tag }})."
+          echo "Repository sync is skipped because main is protected and requires PR-based updates."
+          echo "Open a follow-up PR to align package.json with npm published version."
+
+      - name: Release summary
+        run: |
+          echo "## NPM Release" >> "$GITHUB_STEP_SUMMARY"
+          echo "- mode: ${{ steps.version.outputs.mode }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- published: ${{ steps.version.outputs.tag }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.version.outputs.changed }}" = "true" ]; then
+            echo "- package.json sync: skipped (protected branch, requires PR)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- package.json sync: not required" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true

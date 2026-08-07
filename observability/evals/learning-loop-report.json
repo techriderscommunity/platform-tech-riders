@@ -1,0 +1,154 @@
+{
+  "timestamp": "2026-08-07T18:57:34.802225+00:00",
+  "source": "C:\\repo\\platform-tech-riders\\observability\\logs\\routing-decisions.jsonl",
+  "feedback_source": "C:\\repo\\platform-tech-riders\\observability\\logs\\learning-feedback.jsonl",
+  "total_events": 8,
+  "pending_events": 0,
+  "confirmed_events": 8,
+  "kpis": {
+    "fallback_rate": 0.5,
+    "grounded_rate": 0.625,
+    "success_rate": 1.0,
+    "confidence_avg": 0.95
+  },
+  "thresholds": {
+    "fallback_rate_max": 0.2,
+    "grounded_rate_min": 0.8,
+    "confidence_avg_min": 0.8
+  },
+  "health": {
+    "fallback_ok": false,
+    "grounded_ok": false,
+    "confidence_ok": true
+  },
+  "patterns": [
+    {
+      "pattern": "azure-rag+knowledge-grounded",
+      "total": 1,
+      "fallback_rate": 0.0,
+      "grounded_rate": 0.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "Azure RAG Builder": 1
+      },
+      "agents": {
+        "rag-azure": 1
+      }
+    },
+    {
+      "pattern": "backend+bug-fix",
+      "total": 1,
+      "fallback_rate": 0.0,
+      "grounded_rate": 1.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "codegraph": 1
+      },
+      "agents": {
+        "agents/project-architecture-planner.agent.md": 1
+      }
+    },
+    {
+      "pattern": "dba+analysis",
+      "total": 1,
+      "fallback_rate": 1.0,
+      "grounded_rate": 1.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "Graphify": 1
+      },
+      "agents": {
+        "dba": 1
+      }
+    },
+    {
+      "pattern": "dba+sql",
+      "total": 1,
+      "fallback_rate": 1.0,
+      "grounded_rate": 1.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "Graphify": 1
+      },
+      "agents": {
+        "dba": 1
+      }
+    },
+    {
+      "pattern": "frontend+feature",
+      "total": 1,
+      "fallback_rate": 1.0,
+      "grounded_rate": 0.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "CodeGraph": 1
+      },
+      "agents": {
+        "frontend-agent": 1
+      }
+    },
+    {
+      "pattern": "legacy+migration",
+      "total": 1,
+      "fallback_rate": 0.0,
+      "grounded_rate": 0.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "CodeGraph": 1
+      },
+      "agents": {
+        "backend": 1
+      }
+    },
+    {
+      "pattern": "rag+info",
+      "total": 1,
+      "fallback_rate": 0.0,
+      "grounded_rate": 1.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "Graphify": 1
+      },
+      "agents": {
+        "rag-local": 1
+      }
+    },
+    {
+      "pattern": "ux-ui+review",
+      "total": 1,
+      "fallback_rate": 1.0,
+      "grounded_rate": 1.0,
+      "pending_count": 0,
+      "confirmed_count": 1,
+      "success_rate": 1.0,
+      "confidence_avg": 0.95,
+      "engines": {
+        "Graphify": 1
+      },
+      "agents": {
+        "ux-ui": 1
+      }
+    }
+  ]
+}

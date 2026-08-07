@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "capability": "backend.security.review",
+  "description": "Evaluation cases for this capability.",
+  "qualityDimensions": [
+    "grounding",
+    "specCoverage",
+    "actionability",
+    "riskPrioritization",
+    "tokenEfficiency"
+  ],
+  "cases": [
+    {
+      "id": "case-001",
+      "title": "Broken authorization on tenant-scoped resources",
+      "input": "Review an API where users can access invoices by numeric ID without tenant ownership validation.",
+      "expected": {
+        "mustInclude": [
+          "evidence",
+          "impact",
+          "recommendations",
+          "abuse scenario"
+        ],
+        "mustNotInclude": [
+          "unsupported assumptions"
+        ]
+      },
+      "reasoning": "Ensures security reviews surface exploitability and remediation priority by business impact."
+    }
+  ]
+}

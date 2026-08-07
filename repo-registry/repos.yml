@@ -1,0 +1,198 @@
+{
+  "registry_mode": "template",
+  "schema_version": "2.0",
+  "onboarding_help": {
+    "what_is_this": "Define aqui los paquetes npm (node_modules) que quieres conectar al motor de routing.",
+    "quick_start": [
+      "1) Duplica un ejemplo de repo_examples dentro de repos[]",
+      "2) Ajusta domain (libre), type=npm y package_name",
+      "3) Ejecuta scripts/intake/run-repo-intake.cmd",
+      "4) Ejecuta scripts/ops/hi.ps1 para validar"
+    ],
+    "required_fields": [
+      "name",
+      "domain",
+      "type",
+      "package_name (si type=npm)",
+      "approval.status=approved",
+      "approval.approved_by",
+      "approval.approved_date"
+    ],
+    "domain_reference": {
+      "<your-domain>": "Etiqueta libre del dominio/capabilidad que define el boost"
+    }
+  },
+  "governance": {
+    "owner": "your-team",
+    "approval_required": true,
+    "repo_name_prefix": "platform-tech-riders_"
+  },
+  "repos": [
+    {
+      "name": "platform-tech-riders_mcpee-backend",
+      "domain": "backend",
+      "type": "npm",
+      "package_name": "mcpee-backend",
+      "package_path": "node_modules/mcpee-backend",
+      "optional": false,
+      "dependencies": [],
+      "engines": {
+        "knowledge": "codegraph",
+        "execution": "none",
+        "snapshot": "repomix"
+      },
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-08-07",
+        "review_ticket": "bootstrap-auto-approval"
+      }
+    },
+    {
+      "name": "platform-tech-riders_mcpee-cloud",
+      "domain": "cloud",
+      "type": "npm",
+      "package_name": "mcpee-cloud",
+      "package_path": "node_modules/mcpee-cloud",
+      "optional": false,
+      "dependencies": [],
+      "engines": {
+        "knowledge": "graphify",
+        "execution": "none",
+        "snapshot": "repomix"
+      },
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-08-07",
+        "review_ticket": "bootstrap-auto-approval"
+      }
+    },
+    {
+      "name": "platform-tech-riders_mcpee-dba",
+      "domain": "dba",
+      "type": "npm",
+      "package_name": "mcpee-dba",
+      "package_path": "node_modules/mcpee-dba",
+      "optional": false,
+      "dependencies": [],
+      "engines": {
+        "knowledge": "graphify",
+        "execution": "none",
+        "snapshot": "repomix"
+      },
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-08-07",
+        "review_ticket": "bootstrap-auto-approval"
+      }
+    },
+    {
+      "name": "platform-tech-riders_mcpee-frontend",
+      "domain": "frontend",
+      "type": "npm",
+      "package_name": "mcpee-frontend",
+      "package_path": "node_modules/mcpee-frontend",
+      "optional": false,
+      "dependencies": [],
+      "engines": {
+        "knowledge": "codegraph",
+        "execution": "none",
+        "snapshot": "repomix"
+      },
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-08-07",
+        "review_ticket": "bootstrap-auto-approval"
+      }
+    },
+    {
+      "name": "platform-tech-riders_mcpee-uxdesign",
+      "domain": "ux-ui",
+      "type": "npm",
+      "package_name": "mcpee-uxdesign",
+      "package_path": "node_modules/mcpee-uxdesign",
+      "optional": false,
+      "dependencies": [],
+      "engines": {
+        "knowledge": "graphify",
+        "execution": "none",
+        "snapshot": "repomix"
+      },
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-08-07",
+        "review_ticket": "bootstrap-auto-approval"
+      }
+    }
+  ],
+  "repo_examples": {
+    "npm_generic": {
+      "name": "mcpee-my_boost",
+      "domain": "my-domain",
+      "type": "npm",
+      "package_name": "@your-scope/your-boost",
+      "package_path": "node_modules/@your-scope/your-boost",
+      "optional": false,
+      "dependencies": [],
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-01-01",
+        "review_ticket": "INTAKE-0001"
+      },
+      "engines": {
+        "knowledge": "codegraph",
+        "execution": "none",
+        "snapshot": "repomix"
+      }
+    },
+    "npm_unscoped": {
+      "name": "mcpee-ops_boost",
+      "domain": "ops",
+      "type": "npm",
+      "package_name": "my-ops-boost",
+      "package_path": "node_modules/my-ops-boost",
+      "optional": false,
+      "dependencies": [],
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-01-01",
+        "review_ticket": "INTAKE-0002"
+      },
+      "engines": {
+        "knowledge": "codegraph",
+        "execution": "none",
+        "snapshot": "repomix"
+      }
+    },
+    "npm_with_dependencies": {
+      "name": "mcpee-domain-boost",
+      "domain": "domain-x",
+      "type": "npm",
+      "package_name": "@your-scope/domain-boost",
+      "package_path": "node_modules/@your-scope/domain-boost",
+      "optional": true,
+      "dependencies": [
+        {
+          "ref": "mcpee-my_boost"
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "approved_by": "your-team",
+        "approved_date": "2026-01-01",
+        "review_ticket": "INTAKE-0003"
+      },
+      "engines": {
+        "knowledge": "custom-engine",
+        "execution": "none",
+        "snapshot": "repomix"
+      }
+    }
+  }
+}

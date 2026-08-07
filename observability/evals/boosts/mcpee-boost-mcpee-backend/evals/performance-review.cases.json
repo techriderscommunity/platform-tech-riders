@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "capability": "backend.performance.review",
+  "description": "Evaluation cases for this capability.",
+  "qualityDimensions": [
+    "grounding",
+    "specCoverage",
+    "actionability",
+    "riskPrioritization",
+    "tokenEfficiency"
+  ],
+  "cases": [
+    {
+      "id": "case-001",
+      "title": "CPU saturation under burst traffic",
+      "input": "Review a backend API that exceeds p95 latency SLO during flash-sale traffic due to synchronous IO and repeated serialization work.",
+      "expected": {
+        "mustInclude": [
+          "evidence",
+          "impact",
+          "recommendations",
+          "bottleneck analysis"
+        ],
+        "mustNotInclude": [
+          "unsupported assumptions"
+        ]
+      },
+      "reasoning": "Validates that performance reviews identify constraints, not just generic optimization tips."
+    }
+  ]
+}

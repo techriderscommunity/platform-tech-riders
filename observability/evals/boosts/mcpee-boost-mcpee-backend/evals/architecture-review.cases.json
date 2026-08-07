@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "capability": "backend.architecture.review",
+  "description": "Evaluation cases for this capability.",
+  "qualityDimensions": [
+    "grounding",
+    "specCoverage",
+    "actionability",
+    "riskPrioritization",
+    "tokenEfficiency"
+  ],
+  "cases": [
+    {
+      "id": "case-001",
+      "title": "Layer leakage in modular monolith",
+      "input": "Review a backend where controllers call repository implementations directly and domain services depend on infrastructure types.",
+      "expected": {
+        "mustInclude": [
+          "evidence",
+          "impact",
+          "recommendations",
+          "boundary violations"
+        ],
+        "mustNotInclude": [
+          "unsupported assumptions"
+        ]
+      },
+      "reasoning": "Ensures the review identifies architectural boundary violations and proposes migration-safe remediation steps."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-08-07T18:57:38.679171+00:00",
+  "source": "observability/logs/iteration-metrics.jsonl",
+  "filters": {
+    "source": "copilot-session",
+    "from": "",
+    "to": ""
+  },
+  "totals": {
+    "events": 6,
+    "input_tokens": 654217,
+    "output_tokens": 17878,
+    "total_tokens": 672095,
+    "copilot_credits": 143.530753
+  },
+  "breakdown": {
+    "model": {
+      "copilot/auto": {
+        "count": 6,
+        "input_tokens": 654217,
+        "output_tokens": 17878,
+        "total_tokens": 672095,
+        "copilot_credits": 143.53075299999998
+      }
+    },
+    "day": {
+      "2026-08-07": {
+        "count": 6,
+        "input_tokens": 654217,
+        "output_tokens": 17878,
+        "total_tokens": 672095,
+        "copilot_credits": 143.53075299999998
+      }
+    }
+  },
+  "license": {
+    "plan": "business",
+    "seats": 1,
+    "included_credits_per_user_month": 19.0,
+    "included_credits_total_month": 19.0,
+    "official_plans_url": "https://github.com/features/copilot/plans?ref_cta=View+pricing+and+plans&ref_loc=hero&ref_page=%2Ffeatures_copilot_copilot_business&plans=business"
+  },
+  "budget": {
+    "used_copilot_credits": 143.530753,
+    "budget_utilization_rate": 7.55425,
+    "overage_credits": 124.530753,
+    "equivalent_seats_used": 7.55425,
+    "percent_of_one_seat": 755.43
+  }
+}

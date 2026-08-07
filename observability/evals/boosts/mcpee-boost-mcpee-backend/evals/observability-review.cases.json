@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "capability": "backend.observability.review",
+  "description": "Evaluation cases for this capability.",
+  "qualityDimensions": [
+    "grounding",
+    "specCoverage",
+    "actionability",
+    "riskPrioritization",
+    "tokenEfficiency"
+  ],
+  "cases": [
+    {
+      "id": "case-001",
+      "title": "Missing trace correlation across async workers",
+      "input": "Review a distributed backend where HTTP requests enqueue jobs, but logs and metrics cannot be correlated to original request IDs.",
+      "expected": {
+        "mustInclude": [
+          "evidence",
+          "impact",
+          "recommendations",
+          "traceability"
+        ],
+        "mustNotInclude": [
+          "unsupported assumptions"
+        ]
+      },
+      "reasoning": "Ensures observability evaluations focus on diagnosability and end-to-end signal coherence."
+    }
+  ]
+}

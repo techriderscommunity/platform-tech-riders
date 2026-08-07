@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "name": "mcpee-uxdesign",
+  "version": "0.1.0",
+  "type": "boost",
+  "domain": "ux-ui",
+  "description": "BoostDesign package catalog for UX/UI auditing, design systems, component inventory, and accessibility workflows.",
+  "catalog": {
+    "agents": "agents/",
+    "skills": "skills/",
+    "specs": "specs/",
+    "instructions": "instructions/",
+    "prompts": "prompts/",
+    "docs": "docs/",
+    "references": "references/",
+    "templates": "templates/",
+    "examples": "examples/",
+    "platform": "platform.json"
+  },
+  "coreSpecs": [
+    ".github/copilot-instructions.md"
+  ],
+  "coreSkillSet": [
+    "skills/aria-accessibility-patterns/SKILL.md",
+    "skills/component-inventory/SKILL.md",
+    "skills/css-scss-best-practices/SKILL.md",
+    "skills/design-patterns-library/SKILL.md",
+    "skills/design-system-generator/SKILL.md",
+    "skills/devops-connector/SKILL.md",
+    "skills/figma-integration/SKILL.md",
+    "skills/functional-to-ux-spec/SKILL.md",
+    "skills/react-component-styling/SKILL.md",
+    "skills/screenshot-reporter/SKILL.md",
+    "skills/storybook-component-documentation/SKILL.md",
+    "skills/ux-audit/SKILL.md",
+    "skills/vue-component-styling/SKILL.md"
+  ],
+  "optionalSkillSet": [
+    "skills/hallmark/SKILL.md"
+  ],
+  "cliCapabilities": {
+    "init": "mcpee-uxdesign-init",
+    "doctor": "mcpee-uxdesign-doctor"
+  },
+  "integrations": {
+    "hallmark": {
+      "enabled": true,
+      "mode": "optional-complement",
+      "externalInstall": "npx skills add nutlope/hallmark",
+      "bridgeSkill": "skills/hallmark/SKILL.md"
+    }
+  },
+  "notes": [
+    "This file is intentionally lightweight and references existing artifact families.",
+    "Detailed agent and workflow mapping is maintained in platform.json."
+  ]
+}

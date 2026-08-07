@@ -1,0 +1,9 @@
+{
+  "capability": "azure.integration.logic-apps",
+  "version": "0.1.0",
+  "checks": [
+    "Workflow boundaries are explicit",
+    "Retry and error paths are defined",
+    "Operational observability is included"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "capability": "aws.storage.s3-efs",
+  "version": "0.1.0",
+  "checks": [
+    "Assessment is evidence-based",
+    "Risks are prioritized by impact",
+    "Recommendations are implementation-ready"
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "schemaVersion": "1.0",
+  "name": "mcpee-backend",
+  "version": "0.1.0",
+  "type": "boost",
+  "domain": "backend",
+  "description": "Official backend boost for MCPEE: architecture, APIs, refactoring, performance, security, testing, data access and DevOps.",
+  "capabilities": [
+    {
+      "id": "backend.architecture.review",
+      "title": "Backend Architecture Review",
+      "agent": "agents/project-architecture-planner.agent.md",
+      "skills": [
+        "skills/architecture-review/SKILL.md",
+        "skills/dependency-analysis/SKILL.md",
+        "skills/migration-analysis/SKILL.md",
+        "skills/provider-context-selection/SKILL.md",
+        "skills/task-planning/SKILL.md"
+      ],
+      "specs": [
+        "specs/clean-architecture.md",
+        "specs/ddd.md",
+        "specs/cqrs.md",
+        "specs/modular-monolith.md",
+        "specs/microservices.md",
+        "specs/observability.md",
+        "specs/cloud-native.md",
+        "specs/integration-patterns.md",
+        "specs/event-driven.md",
+        "specs/resilience.md",
+        "specs/net-best-practices.md"
+      ],
+      "prompts": [
+        "prompts/architecture-review.prompt.md"
+      ],
+      "evals": [
+        "evals/architecture-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "dependency-analysis",
+        "call-path-analysis",
+        "knowledge-graph",
+        "project-memory"
+      ]
+    },
+    {
+      "id": "backend.api.review",
+      "title": "Backend API Review",
+      "agent": "agents/api-architect.agent.md",
+      "skills": [
+        "skills/api-review/SKILL.md",
+        "skills/testing-review/SKILL.md",
+        "skills/code-review/SKILL.md"
+      ],
+      "specs": [
+        "specs/api-design.md",
+        "specs/security.md",
+        "specs/testing.md",
+        "specs/versioning.md",
+        "specs/error-handling.md"
+      ],
+      "prompts": [
+        "prompts/api-review.prompt.md"
+      ],
+      "evals": [
+        "evals/api-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "symbol-analysis",
+        "document-search",
+        "project-memory"
+      ]
+    },
+    {
+      "id": "backend.refactoring.review",
+      "title": "Backend Refactoring Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/refactoring/SKILL.md",
+        "skills/dependency-analysis/SKILL.md",
+        "skills/test-impact-analysis/SKILL.md"
+      ],
+      "specs": [
+        "specs/clean-architecture.md",
+        "specs/testing.md",
+        "specs/code-quality.md",
+        "specs/dependency-injection.md",
+        "specs/refactoring.md"
+      ],
+      "prompts": [
+        "prompts/refactoring.prompt.md"
+      ],
+      "evals": [
+        "evals/refactoring.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "dependency-analysis",
+        "call-path-analysis",
+        "blast-radius"
+      ]
+    },
+    {
+      "id": "backend.performance.review",
+      "title": "Backend Performance Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/performance-analysis/SKILL.md",
+        "skills/data-access-review/SKILL.md"
+      ],
+      "specs": [
+        "specs/performance.md",
+        "specs/caching.md",
+        "specs/data-access.md",
+        "specs/observability.md"
+      ],
+      "prompts": [
+        "prompts/performance-review.prompt.md"
+      ],
+      "evals": [
+        "evals/performance-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "dependency-analysis",
+        "telemetry",
+        "knowledge-graph"
+      ]
+    },
+    {
+      "id": "backend.observability.review",
+      "title": "Backend Observability Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/observability-review/SKILL.md",
+        "skills/dependency-analysis/SKILL.md"
+      ],
+      "specs": [
+        "specs/observability.md",
+        "specs/logging.md",
+        "specs/tracing.md",
+        "specs/telemetry.md"
+      ],
+      "prompts": [
+        "prompts/observability-review.prompt.md"
+      ],
+      "evals": [
+        "evals/observability-review.cases.json"
+      ],
+      "providerNeeds": [
+        "telemetry",
+        "call-path-analysis",
+        "code-navigation",
+        "project-memory"
+      ]
+    },
+    {
+      "id": "backend.security.review",
+      "title": "Backend Security Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/security-review/SKILL.md",
+        "skills/api-review/SKILL.md"
+      ],
+      "specs": [
+        "specs/security.md",
+        "specs/api-design.md",
+        "specs/error-handling.md",
+        "specs/data-protection.md"
+      ],
+      "prompts": [
+        "prompts/security-review.prompt.md"
+      ],
+      "evals": [
+        "evals/security-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "dependency-analysis",
+        "document-search"
+      ]
+    },
+    {
+      "id": "backend.testing.review",
+      "title": "Backend Testing Review",
+      "agent": "agents/qa-subagent.agent.md",
+      "skills": [
+        "skills/testing-review/SKILL.md",
+        "skills/test-impact-analysis/SKILL.md"
+      ],
+      "specs": [
+        "specs/testing.md",
+        "specs/clean-architecture.md",
+        "specs/api-design.md"
+      ],
+      "prompts": [
+        "prompts/testing-review.prompt.md"
+      ],
+      "evals": [
+        "evals/testing-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "test-discovery",
+        "dependency-analysis"
+      ]
+    },
+    {
+      "id": "backend.data.review",
+      "title": "Backend Data Access Review",
+      "agent": "agents/principal-software-engineer.agent.md",
+      "skills": [
+        "skills/data-access-review/SKILL.md",
+        "skills/performance-analysis/SKILL.md",
+        "skills/database-first-review/SKILL.md"
+      ],
+      "specs": [
+        "specs/data-access.md",
+        "specs/database-first.md",
+        "specs/transactions.md",
+        "specs/performance.md"
+      ],
+      "prompts": [
+        "prompts/data-access-review.prompt.md"
+      ],
+      "evals": [
+        "evals/data-access-review.cases.json"
+      ],
+      "providerNeeds": [
+        "code-navigation",
+        "dependency-analysis",
+        "schema-analysis"
+      ]
+    },
+    {
+      "id": "backend.devops.review",
+      "title": "Backend DevOps Review",
+      "agent": "agents/devops-expert.agent.md",
+      "skills": [
+        "skills/devops-review/SKILL.md",
+        "skills/release-review/SKILL.md",
+        "skills/token-budgeting/SKILL.md"
+      ],
+      "specs": [
+        "specs/devops.md",
+        "specs/observability.md",
+        "specs/testing.md",
+        "specs/security.md",
+        "specs/ci-cd.md",
+        "specs/containerization.md",
+        "specs/configuration.md",
+        "specs/azure-backend-patterns.md"
+      ],
+      "prompts": [
+        "prompts/devops-review.prompt.md"
+      ],
+      "evals": [
+        "evals/devops-review.cases.json"
+      ],
+      "providerNeeds": [
+        "repository-analysis",
+        "pipeline-analysis",
+        "document-search"
+      ]
+    }
+  ]
+}

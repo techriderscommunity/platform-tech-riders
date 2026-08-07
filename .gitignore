@@ -1,0 +1,51 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.temp
+
+# VS Code workspace runtime artifacts
+.vscode/*.log
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# Coverage / test artifacts
+coverage/
+*.coverage
+*.lcov
+
+# Local tooling caches and generated indexes
+.codegraph/
+.telemetry/
+.token-saver.json
+.mcpee/artifacts/
+.mcpee/cache/
+.mcpee/generated-skills/
+.mcpee/knowledge/
+.mcpee/reports/
+.mcpee/telemetry/
+.mcpee/traces/
+
+# Optional local memory cache folder (keep if needed by project conventions)
+.memories/
