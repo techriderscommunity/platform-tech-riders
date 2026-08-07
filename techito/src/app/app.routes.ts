@@ -47,6 +47,10 @@ export const routes: Routes = [
       { path: 'events/mine', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'])], loadComponent: () => import('./features/intranet/fp-tour/calendar-eventos').then(m => m.CalendarEventos) },
       { path: 'events/management', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador'])], loadComponent: () => import('./features/intranet/fp-tour/admin-sesiones').then(m => m.AdminSesiones) },
 
+      // === Intranet: Member / Ambassador ===
+      { path: 'member/profile', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'embajador', 'colaborador', 'centro', 'member'])], loadComponent: () => import('./features/perfil-usuario/perfil-usuario').then(m => m.PerfilUsuario) },
+      { path: 'ambassador/portal', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'])], loadComponent: () => import('./features/intranet/embajadores/embajador').then(m => m.EmbajadorComponent) },
+
       // === Intranet: Sesiones (navegacion modular interna) ===
       { path: 'sessions/mine', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'junior', 'embajador', 'colaborador', 'centro'])], loadComponent: () => import('./features/intranet/fp-tour/sesiones').then(m => m.Sesiones) },
       { path: 'sessions/management', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador'])], loadComponent: () => import('./features/intranet/fp-tour/admin-gestion-sesiones').then(m => m.AdminGestionSesiones) },

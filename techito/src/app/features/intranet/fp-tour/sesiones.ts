@@ -1,24 +1,27 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, combineLatest, of, tap } from 'rxjs';
+import { AuthService } from '@core/auth/auth.service';
 import { EmbajadoresService } from '../embajadores/services/embajadores.service';
 import { Embajador } from '../embajadores/models/embajadores.models';
 import { Sesion } from './models/sesiones.models';
 import { SesionesService } from './services/sesiones.service';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
+import { UiButton } from '@shared/ui/button/button';
 
 @Component({
   selector: 'app-sesiones',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, UiTextField, UiSelect],
+  imports: [FormsModule, UiTextField, UiSelect, UiButton],
   templateUrl: './sesiones.html',
   styleUrl: './sesiones.scss'
 })
 export class Sesiones {
+  private readonly authService = inject(AuthService);
   private readonly sesionesService = inject(SesionesService);
   private readonly embajadoresService = inject(EmbajadoresService);
   private readonly destroyRef = inject(DestroyRef);
@@ -32,6 +35,8 @@ export class Sesiones {
   readonly filtroAlumnosMax = signal<number | null>(null);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly success = signal<string | null>(null);
+  readonly sessionOverrides = signal<Record<string, Partial<Sesion>>>({});
 
   readonly estados = ['Pendiente', 'Realizada', 'Cancelada'];
   readonly sesiones = signal<Sesion[]>([]);
@@ -92,7 +97,35 @@ export class Sesiones {
         this.embajadores.set(embajadoresResult.items);
         this.loading.set(false);
       });
+
+    this.sesionesService.getSessionWorkflow()
+      .pipe(
+        tap(actions => {
+          const mapped = Object.fromEntries(Object.entries(actions).map(([key, value]) => [key, {
+            estado: value.Status,
+            embajadorAsignadoId: value.AmbassadorAssignedId ?? null,
+          }]));
+          this.sessionOverrides.update(current => ({ ...current, ...mapped }));
+        }),
+        catchError(() => of(null))
+      )
+      .subscribe();
   }
+
+  readonly sesionesBase = computed(() => this.sesiones().map(session => ({
+    ...session,
+    ...(this.sessionOverrides()[session.id] ?? {})
+  })));
+
+  readonly resumen = computed(() => {
+    const sesiones = this.sesionesBase();
+    return {
+      total: sesiones.length,
+      pendientes: sesiones.filter(item => item.estado === 'Pendiente').length,
+      confirmadas: sesiones.filter(item => item.estado === 'Confirmada').length,
+      canceladas: sesiones.filter(item => item.estado === 'Cancelada').length,
+    };
+  });
 
   readonly sesionesFiltradas = computed(() => {
     const centro = this.filtroCentro();
@@ -102,7 +135,7 @@ export class Sesiones {
     const min = this.filtroAlumnosMin();
     const max = this.filtroAlumnosMax();
 
-    return this.sesiones().filter(s => {
+    return this.sesionesBase().filter(s => {
       const centroMatch = centro ? s.centro.toLowerCase().includes(centro.toLowerCase()) : true;
       const fechaMatch = fecha ? s.fecha === fecha : true;
       const categoriaMatch = categoria ? s.categoria === categoria : true;
@@ -116,6 +149,78 @@ export class Sesiones {
     if (!embajadorId) return '';
     return this.embajadores().find(e => e.id === embajadorId)?.nombre ?? '';
   }
+
+  canSelfAssign(): boolean {
+    return this.authService.hasRole(['embajador', 'colaborador']);
+  }
+
+  canManageSessions(): boolean {
+    return this.authService.hasRole(['superadmin', 'staff', 'coordinador']);
+  }
+
+  asignarmeSesion(id: string) {
+    const ownEmbajador = this.resolveCurrentEmbajador();
+    if (!ownEmbajador) {
+      this.success.set('No se encontró un perfil Ambassador asociado a tu usuario actual.');
+      return;
+    }
+
+    this.patchSession(id, {
+      embajadorAsignadoId: ownEmbajador.id,
+      estado: 'Confirmada'
+    }, 'Te has asignado la sesión en local para el MVP.');
+  }
+
+  liberarSesion(id: string) {
+    this.patchSession(id, {
+      embajadorAsignadoId: null,
+      estado: 'Pendiente'
+    }, 'La sesión vuelve a estado pendiente en local para el MVP.');
+  }
+
+  confirmarSesion(id: string) {
+    this.patchSession(id, { estado: 'Confirmada' }, 'Sesión marcada como confirmada en local para el MVP.');
+  }
+
+  cancelarSesion(id: string) {
+    this.patchSession(id, { estado: 'Cancelada' }, 'Sesión marcada como cancelada en local para el MVP.');
+  }
+
+  private patchSession(id: string, patch: Partial<Sesion>, successMessage: string) {
+    this.sesionesService.updateSessionWorkflow(id, {
+      status: patch.estado,
+      ambassadorAssignedId: patch.embajadorAsignadoId ?? null,
+    })
+      .pipe(
+        tap(() => {
+          this.sessionOverrides.update(current => ({
+            ...current,
+            [id]: {
+              ...(current[id] ?? {}),
+              ...patch,
+            }
+          }));
+          this.success.set(successMessage);
+          this.error.set(null);
+        }),
+        catchError(() => {
+          this.error.set('No se pudo guardar el estado de la sesión en backend.');
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
+
+  private resolveCurrentEmbajador(): Embajador | null {
+    const userEmail = this.authService.user()?.email?.toLowerCase();
+    if (!userEmail) {
+      return this.embajadores()[0] ?? null;
+    }
+
+    return this.embajadores().find(item => item.email.toLowerCase() === userEmail) ?? this.embajadores()[0] ?? null;
+  }
+
 }
 
 

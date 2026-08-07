@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Services;
 
 namespace TechRiders.Api.Controllers;
 
@@ -10,10 +11,19 @@ namespace TechRiders.Api.Controllers;
 public class EngagementController : ControllerBase
 {
     private readonly ILogger<EngagementController> _logger;
+    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
 
-    public EngagementController(ILogger<EngagementController> logger)
+    private static readonly HashSet<string> AllowedRequestTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "member",
+        "ambassador",
+        "session"
+    };
+
+    public EngagementController(ILogger<EngagementController> logger, IMvpRuntimeStateStore mvpRuntimeStateStore)
     {
         _logger = logger;
+        this.mvpRuntimeStateStore = mvpRuntimeStateStore;
     }
 
     [HttpPost("contact")]
@@ -49,6 +59,11 @@ public class EngagementController : ControllerBase
     }
 
     [HttpPost("join")]
+    [HttpPost("join/member")]
+    [HttpPost("join/ambassador")]
+    [HttpPost("join/session")]
+    [HttpPost("sessions/request")]
+    [HttpPost("ambassadors/apply")]
     [HttpPost("solicitudes/candidato")]
     [HttpPost("solicitudes/centro")]
     [AllowAnonymous]
@@ -61,8 +76,56 @@ public class EngagementController : ControllerBase
             return ValidationProblem(ModelState);
         }
 
-        _logger.LogInformation("Join request received from {Name} as {Role}", request.Name, request.Role);
-        return Accepted(new { success = true, message = "Join request received" });
+        if (!AllowedRequestTypes.Contains(request.RequestType))
+        {
+            ModelState.AddModelError(nameof(request.RequestType), "RequestType must be member, ambassador or session.");
+            return ValidationProblem(ModelState);
+        }
+
+        _logger.LogInformation(
+            "Public intake request received from {Name}<{Email}>. Type: {RequestType}; CommunityRole: {CommunityRole}; Audience: {Audience}",
+            request.Name,
+            request.Email,
+            request.RequestType,
+            request.CommunityRole,
+            request.Audience);
+
+        if (string.Equals(request.RequestType, "member", StringComparison.OrdinalIgnoreCase))
+        {
+            mvpRuntimeStateStore.UpsertMemberProfile(request.Email, new MemberProfileState
+            {
+                Name = request.Name,
+                Email = request.Email,
+                Bio = request.Motivation,
+                Interests = request.Audience ?? string.Empty,
+                Audience = request.Audience ?? "junior",
+                CommunityRole = request.CommunityRole,
+                Organization = request.Organization ?? string.Empty,
+            });
+        }
+
+        if (string.Equals(request.RequestType, "ambassador", StringComparison.OrdinalIgnoreCase))
+        {
+            mvpRuntimeStateStore.UpsertAmbassadorPortal(request.Email, new AmbassadorPortalState
+            {
+                Email = request.Email,
+                Bio = request.Motivation,
+                Specialties = string.Join(" · ", new[] { request.Audience, request.Organization }.Where(value => !string.IsNullOrWhiteSpace(value))),
+                Availability = "Pendiente de completar por el ambassador en intranet",
+            });
+        }
+
+        return Accepted(new
+        {
+            success = true,
+            message = request.RequestType switch
+            {
+                "member" => "Member application received",
+                "ambassador" => "Ambassador application received",
+                "session" => "Session request received",
+                _ => "Request received"
+            }
+        });
     }
 }
 
@@ -105,11 +168,24 @@ public sealed class JoinRequest
     public string Email { get; set; } = string.Empty;
 
     [Required]
+    [StringLength(20)]
+    public string RequestType { get; set; } = string.Empty;
+
+    [Required]
     [StringLength(50)]
-    public string Role { get; set; } = string.Empty;
+    public string CommunityRole { get; set; } = string.Empty;
+
+    [StringLength(80)]
+    public string? Audience { get; set; }
 
     [StringLength(200)]
     public string? Organization { get; set; }
+
+    [StringLength(150)]
+    public string? SessionTopic { get; set; }
+
+    [StringLength(80)]
+    public string? SessionFormat { get; set; }
 
     [Required]
     [StringLength(2000)]

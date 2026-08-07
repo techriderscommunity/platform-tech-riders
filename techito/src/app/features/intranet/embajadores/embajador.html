@@ -1,72 +1,156 @@
-<div class="embajador-dashboard">
-    <div class="embajador-header">
-        <h1>Embajadores activos</h1>
-        <div class="embajador-filtros">
-                        <app-ui-text-field
-                            label="Buscar"
-                            type="text"
-                            name="search-embajador"
-                            placeholder="Buscar por nombre..."
-                            [value]="searchName()"
-                            (valueChange)="searchName.set($event)"
-                        ></app-ui-text-field>
-                        <app-ui-select
-                            label="Estado"
-                            [options]="estadoOptions"
-                            [value]="searchStatus()"
-                            (valueChange)="searchStatus.set($event)"
-                        ></app-ui-select>
-                        <app-ui-button (click)="addEmbajador()" class="add-btn">Añadir nuevo embajador</app-ui-button>
+<div class="embajador-portal">
+    <header class="embajador-header">
+        <div>
+            <p class="embajador-eyebrow">Portal Ambassador · MVP</p>
+            <h1>Mi espacio como Ambassador</h1>
+            <p class="embajador-subtitle">Perfil, disponibilidad, sesiones pendientes, sesiones asignadas e histórico básico en una sola vista.</p>
         </div>
-    </div>
+
+        <div class="embajador-filtros">
+            <app-ui-text-field
+                label="Buscar ambassador"
+                type="text"
+                name="search-embajador"
+                placeholder="Buscar por nombre..."
+                [value]="searchName()"
+                (valueChange)="searchName.set($event)"
+            ></app-ui-text-field>
+
+            <app-ui-select
+                label="Estado"
+                [options]="estadoOptions"
+                [value]="searchStatus()"
+                (valueChange)="searchStatus.set($event)"
+            ></app-ui-select>
+
+            <app-ui-select
+                label="Ambassador activo"
+                [options]="ambassadorOptions()"
+                [value]="selectedEmbajadorId()"
+                (valueChange)="seleccionarEmbajador($event)"
+            ></app-ui-select>
+        </div>
+    </header>
 
     @if (loading()) {
-    <p>Cargando embajadores...</p>
-    }
-    @if (error()) {
-    <p>{{ error() }}</p>
+        <p class="status-message">Cargando portal ambassador...</p>
     }
 
-    <div class="embajador-list">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Telefóno</th>
-                    <th>Categoría</th>
-                    <th>Sesiones</th>
-                    <th>Ultm. 3 Meses</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (embajador of embajadoresFiltrados(); track embajador.email) {
-                <tr>
-                    <td>{{ embajador.nombre }}</td>
-                    <td>{{ embajador.email }}</td>
-                    <td>{{ embajador.telefono || '-' }}</td>
-                    <td>{{ embajador.categoria }}</td>
-                    <td>{{ embajador.totalSesiones }}</td>
-                    <td>{{ formatUltimaActividad(embajador.ultimaActividad) }}</td>
-                    <td [ngClass]="{'estado-activo': normalizarEstado(embajador.estado) === 'activo','estado-pendiente': normalizarEstado(embajador.estado) === 'pendiente','estado-desactivado': normalizarEstado(embajador.estado) === 'desactivado'}">{{ embajador.estado }}</td>
-                    <td>
-                        @if (normalizarEstado(embajador.estado) === 'pendiente') {
-                            <app-ui-button type="button" variant="secondary" title="Activar" (click)="activarEmbajador(embajador.nombre)">✔️</app-ui-button>
-                        } @else {
-                            @if (normalizarEstado(embajador.estado) === 'activo') {
-                            <app-ui-button type="button" variant="secondary" title="Editar" (click)="editarEmbajador(embajador.nombre)">✏️</app-ui-button>
-                            <app-ui-button type="button" variant="secondary" title="Dar de baja" (click)="darDeBajaEmbajador(embajador.nombre)" class="icon-baja">❌</app-ui-button>
-                            }
-                            @if (normalizarEstado(embajador.estado) === 'desactivado') {
-                            <app-ui-button type="button" variant="secondary" title="Reactivar" (click)="reactivarEmbajador(embajador.nombre)">🔄</app-ui-button>
-                            }
-                        }
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+    @if (error()) {
+        <p class="status-message status-message-error">{{ error() }}</p>
+    }
+
+    @if (ambassadorActual(); as ambassador) {
+        <section class="portal-grid">
+            <article class="portal-card portal-card-highlight">
+                <div class="portal-card-header">
+                    <div>
+                        <h2>{{ ambassador.nombre }}</h2>
+                        <p>{{ ambassador.email }}</p>
+                    </div>
+                    <span
+                        class="estado-badge"
+                        [ngClass]="{
+                            'estado-activo': normalizarEstado(ambassador.estado) === 'activo',
+                            'estado-pendiente': normalizarEstado(ambassador.estado) === 'pendiente',
+                            'estado-desactivado': normalizarEstado(ambassador.estado) === 'desactivado'
+                        }"
+                    >
+                        {{ ambassador.estado }}
+                    </span>
+                </div>
+
+                <div class="profile-meta">
+                    <p><strong>Categoría:</strong> {{ ambassador.categoria }}</p>
+                    <p><strong>Teléfono:</strong> {{ ambassador.telefono || '-' }}</p>
+                    <p><strong>Última actividad:</strong> {{ formatUltimaActividad(ambassador.ultimaActividad) }}</p>
+                </div>
+            </article>
+
+            <article class="portal-card">
+                <h2>Mi perfil Ambassador</h2>
+                <div class="portal-form">
+                    <app-ui-textarea
+                        label="Bio interna"
+                        name="bio"
+                        [rows]="4"
+                        [value]="bio()"
+                        (valueChange)="updateBio($event)"
+                    ></app-ui-textarea>
+
+                    <app-ui-textarea
+                        label="Especialidades"
+                        name="especialidades"
+                        [rows]="3"
+                        [value]="especialidades()"
+                        (valueChange)="updateEspecialidades($event)"
+                    ></app-ui-textarea>
+                </div>
+            </article>
+
+            <article class="portal-card">
+                <h2>Gestionar disponibilidad</h2>
+                <div class="portal-form">
+                    <app-ui-select
+                        label="Capacidad semanal"
+                        [options]="availabilityOptions"
+                        [value]="disponibilidad()"
+                        (valueChange)="updateDisponibilidad($event)"
+                    ></app-ui-select>
+
+                    <app-ui-textarea
+                        label="Detalle de disponibilidad"
+                        name="disponibilidad"
+                        [rows]="4"
+                        [value]="disponibilidad()"
+                        (valueChange)="updateDisponibilidad($event)"
+                    ></app-ui-textarea>
+
+                    <app-ui-button type="button" (click)="guardarPortalAmbassador()">Guardar cambios</app-ui-button>
+                    @if (success()) {
+                        <p class="status-message status-message-success">{{ success() }}</p>
+                    }
+                </div>
+            </article>
+
+            <article class="portal-card">
+                <h2>Sesiones pendientes de respuesta</h2>
+                <ul class="portal-list">
+                    @for (sesion of sesionesPendientes(); track sesion.titulo) {
+                        <li>
+                            <strong>{{ sesion.titulo }}</strong>
+                            <span>{{ sesion.origen }}</span>
+                            <time>{{ sesion.fecha | date:'dd/MM/yyyy' }}</time>
+                        </li>
+                    }
+                </ul>
+            </article>
+
+            <article class="portal-card">
+                <h2>Mis sesiones asignadas</h2>
+                <ul class="portal-list">
+                    @for (sesion of sesionesAsignadas(); track sesion.titulo) {
+                        <li>
+                            <strong>{{ sesion.titulo }}</strong>
+                            <span>{{ sesion.estado }}</span>
+                            <time>{{ sesion.fecha | date:'dd/MM/yyyy' }}</time>
+                        </li>
+                    }
+                </ul>
+            </article>
+
+            <article class="portal-card">
+                <h2>Histórico de participación</h2>
+                <ul class="portal-list">
+                    @for (entrada of historicoParticipacion(); track entrada.titulo) {
+                        <li>
+                            <strong>{{ entrada.titulo }}</strong>
+                            <span>{{ entrada.impacto }}</span>
+                            <time>{{ entrada.fecha | date:'dd/MM/yyyy' }}</time>
+                        </li>
+                    }
+                </ul>
+            </article>
+        </section>
+    }
 </div>

@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '@env/environment';
 
 export type AppRole =
+  | 'member'
   | 'admin'
   | 'superadmin'
   | 'staff'
@@ -73,6 +74,7 @@ export class AuthService {
     if (this.hasRole('staff') || this.hasRole('coordinador')) return '/intranet/staff';
     if (this.hasRole('admin')) return '/intranet/admin';
     if (this.hasRole('empresa')) return '/intranet/empresa';
+    if (this.hasRole(['embajador', 'colaborador'])) return '/intranet/ambassador/portal';
     return '/intranet/junior';
   }
 
@@ -116,7 +118,7 @@ export class AuthService {
   }
 
   private resolvePrimaryRole(roles: AppRole[]): AppRole {
-    const priority: AppRole[] = ['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'colaborador', 'embajador', 'young-riders', 'centro'];
+    const priority: AppRole[] = ['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'colaborador', 'embajador', 'member', 'young-riders', 'centro'];
     const matched = priority.find(role => roles.includes(role));
     return matched ?? 'junior';
   }

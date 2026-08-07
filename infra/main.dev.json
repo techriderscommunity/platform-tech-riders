@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "spaincentral"
+    },
+    "workload": {
+      "value": "techriders"
+    },
+    "environment": {
+      "value": "dev"
+    },
+    "tags": {
+      "value": {
+        "Owner": "tech-riders",
+        "CostCenter": "platform",
+        "ManagedBy": "bicep-avm"
+      }
+    },
+    "logAnalyticsWorkspaceName": {
+      "value": "log-techriders-dev"
+    },
+    "applicationInsightsName": {
+      "value": "appi-techriders-dev"
+    },
+    "appServicePlanName": {
+      "value": "asp-techriders-dev"
+    },
+    "webAppName": {
+      "value": "app-techriders-dev"
+    },
+    "sqlServerName": {
+      "value": "sql-techriders-dev"
+    },
+    "sqlDatabaseName": {
+      "value": "sqldb-techriders-dev"
+    },
+    "keyVaultName": {
+      "value": "kv-techriders-dev"
+    },
+    "sqlAdministratorLogin": {
+      "value": "sqladmintr"
+    },
+    "sqlAdministratorPassword": {
+      "value": "ReplaceMe_123456789!"
+    },
+    "appServicePlanSkuName": {
+      "value": "B1"
+    },
+    "sqlConnectionStringSecretName": {
+      "value": "SqlConnectionString"
+    },
+    "sqlAdminPasswordSecretName": {
+      "value": "SqlAdminPassword"
+    }
+  }
+}

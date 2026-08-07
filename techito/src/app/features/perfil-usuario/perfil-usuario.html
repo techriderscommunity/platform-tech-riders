@@ -1,59 +1,49 @@
 <section class="perfil-area">
-<h2>Área privada de Tech Rider</h2>
-<div class="perfil-datos">
-<button type="button" class="perfil-foto-trigger" (click)="abrirModalFoto()" aria-label="Cambiar foto de perfil" title="Cambiar foto">
-<img [src]="foto()" alt="Foto de perfil" class="perfil-foto" />
-</button>
-<div class="perfil-info">
-<app-ui-text-field label="Nombre" type="text" name="perfil-nombre" [value]="nombre()" (valueChange)="nombre.set($event)"></app-ui-text-field>
-<app-ui-text-field label="Email" type="email" name="perfil-email" [value]="email()" (valueChange)="email.set($event)"></app-ui-text-field>
-<app-ui-textarea label="Feedback visible" name="perfil-feedback" [rows]="2" [value]="feedback()" (valueChange)="feedback.set($event)"></app-ui-textarea>
-<!-- El botón de cambiar foto se elimina, ahora se hace pinchando en la foto -->
-<div class="perfil-actions">
-<button (click)="cambiarPassword()">Cambiar contraseña</button>
-<button (click)="guardarCambios()">Guardar cambios</button>
-</div>
-</div>
-</div>
-<!-- Modal real para subir foto -->
-@if (mostrarModalFoto()) {
-<div class="modal-foto">
-<div class="modal-foto-content">
-<h3>Cambiar foto de perfil</h3>
-<app-ui-file-input label="Selecciona imagen" accept="image/*" (fileSelected)="onFotoSeleccionadaArchivo($event)"></app-ui-file-input>
-@if (fotoPreview()) {
-<div class="foto-preview">
-<img [src]="fotoPreview()" alt="Preview" />
-</div>
-}
-<button (click)="guardarFoto()">Guardar</button>
-<button (click)="cerrarModalFoto()">Cancelar</button>
-</div>
-</div>
-}
-<div class="perfil-charlas">
-<h3>Mis charlas</h3>
-<ul>
-@for (charla of charlas(); track charla.titulo) {
-<li>
-<strong>{{ charla.titulo }}:</strong>
-{{ charla.estado === 'impartida' ? 'Impartida' : 'Pendiente' }} el {{ charla.fecha }} en {{ charla.centro }}
-<span class="charla-estado" [ngClass]="charla.estado">{{ charla.estado | titlecase }}</span>
-@if (charla.valoracion) {
-<span class="charla-valoracion">Valoración: {{ '⭐'.repeat(charla.valoracion) }}</span>
-}
-</li>
-}
-</ul>
-</div>
-<div class="perfil-valoraciones">
-<h3>Valoraciones de profesores</h3>
-<ul>
-@for (val of valoraciones(); track val.centro) {
-<li>
-<strong>{{ val.centro }}:</strong> "{{ val.texto }}"
-</li>
-}
-</ul>
-</div>
+	<header class="perfil-header">
+		<p class="perfil-eyebrow">Portal Member · MVP</p>
+		<h2>Mi perfil Tech Riders</h2>
+		<p class="perfil-intro">Gestiona tu información base, tus intereses y tu relación con la comunidad desde un único punto.</p>
+	</header>
+
+	<div class="perfil-grid">
+		<article class="perfil-card perfil-card-highlight">
+			<h3>{{ currentUserName() }}</h3>
+			<p><strong>Email:</strong> {{ email() || 'pendiente' }}</p>
+			<p><strong>Roles actuales:</strong> {{ currentRoles().join(', ') || communityRole() }}</p>
+			<p><strong>Rol comunidad MVP:</strong> {{ communityRole() }}</p>
+		</article>
+
+		<article class="perfil-card">
+			<h3>Mi perfil</h3>
+			<div class="perfil-form">
+				<app-ui-text-field label="Nombre" type="text" name="perfil-nombre" [value]="nombre()" (valueChange)="updateNombre($event)"></app-ui-text-field>
+				<app-ui-text-field label="Email" type="email" name="perfil-email" [value]="email()" (valueChange)="updateEmail($event)"></app-ui-text-field>
+				<app-ui-text-field label="Centro, empresa u organización" type="text" name="perfil-organizacion" [value]="organizacion()" (valueChange)="updateOrganizacion($event)"></app-ui-text-field>
+				<app-ui-select label="Perfil funcional" [options]="audienceOptions" [value]="audience()" (valueChange)="updateAudience($event)"></app-ui-select>
+				<app-ui-textarea label="Bio / presentación" name="perfil-bio" [rows]="4" [value]="bio()" (valueChange)="updateBio($event)"></app-ui-textarea>
+				<app-ui-textarea label="Mis intereses" name="perfil-intereses" [rows]="3" [value]="intereses()" (valueChange)="updateIntereses($event)"></app-ui-textarea>
+
+				<div class="perfil-actions">
+					<app-ui-button type="button" (click)="guardarCambios()">Guardar perfil</app-ui-button>
+					<a routerLink="/join" class="perfil-link-action">Solicitar ser Ambassador</a>
+				</div>
+
+				@if (success()) {
+					<p class="status-message status-message-success">{{ success() }}</p>
+				}
+			</div>
+		</article>
+
+		<article class="perfil-card">
+			<h3>Próximas actividades</h3>
+			<ul class="perfil-list">
+				@for (item of proximasActividades(); track item.titulo) {
+					<li>
+						<strong>{{ item.titulo }}</strong>
+						<span>{{ item.detalle }}</span>
+					</li>
+				}
+			</ul>
+		</article>
+	</div>
 </section>

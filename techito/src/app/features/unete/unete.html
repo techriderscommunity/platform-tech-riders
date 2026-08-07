@@ -1,123 +1,134 @@
 <section class="unete-hero">
   <div class="unete-hero-content">
-    <h1>🚀 ¡Únete al movimiento Tech!</h1>
-    <p>¿Eres un todoterreno de la tecnología o diriges un centro educativo? ¡Tenemos un lugar para ti!</p>
+    <h1>Únete a la comunidad Tech Riders</h1>
+    <p>El MVP de Tech Riders empieza aquí: alta como miembro, solicitud Ambassador y solicitud de sesión, con el mismo lenguaje visual del producto.</p>
   </div>
 </section>
 
-<!-- TABS: CANDIDATOS vs CENTROS -->
+<!-- TABS: FLUJOS MVP -->
 <section class="unete-tabs">
   <button
     class="tab-btn"
-    [class.activo]="rolActivo() === 'candidato'"
-    (click)="seleccionarRol('candidato')"
+    [class.activo]="flujoActivo() === 'member'"
+    (click)="seleccionarFlujo('member')"
+    type="button"
   >
-    👩‍💻 Candidato / Voluntario
+    Alta miembro
   </button>
   <button
     class="tab-btn"
-    [class.activo]="rolActivo() === 'centro'"
-    (click)="seleccionarRol('centro')"
+    [class.activo]="flujoActivo() === 'ambassador'"
+    (click)="seleccionarFlujo('ambassador')"
+    type="button"
   >
-    🎓 Centro Formador
+    Solicitud Ambassador
+  </button>
+  <button
+    class="tab-btn"
+    [class.activo]="flujoActivo() === 'session'"
+    (click)="seleccionarFlujo('session')"
+    type="button"
+  >
+    Solicitud de sesión
   </button>
 </section>
 
-<!-- SECCIÓN CANDIDATOS -->
-@if (rolActivo() === 'candidato') {
-  <section class="rol-section candidato-section" [@fadeIn]>
+@if (flujoActivo() === 'member') {
+  <section class="rol-section">
     <div class="rol-content">
-      <h2>¿Por qué ser Candidato / Voluntario?</h2>
+      <h2>Alta como miembro Tech Riders</h2>
       <ul class="rol-list">
-        <li>✨ Compartir tu pasión por la tecnología e inspirar a futuras generaciones</li>
-        <li>🤝 Conocer una comunidad tech increíble (gente con flow, de verdad)</li>
-        <li>📚 Acceso a recursos, talleres y eventos exclusivos</li>
-        <li>🎯 Ayudarte a crecer profesional y personalmente</li>
-        <li>🌍 Colaborar en misiones que tienen impacto real</li>
-        <li>☕ ¡Y mil cosas más que descubrirás en el camino!</li>
-      </ul>
-    </div>
-
-    <div class="rol-carrusel">
-      <h3>Mira quiénes ya están en la tribu 📸</h3>
-      <div class="carrusel">
-        <button class="carrusel-btn carrusel-btn-left" aria-label="Anterior" (click)="scrollCarrusel(-1)">&#8592;</button>
-        <div class="carrusel-track" #carruselTrack>
-          <img src="../../assets/Tetxito/techito_bici.jpg" alt="Tech Riders Bici" />
-          <img src="../../assets/Tetxito/techito_montania.jpg" alt="Tech Riders Montaña" />
-          <img src="../../assets/Tetxito/techito_cervezas.jpg" alt="Tech Riders Cervezas" />
-          <img src="../../assets/Tetxito/techito_helado.jpg" alt="Tech Riders Helado" />
-        </div>
-        <button class="carrusel-btn carrusel-btn-right" aria-label="Siguiente" (click)="scrollCarrusel(1)">&#8594;</button>
-      </div>
-    </div>
-  </section>
-}
-
-<!-- SECCIÓN CENTROS -->
-@if (rolActivo() === 'centro') {
-  <section class="rol-section centro-section" [@fadeIn]>
-    <div class="rol-content">
-      <h2>¿Por qué colaborar con Tech Riders?</h2>
-      <ul class="rol-list">
-        <li>🔬 Acerca la tecnología real y actual a tu alumnado</li>
-        <li>💡 Despierta vocaciones STEM en tus estudiantes</li>
-        <li>👨‍💼 Conecta con profesionales y referentes del sector tech</li>
-        <li>🎓 Fomenta el aprendizaje práctico y colaborativo</li>
-        <li>🏆 Destaca tu centro por estar a la vanguardia de la innovación</li>
-        <li>🎉 ¡Es totalmente gratis! (sí, leíste bien 👀)</li>
+        <li>Conecta con una comunidad tecnológica real y activa.</li>
+        <li>Accede a sesiones, eventos y contenidos compartidos por la comunidad.</li>
+        <li>Empieza como member y evoluciona hacia otros roles cuando tenga sentido.</li>
+        <li>Mantén un perfil vivo con tus intereses y tu manera de participar.</li>
       </ul>
     </div>
   </section>
 }
+
+@if (flujoActivo() === 'ambassador') {
+  <section class="rol-section">
+    <div class="rol-content">
+      <h2>Solicitud para ser Ambassador</h2>
+      <ul class="rol-list">
+        <li>Comparte experiencia real con estudiantes, miembros y comunidad.</li>
+        <li>Participa en sesiones, actividades y mentoring cuando encaje contigo.</li>
+        <li>Declara tu disponibilidad y tus áreas de conocimiento.</li>
+        <li>Forma parte del motor que extiende la comunidad Tech Riders.</li>
+      </ul>
+    </div>
+  </section>
+}
+
+@if (flujoActivo() === 'session') {
+  <section class="rol-section">
+    <div class="rol-content">
+      <h2>Solicitud de sesión</h2>
+      <ul class="rol-list">
+        <li>Solicita una sesión para tu centro, grupo o colectivo.</li>
+        <li>Indica tema, formato y contexto para encajar mejor la propuesta.</li>
+        <li>El equipo Staff revisará la petición y propondrá siguiente paso.</li>
+        <li>Este flujo forma parte del core del MVP y sustituye la gestión ad hoc.</li>
+      </ul>
+    </div>
+  </section>
+}
+
+<section class="rol-carrusel">
+  <h3>La comunidad en movimiento</h3>
+  <div class="carrusel">
+    <button class="carrusel-btn carrusel-btn-left" aria-label="Anterior" (click)="scrollCarrusel(-1)" type="button">&#8592;</button>
+    <div class="carrusel-track" #carruselTrack>
+      <img src="../../assets/Tetxito/techito_bici.jpg" alt="Comunidad Tech Riders en actividad exterior" />
+      <img src="../../assets/Tetxito/techito_montania.jpg" alt="Tech Riders compartiendo experiencias" />
+      <img src="../../assets/Tetxito/techito_cervezas.jpg" alt="Networking informal de la comunidad" />
+      <img src="../../assets/Tetxito/techito_helado.jpg" alt="Celebración y vida comunitaria en Tech Riders" />
+    </div>
+    <button class="carrusel-btn carrusel-btn-right" aria-label="Siguiente" (click)="scrollCarrusel(1)" type="button">&#8594;</button>
+  </div>
+</section>
 
 <!-- FEEDBACK DE EMBAJADORES Y CENTROS -->
 <section class="feedback-section">
-  <h2>Lo que dicen nuestros colaboradores 💬</h2>
-  <p class="feedback-intro">Historias reales de gente como tú que ya es parte de Tech Riders</p>
+  <h2>Lo que mueve a la comunidad</h2>
+  <p class="feedback-intro">Tres motivos recurrentes detrás del MVP: pertenencia, contribución y conexión real con el ecosistema tech.</p>
 
   <div class="feedback-grid">
     <div class="feedback-card">
-      <div class="feedback-avatar">👩‍💻</div>
-      <strong>Laura Martínez</strong>
-      <span class="feedback-rol">Candidata 2024</span>
-      <p>"Ser candidata me ayudó a crecer profesional y conocer gente increíble. ¡Mejor decisión del año!"</p>
+      <div class="feedback-avatar">🤝</div>
+      <strong>Member</strong>
+      <span class="feedback-rol">Alta y participación</span>
+      <p>Entrar en Tech Riders debe ser sencillo, claro y accionable desde la primera visita.</p>
     </div>
 
     <div class="feedback-card">
-      <div class="feedback-avatar">🧑‍💼</div>
-      <strong>Pablo Gómez</strong>
-      <span class="feedback-rol">Embajador & Mentor</span>
-      <p>"La comunidad de Tech Riders siempre está dispuesta a apoyar. La energía aquí es insuperable."</p>
-    </div>
-
-    <div class="feedback-card">
-      <div class="feedback-avatar">📢</div>
-      <strong>Ana Ruiz</strong>
-      <span class="feedback-rol">Speaker & Candidata</span>
-      <p>"Participar en Tech Riders me abrió puertas que no sabía que existían. ¡Gracias, tribu!"</p>
+      <div class="feedback-avatar">🎤</div>
+      <strong>Ambassador</strong>
+      <span class="feedback-rol">Contribución activa</span>
+      <p>El rol Ambassador debe tener una puerta de entrada visible y diferenciada.</p>
     </div>
 
     <div class="feedback-card">
       <div class="feedback-avatar">🏫</div>
-      <strong>Centro Educativo X</strong>
-      <span class="feedback-rol">Colaborador 2023</span>
-      <p>"Las sesiones de Tech Riders fueron la bomba. Nuestros estudiantes todavía hablan de ello 🚀"</p>
+      <strong>Solicitud de sesión</strong>
+      <span class="feedback-rol">Centros y colectivos</span>
+      <p>Centros, profesorado y entidades deben poder solicitar actividad sin fricción ni ambigüedad.</p>
     </div>
   </div>
 </section>
 
 <!-- PROCESO DE INSCRIPCIÓN -->
 <section class="proceso-section">
-  <h2>Cómo funciona la inscripción 📋</h2>
-  <p class="proceso-intro">3 pasos simples para que seas parte de la revolución</p>
+  <h2>Cómo funciona el flujo MVP</h2>
+  <p class="proceso-intro">Un único punto de entrada, tres recorridos funcionales y revisión humana cuando toca.</p>
 
   <div class="pasos-container">
     <div class="paso">
       <div class="paso-numero">1️⃣</div>
       <div class="paso-content">
         <h3>Rellena la solicitud</h3>
-        <p>Cuéntanos quién eres, qué haces y por qué quieres colaborar con nosotros. ¡Sin rodeos!</p>
+        <p>Selecciona el flujo correcto y aporta el contexto mínimo necesario para que el equipo pueda actuar.</p>
       </div>
     </div>
 
@@ -127,7 +138,7 @@
       <div class="paso-numero">2️⃣</div>
       <div class="paso-content">
         <h3>El staff revisa (en serio)</h3>
-        <p>Alguien del equipo Tech Riders analizará tu solicitud y se asegurará de que encajas con nosotros.</p>
+        <p>El equipo revisa el caso y lo enruta: alta, solicitud Ambassador o petición de sesión.</p>
       </div>
     </div>
 
@@ -136,8 +147,8 @@
     <div class="paso">
       <div class="paso-numero">3️⃣</div>
       <div class="paso-content">
-        <h3>¡Te damos la bienvenida! 🎉</h3>
-        <p>Te llegará un correo para completar tu registro y empezar a colaborar. ¡Bienvenido a la tribu!</p>
+        <h3>Siguiente acción clara</h3>
+        <p>Recibirás confirmación y el siguiente paso operativo: activación, validación o propuesta de coordinación.</p>
       </div>
     </div>
   </div>
@@ -145,9 +156,16 @@
 
 <!-- FORMULARIO UNIFICADO -->
 <section class="solicitud-form-section">
-  <h2>¡Vamos, cuéntanos! 📝</h2>
+  <h2>Cuéntanos qué necesitas</h2>
 
   <form class="solicitud-form" (submit)="onSubmit($event)">
+    <app-ui-select
+      label="Tipo de solicitud"
+      [options]="intakeOptions"
+      [value]="formulario().requestType"
+      (valueChange)="seleccionarFlujoDesdeSelect($event)"
+    ></app-ui-select>
+
     <app-ui-text-field
       label="Nombre completo"
       type="text"
@@ -168,9 +186,16 @@
       [required]="true"
     ></app-ui-text-field>
 
-    @if (rolActivo() === 'centro') {
+    <app-ui-select
+      label="Tu perfil actual"
+      [options]="audienceOptions"
+      [value]="formulario().audience"
+      (valueChange)="updateAudience($event)"
+    ></app-ui-select>
+
+    @if (flujoActivo() === 'session') {
       <app-ui-text-field
-        label="Nombre de tu centro"
+        label="Centro, empresa o colectivo"
         type="text"
         name="organizacion"
         [value]="formulario().organizacion"
@@ -178,14 +203,44 @@
         placeholder="¿Cómo se llama tu centro?"
         [required]="true"
       ></app-ui-text-field>
+
+      <app-ui-text-field
+        label="Tema o necesidad de la sesión"
+        type="text"
+        name="sessionTopic"
+        [value]="formulario().sessionTopic"
+        (valueChange)="updateSessionTopic($event)"
+        placeholder="Ej. empleabilidad tech, introducción a cloud, orientación FP"
+        [required]="true"
+      ></app-ui-text-field>
+
+      <app-ui-select
+        label="Formato preferido"
+        [options]="[
+          { label: 'Talk', value: 'tech-talk' },
+          { label: 'Taller práctico', value: 'workshop' },
+          { label: 'Orientación', value: 'orientation' },
+          { label: 'Mesa redonda', value: 'panel' }
+        ]"
+        [value]="formulario().sessionFormat"
+        (valueChange)="updateSessionFormat($event)"
+      ></app-ui-select>
     }
 
     <app-ui-textarea
-      [label]="rolActivo() === 'candidato' ? '¿Por qué quieres colaborar con Tech Riders?' : '¿Qué esperas de una sesión con Tech Riders?'"
+      [label]="flujoActivo() === 'member'
+        ? '¿Por qué quieres unirte a Tech Riders?'
+        : flujoActivo() === 'ambassador'
+          ? '¿Qué puedes aportar como Ambassador?'
+          : 'Cuéntanos el contexto y el objetivo de la sesión'"
       name="motivacion"
       [value]="formulario().motivacion"
       (valueChange)="updateMotivacion($event)"
-      [placeholder]="rolActivo() === 'candidato' ? 'Cuéntanos tu historia, tus motivaciones, lo que sea...' : 'Qué tipo de sesión te interesa, nivel del alumnado, etc...'"
+      [placeholder]="flujoActivo() === 'member'
+        ? 'Tu motivación, intereses y cómo quieres participar en la comunidad'
+        : flujoActivo() === 'ambassador'
+          ? 'Experiencia, áreas de conocimiento, disponibilidad o tipo de contribución'
+          : 'Nivel del público, fechas orientativas, necesidades y resultado esperado'"
       [rows]="4"
       [required]="true"
     ></app-ui-textarea>
@@ -195,12 +250,17 @@
     }
 
     <app-ui-button type="submit" [disabled]="loading()">
-      {{ loading() ? '⏳ Enviando...' : '🚀 ¡Únete ya!' }}
+      {{ loading() ? 'Enviando...' : flujoActivo() === 'session' ? 'Solicitar sesión' : 'Enviar solicitud' }}
     </app-ui-button>
 
     @if (enviado()) {
       <div class="toaster toaster-exito">
-        ✨ ¡Solicitud enviada! Pronto nos ponemos en contacto. ¡Gracias por creer en Tech Riders! 🙌
+        {{ successMessage() }}
+        @if (flujoActivo() === 'ambassador') {
+          <div class="success-actions">
+            <app-ui-button type="button" variant="secondary" (click)="irAlPortalAmbassador()">Abrir portal Ambassador</app-ui-button>
+          </div>
+        }
       </div>
     }
   </form>
@@ -210,7 +270,7 @@
 <section class="cta-final">
   <div class="cta-content">
     <h2>¿Alguna duda?</h2>
-    <p>Si tienes preguntas sobre cómo colaborar con nosotros, escríbenos a través del formulario de contacto.</p>
-    <a routerLink="/contact" class="btn btn-primary">Ir a Contacto 📧</a>
+    <p>Si tu caso no encaja en estos tres flujos del MVP, usa el formulario de contacto y lo canalizamos manualmente.</p>
+    <a routerLink="/contact" class="btn btn-primary">Ir a contacto</a>
   </div>
 </section>

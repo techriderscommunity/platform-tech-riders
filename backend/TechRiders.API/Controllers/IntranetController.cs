@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Responses;
 using TechRiders.Application.Interfaces;
 
@@ -10,13 +12,167 @@ namespace TechRiders.Api.Controllers;
 [Produces("application/json")]
 public class IntranetController : ControllerBase
 {
+    private const string SessionWorkflowKey = "intranet-session-workflow";
+
     private readonly IIntranetService _intranetService;
     private readonly ILogger<IntranetController> _logger;
+    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
 
-    public IntranetController(IIntranetService intranetService, ILogger<IntranetController> logger)
+    public IntranetController(
+        IIntranetService intranetService,
+        ILogger<IntranetController> logger,
+        IMvpRuntimeStateStore mvpRuntimeStateStore)
     {
         _intranetService = intranetService ?? throw new ArgumentNullException(nameof(intranetService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        this.mvpRuntimeStateStore = mvpRuntimeStateStore ?? throw new ArgumentNullException(nameof(mvpRuntimeStateStore));
+    }
+
+    [HttpGet("perfil")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberProfileState))]
+    public IActionResult GetMemberProfile([FromQuery] string? userKey, [FromQuery] string? email)
+    {
+        var profile = mvpRuntimeStateStore.GetOrCreateMemberProfile(userKey ?? email ?? string.Empty, email);
+        return Ok(profile);
+    }
+
+    [HttpPut("perfil")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberProfileState))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SaveMemberProfile([FromBody] SaveMemberProfileRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var profile = new MemberProfileState
+        {
+            Name = request.Name,
+            Email = request.Email,
+            Bio = request.Bio,
+            Interests = request.Interests,
+            Audience = request.Audience,
+            CommunityRole = request.CommunityRole,
+            Organization = request.Organization ?? string.Empty,
+        };
+
+        mvpRuntimeStateStore.UpsertMemberProfile(request.UserKey ?? request.Email, profile);
+        return Ok(profile);
+    }
+
+    [HttpGet("ambassador-profile")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AmbassadorPortalState))]
+    public IActionResult GetAmbassadorPortal([FromQuery] string? userKey, [FromQuery] string? email)
+    {
+        var profile = mvpRuntimeStateStore.GetOrCreateAmbassadorPortal(userKey ?? email ?? string.Empty, email);
+        return Ok(profile);
+    }
+
+    [HttpPut("ambassador-profile")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AmbassadorPortalState))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SaveAmbassadorPortal([FromBody] SaveAmbassadorPortalRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var profile = new AmbassadorPortalState
+        {
+            Email = request.Email,
+            Bio = request.Bio,
+            Specialties = request.Specialties,
+            Availability = request.Availability,
+        };
+
+        mvpRuntimeStateStore.UpsertAmbassadorPortal(request.UserKey ?? request.Email, profile);
+        return Ok(profile);
+    }
+
+    [HttpGet("mis-categorias")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
+    public IActionResult GetMyCategories([FromQuery] string? userKey)
+    {
+        var categories = mvpRuntimeStateStore.GetUserCategories(userKey ?? string.Empty);
+        return Ok(categories);
+    }
+
+    [HttpPut("mis-categorias")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SaveMyCategories([FromBody] SaveCategoriesRequest request)
+    {
+        if (request.Categories.Count == 0)
+        {
+            return BadRequest(new { error = "At least one category is required." });
+        }
+
+        mvpRuntimeStateStore.UpsertUserCategories(request.UserKey ?? string.Empty, request.Categories);
+        return Ok(request.Categories);
+    }
+
+    [HttpPost("trazas")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult AddTrace([FromBody] SaveTraceRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        mvpRuntimeStateStore.AddTrace(new IntranetTraceEntry
+        {
+            Kind = request.Kind,
+            Route = request.Route,
+            Detail = request.Detail,
+        });
+
+        return Accepted(new { success = true });
+    }
+
+    [HttpGet("session-actions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDictionary<string, SessionActionState>))]
+    public IActionResult GetSessionActions([FromQuery] string? userKey)
+    {
+        var actions = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey);
+        return Ok(actions);
+    }
+
+    [HttpPut("session-actions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult SaveSessionActions([FromBody] SaveSessionActionsRequest request)
+    {
+        if (request.Actions.Count == 0)
+        {
+            return BadRequest(new { error = "At least one session action is required." });
+        }
+
+        var mappedActions = request.Actions.ToDictionary(
+            item => item.Key,
+            item => new SessionActionState
+            {
+                SessionId = item.Key,
+                Status = item.Value.Status,
+                AmbassadorAssignedId = item.Value.AmbassadorAssignedId,
+                UpdatedAt = DateTimeOffset.UtcNow,
+            },
+            StringComparer.OrdinalIgnoreCase);
+
+        mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, mappedActions);
+        return Ok(mappedActions);
     }
 
     [HttpGet("audit-logs")]
@@ -136,4 +292,96 @@ public class IntranetController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
         }
     }
+}
+
+public sealed class SaveMemberProfileRequest
+{
+    [StringLength(254)]
+    public string? UserKey { get; set; }
+
+    [Required]
+    [StringLength(150)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    [StringLength(254)]
+    public string Email { get; set; } = string.Empty;
+
+    [StringLength(2000)]
+    public string Bio { get; set; } = string.Empty;
+
+    [StringLength(500)]
+    public string Interests { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(80)]
+    public string Audience { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(50)]
+    public string CommunityRole { get; set; } = string.Empty;
+
+    [StringLength(200)]
+    public string? Organization { get; set; }
+}
+
+public sealed class SaveAmbassadorPortalRequest
+{
+    [StringLength(254)]
+    public string? UserKey { get; set; }
+
+    [Required]
+    [EmailAddress]
+    [StringLength(254)]
+    public string Email { get; set; } = string.Empty;
+
+    [StringLength(2000)]
+    public string Bio { get; set; } = string.Empty;
+
+    [StringLength(500)]
+    public string Specialties { get; set; } = string.Empty;
+
+    [StringLength(500)]
+    public string Availability { get; set; } = string.Empty;
+}
+
+public sealed class SaveCategoriesRequest
+{
+    [StringLength(254)]
+    public string? UserKey { get; set; }
+
+    public List<string> Categories { get; set; } = [];
+}
+
+public sealed class SaveTraceRequest
+{
+    [Required]
+    [StringLength(80)]
+    public string Kind { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(200)]
+    public string Route { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(200)]
+    public string Detail { get; set; } = string.Empty;
+}
+
+public sealed class SaveSessionActionsRequest
+{
+    [StringLength(254)]
+    public string? UserKey { get; set; }
+
+    public Dictionary<string, SaveSessionActionItem> Actions { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+}
+
+public sealed class SaveSessionActionItem
+{
+    [StringLength(50)]
+    public string? Status { get; set; }
+
+    [StringLength(80)]
+    public string? AmbassadorAssignedId { get; set; }
 }

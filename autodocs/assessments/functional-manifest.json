@@ -1,0 +1,66 @@
+{
+  "manifestVersion": "1.0.0",
+  "product": "Tech Riders Platform",
+  "generatedOn": "2026-08-07",
+  "status": "active",
+  "sources": [
+    {
+      "id": "functional-core",
+      "path": "autodocs/assessments/Funcional_Completo_Plataforma_Web_Tech_Riders.md",
+      "version": "1.2",
+      "lastReview": "2026-07-25"
+    },
+    {
+      "id": "uxui-design-system",
+      "path": "autodocs/assessments/UXUI_Functional_Design_System_Tech_Riders.md",
+      "version": "1.0",
+      "lastReview": "2026-07-25"
+    }
+  ],
+  "implementationScope": {
+    "backend": {
+      "language": "C#",
+      "style": "database-first",
+      "runtime": ".NET 10",
+      "database": "Azure SQL"
+    },
+    "frontend": {
+      "framework": "Angular",
+      "majorVersion": 20,
+      "architecture": "standalone + lazy routes + signals"
+    },
+    "cloud": {
+      "provider": "Azure",
+      "runtime": "App Service",
+      "iac": "Bicep",
+      "requiredServices": [
+        "Azure SQL",
+        "Key Vault",
+        "Application Insights"
+      ]
+    }
+  },
+  "functionalDomains": [
+    "public-portal",
+    "intranet",
+    "community-management",
+    "sessions-events",
+    "content-knowledge",
+    "admin-reporting",
+    "security-rgpd-audit"
+  ],
+  "executionPolicy": {
+    "brandingCoreIsMandatory": true,
+    "badgesDeferred": true,
+    "badgesUsageStage": "post-mvp",
+    "note": "Badges are awards and not blocking for core functional implementation."
+  },
+  "acceptanceGates": [
+    "functional-traceability",
+    "database-first-readiness",
+    "frontend-angular-readiness",
+    "azure-deployment-readiness",
+    "security-observability-readiness",
+    "branding-consistency"
+  ]
+}

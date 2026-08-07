@@ -1,17 +1,80 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using TechRiders.Api.Extensions;
+using TechRiders.Api.Services;
 using TechRiders.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+const string DynamicAuthScheme = "DynamicJwt";
+const string AzureAdScheme = "AzureAd";
+const string LocalJwtScheme = "LocalJwt";
 
 // =====================================================================
 // CONFIGURACIÓN DE SERVICIOS - Dependency Injection
 // =====================================================================
 
-// 1. Configuración de autenticación JWT con Microsoft Identity
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+// 1. Configuración de autenticación JWT con Microsoft Identity y JWT local para desarrollo.
+var localJwtKey = builder.Configuration["JWT_KEY"]
+    ?? builder.Configuration[$"{LocalAuthOptions.SectionName}:JwtKey"];
+
+if (string.IsNullOrWhiteSpace(localJwtKey))
+{
+    throw new InvalidOperationException("JWT key for local auth is required. Configure JWT_KEY or LocalAuth:JwtKey.");
+}
+
+builder.Services.Configure<LocalAuthOptions>(builder.Configuration.GetSection(LocalAuthOptions.SectionName));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = DynamicAuthScheme;
+    options.DefaultAuthenticateScheme = DynamicAuthScheme;
+    options.DefaultChallengeScheme = DynamicAuthScheme;
+})
+    .AddPolicyScheme(DynamicAuthScheme, "Azure AD o JWT local", options =>
+    {
+        options.ForwardDefaultSelector = context =>
+        {
+            var authorization = context.Request.Headers.Authorization.ToString();
+            if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = authorization["Bearer ".Length..].Trim();
+                if (!string.IsNullOrWhiteSpace(token))
+                {
+                    var jwtHandler = new JwtSecurityTokenHandler();
+                    if (jwtHandler.CanReadToken(token))
+                    {
+                        var parsedToken = jwtHandler.ReadJwtToken(token);
+                        if (string.Equals(parsedToken.Issuer, LocalAuthOptions.DefaultIssuer, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return LocalJwtScheme;
+                        }
+                    }
+                }
+            }
+
+            return AzureAdScheme;
+        };
+    })
+    .AddJwtBearer(LocalJwtScheme, options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = LocalAuthOptions.DefaultIssuer,
+            ValidateAudience = true,
+            ValidAudience = LocalAuthOptions.DefaultAudience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtKey)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(2),
+        };
+    })
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"), jwtBearerScheme: AzureAdScheme)
         .EnableTokenAcquisitionToCallDownstreamApi()
             .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
             .AddInMemoryTokenCaches();
@@ -21,6 +84,9 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // 3. Configuración de servicios de aplicación (servicios de negocio, Mapster)
 builder.Services.AddApplicationServices();
+
+// 3.1 Estado MVP en memoria para flujos locales mientras no exista persistencia definitiva.
+builder.Services.AddSingleton<IMvpRuntimeStateStore, InMemoryMvpRuntimeStateStore>();
 
 // 4. Configuración de Controllers con validación de modelo automática
 builder.Services.AddControllers(options =>
@@ -58,8 +124,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddSwaggerDocumentation();
 
 // 7. Configuración de Health Checks
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<TechRiders.Infrastructure.Data.TechRidersDbContext>();
+var useInMemoryDatabase = bool.TryParse(builder.Configuration["Database:UseInMemory"], out var useInMemoryParsed)
+    && useInMemoryParsed;
+var healthChecks = builder.Services.AddHealthChecks();
+if (!useInMemoryDatabase)
+{
+    healthChecks.AddDbContextCheck<TechRiders.Infrastructure.Data.TechRidersDbContext>();
+}
 
 // 8. Configuración de compresión de respuestas
 builder.Services.AddResponseCompression(options =>

@@ -16,6 +16,18 @@ interface SessionApi {
   } | null;
 }
 
+interface SessionWorkflowApi {
+  SessionId: string;
+  Status?: string;
+  AmbassadorAssignedId?: string | null;
+  UpdatedAt: string;
+}
+
+interface UpdateSessionWorkflowRequest {
+  status?: string;
+  ambassadorAssignedId?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SesionesService {
   private readonly http = inject(HttpClient);
@@ -58,6 +70,14 @@ export class SesionesService {
 
   createSesion(sesion: Omit<Sesion, 'id' | 'estado' | 'embajadorAsignadoId'>) {
     return this.http.post<string>(this.baseUrl, sesion);
+  }
+
+  getSessionWorkflow() {
+    return this.http.get<Record<string, SessionWorkflowApi>>(`${this.baseUrl}/workflow`);
+  }
+
+  updateSessionWorkflow(sessionId: string, request: UpdateSessionWorkflowRequest) {
+    return this.http.put<SessionWorkflowApi>(`${this.baseUrl}/${sessionId}/workflow`, request);
   }
 
   updateSesion(id: string, sesion: { titulo: string; centro: string; fecha: string; categoria: string; numAlumnos: number; }) {

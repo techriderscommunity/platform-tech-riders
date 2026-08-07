@@ -43,6 +43,14 @@ export class IntranetLayout {
       ],
     },
     {
+      title: 'Mi espacio',
+      icon: '🧭',
+      items: [
+        { label: 'Mi perfil', route: '/intranet/member/profile', roles: ['admin', 'superadmin', 'staff', 'coordinador', 'empresa', 'junior', 'embajador', 'colaborador', 'centro'] },
+        { label: 'Portal Ambassador', route: '/intranet/ambassador/portal', roles: ['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'] },
+      ],
+    },
+    {
       title: 'FP Tour',
       icon: '🎓',
       items: [

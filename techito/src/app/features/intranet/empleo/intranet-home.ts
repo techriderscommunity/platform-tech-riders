@@ -50,7 +50,7 @@ export class IntranetHome {
   readonly profileRoute = computed(() => {
     if (this.authService.hasRole('junior')) return '/intranet/junior/edit-profile';
     if (this.authService.hasRole('empresa')) return '/intranet/company';
-    if (this.authService.hasRole(['embajador', 'colaborador', 'centro'])) return '/intranet/fp-tour/my-sessions';
+    if (this.authService.hasRole(['embajador', 'colaborador', 'centro'])) return '/intranet/member/profile';
     return '/intranet/administration/user-roles';
   });
 
@@ -109,6 +109,7 @@ export class IntranetHome {
   readonly mySpace = computed<MySpaceItem[]>(() => [
     { label: 'Mi perfil (ver/editar)', route: this.profileRoute() },
     { label: 'Dashboard personal', route: '/intranet' },
+    { label: 'Portal Ambassador', route: this.authService.hasRole(['embajador', 'colaborador']) ? '/intranet/ambassador/portal' : this.profileRoute() },
     { label: 'Sesiones impartidas', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/sessions/mine' },
     { label: 'Proximas sesiones', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/fp-tour/my-sessions' },
     { label: 'Actividad reciente', route: this.authService.hasRole(['superadmin', 'admin']) ? '/intranet/admin' : '/intranet' },
@@ -168,7 +169,11 @@ export class IntranetHome {
   }
 
   private loadMyCategories() {
-    this.http.get<string[]>(`${this.baseUrl}/intranet/mis-categorias`)
+    this.http.get<string[]>(`${this.baseUrl}/intranet/mis-categorias`, {
+      params: {
+        userKey: this.resolveUserKey(),
+      },
+    })
       .pipe(
         catchError(() => of([] as string[])),
         takeUntilDestroyed(),
@@ -182,7 +187,10 @@ export class IntranetHome {
 
   private saveMyCategories(categories: string[]) {
     this.categoriesSaving.set(true);
-    this.http.put(`${this.baseUrl}/intranet/mis-categorias`, { categories })
+    this.http.put(`${this.baseUrl}/intranet/mis-categorias`, {
+      userKey: this.resolveUserKey(),
+      categories,
+    })
       .pipe(
         catchError(() => of(null)),
         takeUntilDestroyed(),
@@ -203,6 +211,10 @@ export class IntranetHome {
         takeUntilDestroyed(),
       )
       .subscribe();
+  }
+
+  private resolveUserKey(): string {
+    return this.authService.user()?.email || 'local-user@techriders.local';
   }
 }
 

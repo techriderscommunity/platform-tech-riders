@@ -20,22 +20,34 @@ public static class InfrastructureServiceExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
+        var useInMemory = bool.TryParse(configuration["Database:UseInMemory"], out var useInMemoryParsed)
+            && useInMemoryParsed;
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
         // Configurar DbContext con pooling (mejora de rendimiento según EF Core 2.0+)
         services.AddDbContextPool<TechRidersDbContext>(options =>
         {
-            options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"),
-                sqlOptions =>
-                {
-                    // Habilitar reintentos automáticos para resiliencia en Azure SQL
-                    sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(10),
-                        errorNumbersToAdd: null);
+            if (useInMemory || string.IsNullOrWhiteSpace(connectionString))
+            {
+                // Fallback de desarrollo: permite avanzar sin acceso a SQL Server.
+                options.UseInMemoryDatabase("TechRidersDevInMemory");
+            }
+            else
+            {
+                options.UseSqlServer(
+                    connectionString,
+                    sqlOptions =>
+                    {
+                        // Habilitar reintentos automáticos para resiliencia en Azure SQL
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null);
 
-                    // Mejorar rendimiento de consultas complejas
-                    sqlOptions.CommandTimeout(30);
-                });
+                        // Mejorar rendimiento de consultas complejas
+                        sqlOptions.CommandTimeout(30);
+                    });
+            }
 
             // Solo en desarrollo, mostrar queries sensibles
             // if (configuration.GetValue<bool>("Logging:EnableSensitiveDataLogging"))

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
 using TechRiders.Application.Interfaces;
@@ -16,15 +18,20 @@ namespace TechRiders.Api.Controllers;
 [Produces("application/json")]
 public class SessionsController : BaseApiController
 {
+    private const string SessionWorkflowKey = "intranet-session-workflow";
+
     private readonly ISessionService _sessionService;
     private readonly ILogger<SessionsController> _logger;
+    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
 
     public SessionsController(
         ISessionService sessionService,
-        ILogger<SessionsController> logger)
+        ILogger<SessionsController> logger,
+        IMvpRuntimeStateStore mvpRuntimeStateStore)
     {
         _sessionService = sessionService;
         _logger = logger;
+        this.mvpRuntimeStateStore = mvpRuntimeStateStore;
     }
 
     /// <summary>
@@ -53,6 +60,65 @@ public class SessionsController : BaseApiController
             return StatusCode(500, "Error al obtener las sesiones");
         }
     }
+
+    [HttpGet("workflow")]
+    [SwaggerOperation(
+        Summary = "Obtener estado operativo de sesiones",
+        Description = "Retorna el estado operativo (pendiente, confirmada, cancelada) y la asignación de ambassador para cada sesión con workflow gestionado desde backend.",
+        OperationId = "GetSessionsWorkflow"
+    )]
+    [SwaggerResponse(200, "Workflow de sesiones obtenido exitosamente")]
+    [ProducesResponseType(typeof(IDictionary<string, SessionActionState>), StatusCodes.Status200OK)]
+    public IActionResult GetWorkflow()
+    {
+        var actions = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey);
+        return Ok(actions);
+    }
+
+    [HttpPut("{id:guid}/workflow")]
+    [SwaggerOperation(
+        Summary = "Actualizar workflow de sesión",
+        Description = "Actualiza el estado operativo y/o ambassador asignado para una sesión en el workflow compartido de backend.",
+        OperationId = "UpdateSessionWorkflow"
+    )]
+    [SwaggerResponse(200, "Workflow actualizado exitosamente")]
+    [SwaggerResponse(400, "Solicitud inválida")]
+    [ProducesResponseType(typeof(SessionActionState), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult UpdateWorkflow(
+        [FromRoute] Guid id,
+        [FromBody] UpdateSessionWorkflowRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Status)
+            && !AllowedSessionStatuses.Contains(request.Status.Trim(), StringComparer.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { error = "Status must be Pendiente, Confirmada or Cancelada." });
+        }
+
+        var workflow = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey)
+            .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+
+        var sessionId = id.ToString();
+        workflow[sessionId] = new SessionActionState
+        {
+            SessionId = sessionId,
+            Status = request.Status?.Trim(),
+            AmbassadorAssignedId = string.IsNullOrWhiteSpace(request.AmbassadorAssignedId)
+                ? null
+                : request.AmbassadorAssignedId.Trim(),
+            UpdatedAt = DateTimeOffset.UtcNow,
+        };
+
+        mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, workflow);
+        return Ok(workflow[sessionId]);
+    }
+
+    private static readonly string[] AllowedSessionStatuses = ["Pendiente", "Confirmada", "Cancelada"];
 
     /// <summary>
     /// Obtiene una sesión específica por su ID
@@ -322,4 +388,13 @@ public class SessionsController : BaseApiController
             return StatusCode(500, "Error al eliminar la sesión");
         }
     }
+}
+
+public sealed class UpdateSessionWorkflowRequest
+{
+    [StringLength(50)]
+    public string? Status { get; set; }
+
+    [StringLength(80)]
+    public string? AmbassadorAssignedId { get; set; }
 }

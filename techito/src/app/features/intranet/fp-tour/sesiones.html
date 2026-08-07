@@ -1,11 +1,34 @@
 <div class="sesiones-dashboard">
   <h1>{{ context().title }}</h1>
   <p>{{ context().subtitle }}</p>
+
+  <div class="sesiones-resumen">
+    <article class="sesion-kpi">
+      <strong>{{ resumen().total }}</strong>
+      <span>Total</span>
+    </article>
+    <article class="sesion-kpi">
+      <strong>{{ resumen().pendientes }}</strong>
+      <span>Pendientes</span>
+    </article>
+    <article class="sesion-kpi">
+      <strong>{{ resumen().confirmadas }}</strong>
+      <span>Confirmadas</span>
+    </article>
+    <article class="sesion-kpi">
+      <strong>{{ resumen().canceladas }}</strong>
+      <span>Canceladas</span>
+    </article>
+  </div>
+
   @if (loading()) {
   <p>Cargando sesiones...</p>
   }
   @if (error()) {
   <p>{{ error() }}</p>
+  }
+  @if (success()) {
+  <p class="status-message status-message-success">{{ success() }}</p>
   }
   <div class="sesiones-filtros">
     <app-ui-text-field
@@ -62,6 +85,7 @@
         <th>Estado</th>
         <th>Alumnos</th>
         <th>Embajador asignado</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -79,6 +103,22 @@
           @if (!getEmbajadorNombre(sesion.embajadorAsignadoId)) {
           <span class="no-embajador">No asignado</span>
           }
+        </td>
+        <td>
+          <div class="sesiones-acciones">
+            @if (canSelfAssign() && !sesion.embajadorAsignadoId && sesion.estado !== 'Cancelada') {
+            <app-ui-button type="button" variant="secondary" (click)="asignarmeSesion(sesion.id)">Asignarme</app-ui-button>
+            }
+            @if (canSelfAssign() && sesion.embajadorAsignadoId && getEmbajadorNombre(sesion.embajadorAsignadoId)) {
+            <app-ui-button type="button" variant="secondary" (click)="liberarSesion(sesion.id)">Liberar</app-ui-button>
+            }
+            @if (canManageSessions() && sesion.estado !== 'Confirmada') {
+            <app-ui-button type="button" variant="secondary" (click)="confirmarSesion(sesion.id)">Confirmar</app-ui-button>
+            }
+            @if (canManageSessions() && sesion.estado !== 'Cancelada') {
+            <app-ui-button type="button" variant="secondary" (click)="cancelarSesion(sesion.id)">Cancelar</app-ui-button>
+            }
+          </div>
         </td>
       </tr>
       }
