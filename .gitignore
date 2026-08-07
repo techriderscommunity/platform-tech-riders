@@ -46,6 +46,13 @@ coverage/
 .mcpee/reports/
 .mcpee/telemetry/
 .mcpee/traces/
+graphify-out/
+context/graphify-out/
+scripts/graphify-out/
+repo-intake/generated/
+observability/logs/
+autodocs/generated/
+autodocs/site/
 
 # Optional local memory cache folder (keep if needed by project conventions)
 .memories/
