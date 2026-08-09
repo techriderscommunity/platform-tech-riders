@@ -26,4 +26,22 @@ export interface TutorialesQueryParams {
   busqueda?: string;
 }
 
+export interface TutorialApi {
+  Id: string;
+  Slug: string;
+  Titulo: string;
+  Extracto: string;
+  Autor: string;
+  FechaPublicacion: string;
+  CategoriasJson: string;
+  Url: string;
+}
+
+export interface TutorialPagedApi {
+  items: TutorialApi[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+}
+
 

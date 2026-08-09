@@ -4,15 +4,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { UiCarouselItem } from '@shared/ui/media-carousel/media-carousel';
-
-interface PlaylistVideoDto {
-  videoId: string;
-  title: string;
-  url: string;
-  embedUrl: string;
-  publishedAt?: string | null;
-  thumbnailUrl?: string | null;
-}
+import { OrientaPlaylistKey, PlaylistVideoDto } from '../models/orienta-tech.models';
 
 @Injectable({ providedIn: 'root' })
 export class OrientaTechPlaylistsService {
@@ -20,7 +12,7 @@ export class OrientaTechPlaylistsService {
   private readonly baseUrl = `${environment.apiUrl}/events/podcast/videos`;
 
   getVideosByPlaylist(
-    playlist: 'profiles' | 'success-stories' | 'interviews',
+    playlist: OrientaPlaylistKey,
     maxResults = 8
   ): Observable<UiCarouselItem[]> {
     const params = new HttpParams()

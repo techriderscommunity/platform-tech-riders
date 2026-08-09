@@ -1,29 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { PublicContentService } from '@core/content/public-content.service';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
 import { UiButton  } from '@shared/ui/button/button';
-
-interface PerfilPublico {
-  nombre: string;
-  titulo: string;
-  ubicacion: string;
-  resumen: string;
-  habilidades: string[];
-  experiencia: string;
-  foto: string;
-}
-
-interface PerfilPrivado {
-  email: string;
-  telefono: string;
-  edad: number;
-  gradoAcademico: string;
-  universidad: string;
-  disponibilidad: string;
-  pretensionSalarial: string;
-}
+import { PerfilPrivado, PerfilPublico } from '../models/junior.models';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -34,6 +17,9 @@ interface PerfilPrivado {
   styleUrl: './editar-perfil.scss'
 })
 export class EditarPerfil {
+  private readonly publicContentService = inject(PublicContentService);
+  private readonly publicContent = toSignal(this.publicContentService.getPublicContent(), { initialValue: null });
+
   readonly tabActiva = signal<'publico' | 'privado'>('publico');
 
   readonly perfilPublico = signal<PerfilPublico>({
@@ -56,24 +42,16 @@ export class EditarPerfil {
     pretensionSalarial: '24.000 - 30.000€'
   });
 
-  readonly habilidadesDisponibles = [
-    'JavaScript', 'TypeScript', 'React', 'Angular', 'Vue.js',
-    'Node.js', 'Python', 'Java', 'C++', 'HTML', 'CSS',
-    'Sass', 'Bootstrap', 'Tailwind', 'Git', 'Docker',
-    'SQL', 'MongoDB', 'REST APIs', 'GraphQL'
-  ];
+  readonly habilidadesDisponibles = computed(() => this.publicContent()?.intranet.juniorSkillOptions ?? []);
 
   readonly habilidadesOptions = computed<UiSelectOption[]>(() => [
     { label: 'Selecciona una habilidad...', value: '' },
-    ...this.habilidadesDisponibles.map(hab => ({ label: hab, value: hab }))
+    ...this.habilidadesDisponibles().map(hab => ({ label: hab, value: hab }))
   ]);
 
-  readonly disponibilidadOptions: UiSelectOption[] = [
-    { label: 'Inmediata', value: 'Inmediata' },
-    { label: 'En 1 semana', value: 'En 1 semana' },
-    { label: 'En 2 semanas', value: 'En 2 semanas' },
-    { label: 'En 1 mes', value: 'En 1 mes' }
-  ];
+  readonly disponibilidadOptions = computed<UiSelectOption[]>(
+    () => this.publicContent()?.intranet.juniorAvailabilityOptions ?? []
+  );
 
   readonly nuevaHabilidad = signal('');
 

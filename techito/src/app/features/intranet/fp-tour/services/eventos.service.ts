@@ -1,30 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { environment } from '\.\./\.\./\.\./\.\./\.\./environments/environment';
+import { environment } from '../../../../../environments/environment';
+import { EventoConSesionesApi, EventoListApi, EventoResumen } from '../models/eventos.models';
 import { PagedResult } from '../models/sesiones.models';
 import { EventoCalendario, SesionEnEvento } from '../calendar-eventos';
-
-interface SesionEnEventoApi {
-  Id: string;
-  Title: string;
-  StartTime: string;
-  EndTime: string;
-  Description?: string;
-  Speaker?: string;
-  Room?: string;
-}
-
-interface EventoConSesionesApi {
-  Id: string;
-  Name: string;
-  Location?: string;
-  StartDate: string;
-  EndDate: string;
-  Description?: string;
-  IsActive: boolean;
-  Sessions?: SesionEnEventoApi[];
-}
 
 function toHHmm(timeOnly: string | null): string {
   if (!timeOnly) return '00:00';
@@ -37,88 +17,116 @@ function toFechaStr(dateStr: string): string {
   return dateStr.substring(0, 10);
 }
 
-export interface EventoResumen {
-  id: string;
-  titulo: string;
-  ubicacion: string;
-  categoria: string;
-  estado: string;
-  url: string;
-  esPasado: boolean;
-}
 
-interface EventoListApi {
-  Id: string;
-  Name: string;
-  Location?: string;
-  IsActive: boolean;
-}
+const DEFAULT_EVENTO_CALENDARIO_CATEGORIA: EventoCalendario['categoria'] = 'Colaboradores';
+const DEFAULT_EVENTO_RESUMEN_CATEGORIA = 'others';
+
+const EVENT_STATUS = {
+  active: 'Active',
+  inactive: 'Inactive',
+} as const;
 
 @Injectable({ providedIn: 'root' })
 export class EventosService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/events`;
 
-  getEventosConSesiones(page = 1, pageSize = 100) {
-    const params = new HttpParams()
-      .set('page', String(page))
-      .set('pageSize', String(pageSize));
+  getEventosConSesiones(page = 1, pageSize = 100): import('rxjs').Observable<PagedResult<EventoCalendario>> {
+    const safePage = this.normalizePositiveInt(page, 1);
+    const safePageSize = this.normalizePositiveInt(pageSize, 100);
+    const params = this.buildPaginationParams(safePage, safePageSize);
 
     return this.http
       .get<EventoConSesionesApi[]>(this.baseUrl, { params })
       .pipe(map((result) => ({
-        items: (result ?? []).map((e): EventoCalendario => ({
-          id: e.Id,
-          titulo: e.Name,
-          fechaInicio: toFechaStr(e.StartDate),
-          fechaFin: toFechaStr(e.EndDate),
-          categoria: 'otros' as EventoCalendario['categoria'],
-          descripcion: e.Description,
-          centro: e.Location,
-          sesiones: (e.Sessions ?? []).map((s): SesionEnEvento => ({
-            id: s.Id,
-            titulo: s.Title,
-            fecha: toFechaStr(e.StartDate),
-            horaInicio: toHHmm(s.StartTime),
-            horaFin: toHHmm(s.EndTime),
-            descripcion: s.Description,
-            ponente: s.Speaker,
-            sala: s.Room,
-          })),
-        })),
+        items: (result ?? []).map((evento) => this.mapEventoCalendario(evento)),
         totalCount: result?.length ?? 0,
-        page,
-        pageSize,
+        page: safePage,
+        pageSize: safePageSize,
         totalPages: 1,
         hasNextPage: false,
         hasPreviousPage: false,
       })));
   }
 
-  getEventos(page = 1, pageSize = 20) {
-    const params = new HttpParams()
-      .set('page', String(page))
-      .set('pageSize', String(pageSize));
+  getEventos(page = 1, pageSize = 20): import('rxjs').Observable<PagedResult<EventoResumen>> {
+    const safePage = this.normalizePositiveInt(page, 1);
+    const safePageSize = this.normalizePositiveInt(pageSize, 20);
+    const params = this.buildPaginationParams(safePage, safePageSize);
 
     return this.http
       .get<EventoListApi[]>(this.baseUrl, { params })
       .pipe(map((result) => ({
-        items: (result ?? []).map((e): EventoResumen => ({
-          id: e.Id,
-          titulo: e.Name,
-          ubicacion: e.Location ?? '',
-          categoria: 'others',
-          estado: e.IsActive ? 'Active' : 'Inactive',
-          url: '',
-          esPasado: false,
-        })),
+        items: (result ?? []).map((evento) => this.mapEventoResumen(evento)),
         totalCount: result?.length ?? 0,
-        page,
-        pageSize,
+        page: safePage,
+        pageSize: safePageSize,
         totalPages: 1,
         hasNextPage: false,
         hasPreviousPage: false,
       })));
+  }
+
+  private buildPaginationParams(page: number, pageSize: number): HttpParams {
+    return new HttpParams()
+      .set('page', String(page))
+      .set('pageSize', String(pageSize));
+  }
+
+  private mapEventoCalendario(evento: EventoConSesionesApi): EventoCalendario {
+    return {
+      id: evento.Id,
+      titulo: evento.Name,
+      fechaInicio: toFechaStr(evento.StartDate),
+      fechaFin: toFechaStr(evento.EndDate),
+      categoria: this.getCalendarCategory(evento.Name),
+      descripcion: evento.Description,
+      centro: evento.Location,
+      sesiones: (evento.Sessions ?? []).map((sesion): SesionEnEvento => ({
+        id: sesion.Id,
+        titulo: sesion.Title,
+        fecha: toFechaStr(evento.StartDate),
+        horaInicio: toHHmm(sesion.StartTime),
+        horaFin: toHHmm(sesion.EndTime),
+        descripcion: sesion.Description,
+        ponente: sesion.Speaker,
+        sala: sesion.Room,
+      })),
+    };
+  }
+
+  private mapEventoResumen(evento: EventoListApi): EventoResumen {
+    return {
+      id: evento.Id,
+      titulo: evento.Name,
+      ubicacion: evento.Location ?? '',
+      categoria: DEFAULT_EVENTO_RESUMEN_CATEGORIA,
+      estado: evento.IsActive ? EVENT_STATUS.active : EVENT_STATUS.inactive,
+      url: '',
+      esPasado: false,
+    };
+  }
+
+  private getCalendarCategory(nombreEvento: string): EventoCalendario['categoria'] {
+    const normalizedName = nombreEvento.toLowerCase();
+
+    if (normalizedName.includes('fptour') || normalizedName.includes('fp tour')) {
+      return 'FPTour';
+    }
+
+    if (normalizedName.includes('tajamar')) {
+      return 'TajamarTech';
+    }
+
+    if (normalizedName.includes('techriders') || normalizedName.includes('tech riders')) {
+      return 'TechRiders';
+    }
+
+    return DEFAULT_EVENTO_CALENDARIO_CATEGORIA;
+  }
+
+  private normalizePositiveInt(value: number, fallback: number): number {
+    return Number.isInteger(value) && value > 0 ? value : fallback;
   }
 }
 

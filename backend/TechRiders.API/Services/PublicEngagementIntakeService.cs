@@ -16,11 +16,11 @@ public sealed class PublicEngagementIntakeService : IPublicEngagementIntakeServi
         "session",
     };
 
-    private readonly IMvpRuntimeStateStore _mvpRuntimeStateStore;
+    private readonly IMvpRuntimeRepository _mvpRuntimeRepository;
 
-    public PublicEngagementIntakeService(IMvpRuntimeStateStore mvpRuntimeStateStore)
+    public PublicEngagementIntakeService(IMvpRuntimeRepository mvpRuntimeRepository)
     {
-        _mvpRuntimeStateStore = mvpRuntimeStateStore ?? throw new ArgumentNullException(nameof(mvpRuntimeStateStore));
+        _mvpRuntimeRepository = mvpRuntimeRepository ?? throw new ArgumentNullException(nameof(mvpRuntimeRepository));
     }
 
     public PublicEngagementIntakeResult ProcessJoinRequest(JoinRequest request)
@@ -34,7 +34,7 @@ public sealed class PublicEngagementIntakeService : IPublicEngagementIntakeServi
 
         if (string.Equals(request.RequestType, "member", StringComparison.OrdinalIgnoreCase))
         {
-            _mvpRuntimeStateStore.UpsertMemberProfile(request.Email, new MemberProfileState
+            _mvpRuntimeRepository.UpsertMemberProfile(request.Email, new MemberProfileState
             {
                 Name = request.Name,
                 Email = request.Email,
@@ -48,7 +48,7 @@ public sealed class PublicEngagementIntakeService : IPublicEngagementIntakeServi
 
         if (string.Equals(request.RequestType, "ambassador", StringComparison.OrdinalIgnoreCase))
         {
-            _mvpRuntimeStateStore.UpsertAmbassadorPortal(request.Email, new AmbassadorPortalState
+            _mvpRuntimeRepository.UpsertAmbassadorPortal(request.Email, new AmbassadorPortalState
             {
                 Email = request.Email,
                 Bio = request.Motivation,

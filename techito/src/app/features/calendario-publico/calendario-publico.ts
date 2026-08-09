@@ -1,19 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { UiTextField } from '@shared/ui/text-field/text-field';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/resource-cards';
-
-type PublicEvent = {
-  title: string;
-  summary: string;
-  type: 'Sesion tecnica' | 'Orientacion' | 'Empleabilidad' | 'Podcast' | 'Workshop' | 'Woman Tech';
-  modality: 'Online' | 'Presencial' | 'Hibrido';
-  topic: 'Azure' | '.NET' | 'Datos' | 'Ciberseguridad' | 'Carrera' | 'Soft Skills' | 'Comunidad';
-  date: string;
-  place: string;
-  url: string;
-};
+import {
+  PUBLIC_EVENT_MODALITIES,
+  PUBLIC_EVENT_TOPICS,
+  PUBLIC_EVENT_TYPES,
+  PublicEvent,
+} from './models/public-event.model';
+import { PublicEventsService } from './services/public-events.service';
 
 @Component({
   selector: 'app-calendario-publico',
@@ -23,93 +21,16 @@ type PublicEvent = {
   templateUrl: './calendario-publico.html',
   styleUrl: './calendario-publico.scss'
 })
-export class CalendarioPublico {
-  readonly events: PublicEvent[] = [
-    {
-      title: 'Arquitecturas modernas con .NET',
-      summary: 'Sesion tecnica para revisar patrones de arquitectura, modularidad y despliegue de APIs.',
-      type: 'Sesion tecnica',
-      modality: 'Hibrido',
-      topic: '.NET',
-      date: '2026-09-18',
-      place: 'Tech Riders Hub',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Ruta de entrada a Cloud con Azure',
-      summary: 'Sesion de orientacion para perfiles junior sobre itinerarios reales de aprendizaje cloud.',
-      type: 'Orientacion',
-      modality: 'Online',
-      topic: 'Azure',
-      date: '2026-09-22',
-      place: 'Streaming',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'CV Tech y entrevistas sin humo',
-      summary: 'Practica guiada para mejorar CV, portfolio y narrativa profesional en entrevistas.',
-      type: 'Empleabilidad',
-      modality: 'Presencial',
-      topic: 'Carrera',
-      date: '2026-09-27',
-      place: 'Aula 3',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Woman Tech: referentes y trayectorias',
-      summary: 'Encuentro abierto con profesionales para compartir experiencias y abrir nuevas oportunidades.',
-      type: 'Woman Tech',
-      modality: 'Hibrido',
-      topic: 'Comunidad',
-      date: '2026-10-02',
-      place: 'Auditorio principal',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Podcast en directo: Data y decision',
-      summary: 'Conversacion tecnica sobre datos aplicados a producto, negocio y operaciones.',
-      type: 'Podcast',
-      modality: 'Online',
-      topic: 'Datos',
-      date: '2026-10-08',
-      place: 'Canal Tech Riders',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Workshop de seguridad para equipos',
-      summary: 'Taller practico de hardening basico, checklist OWASP y analisis de riesgos frecuentes.',
-      type: 'Workshop',
-      modality: 'Presencial',
-      topic: 'Ciberseguridad',
-      date: '2026-10-15',
-      place: 'Lab de ciber',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Soft Skills para equipos tecnicos',
-      summary: 'Sesion para mejorar comunicacion, feedback y colaboracion entre perfiles tecnicos.',
-      type: 'Orientacion',
-      modality: 'Online',
-      topic: 'Soft Skills',
-      date: '2026-10-21',
-      place: 'Streaming',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    },
-    {
-      title: 'Ingenieria de APIs con Azure',
-      summary: 'Practica de diseno de APIs, versionado y observabilidad para ecosistemas cloud.',
-      type: 'Sesion tecnica',
-      modality: 'Hibrido',
-      topic: 'Azure',
-      date: '2026-10-29',
-      place: 'Tech Riders Hub',
-      url: 'https://luma.com/cal-24k3WtXkbkzA2tg'
-    }
-  ];
+export class CalendarioPublico implements OnInit {
+  private readonly publicEventsService = inject(PublicEventsService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly types = ['Sesion tecnica', 'Orientacion', 'Empleabilidad', 'Podcast', 'Workshop', 'Woman Tech'] as const;
-  readonly modalities = ['Online', 'Presencial', 'Hibrido'] as const;
-  readonly topics = ['Azure', '.NET', 'Datos', 'Ciberseguridad', 'Carrera', 'Soft Skills', 'Comunidad'] as const;
+  readonly events = signal<PublicEvent[]>([]);
+  readonly loading = signal(false);
+
+  readonly types = PUBLIC_EVENT_TYPES;
+  readonly modalities = PUBLIC_EVENT_MODALITIES;
+  readonly topics = PUBLIC_EVENT_TOPICS;
 
   readonly selectedType = signal('');
   readonly selectedModality = signal('');
@@ -118,7 +39,7 @@ export class CalendarioPublico {
 
   readonly filteredEvents = computed(() => {
     const query = this.searchText().trim().toLowerCase();
-    return this.events.filter(event => {
+    return this.events().filter((event) => {
       const byType = !this.selectedType() || event.type === this.selectedType();
       const byModality = !this.selectedModality() || event.modality === this.selectedModality();
       const byTopic = !this.selectedTopic() || event.topic === this.selectedTopic();
@@ -142,7 +63,7 @@ export class CalendarioPublico {
     return labels.length ? labels.join(' · ') : 'Todos';
   });
 
-  readonly eventCards = computed<UiResourceCardItem[]>(() => this.filteredEvents().map(event => ({
+  readonly eventCards = computed<UiResourceCardItem[]>(() => this.filteredEvents().map((event) => ({
     mode: event.type,
     title: event.title,
     summary: event.summary,
@@ -157,6 +78,25 @@ export class CalendarioPublico {
     month: 'short',
     year: 'numeric'
   });
+
+  ngOnInit(): void {
+    this.loading.set(true);
+    this.publicEventsService
+      .getUpcomingEvents()
+      .pipe(
+        tap((events) => {
+          this.events.set(events);
+          this.loading.set(false);
+        }),
+        catchError(() => {
+          this.events.set([]);
+          this.loading.set(false);
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 
   setType(type: string): void {
     this.selectedType.set(type);

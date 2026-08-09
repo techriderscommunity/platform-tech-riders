@@ -1,16 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '@env/environment';
+import { PublicContentService } from '@core/content/public-content.service';
+import { MetricItem } from '@core/content/public-content.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton  } from '@shared/ui/button/button';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
-
-type IntakeType = 'member' | 'ambassador' | 'session';
+import { IntakeType, JoinRequestPayload } from './models/unete.models';
+import { UneteIntakeService } from './services/unete-intake.service';
 
 @Component({
   selector: 'app-unete',
@@ -20,23 +22,15 @@ type IntakeType = 'member' | 'ambassador' | 'session';
   templateUrl: './unete.html',
   styleUrl: './unete.scss'
 })
-export class Unete {
-  private readonly http = inject(HttpClient);
+export class Unete implements OnInit {
+  private readonly uneteIntakeService = inject(UneteIntakeService);
+  private readonly publicContentService = inject(PublicContentService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
-  private readonly baseUrl = environment.apiUrl;
 
-  readonly intakeOptions: UiSelectOption[] = [
-    { label: 'Quiero unirme como miembro', value: 'member' },
-    { label: 'Quiero solicitar ser Ambassador', value: 'ambassador' },
-    { label: 'Quiero solicitar una sesión', value: 'session' }
-  ];
+  intakeOptions: UiSelectOption[] = [];
 
-  readonly joinMetrics = [
-    { value: '13', label: 'Años de comunidad', icon: '📅' },
-    { value: '1300+', label: 'Recursos compartidos', icon: '📚' },
-    { value: '80+', label: 'Sesiones #FPTOUR', icon: '🎤' },
-    { value: '1500+', label: 'Alumnos impactados', icon: '👥' },
-  ];
+  joinMetrics: MetricItem[] = [];
 
   // Estado de flujo activo
   flujoActivo = signal<IntakeType>('member');
@@ -56,6 +50,20 @@ export class Unete {
   loading = signal(false);
   error = signal('');
   successMessage = signal('');
+
+  ngOnInit(): void {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.joinMetrics = content.join.metrics;
+          this.intakeOptions = content.join.intakeOptions;
+        }),
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 
   seleccionarFlujo(requestType: IntakeType) {
     this.flujoActivo.set(requestType);
@@ -99,7 +107,7 @@ export class Unete {
     this.loading.set(true);
     this.error.set('');
 
-    const payload = {
+    const payload: JoinRequestPayload = {
       name: this.formulario().nombre,
       email: this.formulario().email,
       requestType: this.formulario().requestType,
@@ -111,7 +119,7 @@ export class Unete {
       sessionFormat: this.formulario().requestType === 'session' ? 'por-definir' : null,
     };
 
-    this.http.post(`${this.baseUrl}/join`, payload).subscribe({
+    this.uneteIntakeService.submitJoinRequest(payload).subscribe({
       next: () => {
         this.persistLocalDraft(payload);
         this.loading.set(false);
@@ -171,17 +179,7 @@ export class Unete {
     this.router.navigateByUrl('/intranet/ambassador/portal');
   }
 
-  private persistLocalDraft(payload: {
-    name: string;
-    email: string;
-    requestType: IntakeType;
-    communityRole: string;
-    audience: string | null;
-    organization: string | null;
-    motivation: string;
-    sessionTopic: string | null;
-    sessionFormat: string | null;
-  }) {
+  private persistLocalDraft(payload: JoinRequestPayload) {
     if (typeof localStorage === 'undefined') {
       return;
     }

@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { RouterLink } from '@angular/router';
+import { PublicContentService } from '@core/content/public-content.service';
+import { JourneyStepItem, MetricItem } from '@core/content/public-content.models';
 import { UiJourneySteps } from '@shared/ui/journey-steps/journey-steps';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 
@@ -11,28 +15,24 @@ import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
   templateUrl: './woman-tech.html',
   styleUrl: './woman-tech.scss'
 })
-export class WomanTech {
-  readonly metrics = [
-    { icon: '💜', value: 'Woman Tech', label: 'Línea de comunidad' },
-    { icon: '🎙️', value: 'Sesiones', label: 'Referentes y experiencias' },
-    { icon: '🤝', value: 'Red', label: 'Acompañamiento y visibilidad' },
-  ];
+export class WomanTech implements OnInit {
+  private readonly publicContentService = inject(PublicContentService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly journey = [
-    {
-      step: '01',
-      title: 'Inspiración',
-      text: 'Historias y trayectorias de mujeres en tecnología con contexto real.'
-    },
-    {
-      step: '02',
-      title: 'Aprendizaje',
-      text: 'Sesiones técnicas y recursos para fortalecer habilidades y confianza.'
-    },
-    {
-      step: '03',
-      title: 'Conexión',
-      text: 'Vínculo con comunidad, redes profesionales y nuevas oportunidades.'
-    }
-  ];
+  metrics: MetricItem[] = [];
+  journey: JourneyStepItem[] = [];
+
+  ngOnInit(): void {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.metrics = content.womanTech.metrics;
+          this.journey = content.womanTech.journey;
+        }),
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 }

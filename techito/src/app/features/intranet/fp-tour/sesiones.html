@@ -54,7 +54,7 @@
     ></app-ui-select>
     <app-ui-select
       label="Estado"
-      [options]="estadoOptions"
+      [options]="estadoOptions()"
       [value]="filtroEstado()"
       (valueChange)="filtroEstado.set($event)"
     ></app-ui-select>

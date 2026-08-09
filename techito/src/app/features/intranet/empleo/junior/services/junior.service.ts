@@ -2,18 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '\.\./\.\./\.\./\.\./\.\./\.\./environments/environment';
-import { Curso, Evento, OfertaJunior, PagedResult } from '../models/junior.models';
-
-interface OfferApi {
-  Id: string;
-  Titulo: string;
-  Empresa: string;
-  Salario: number;
-  Ubicacion: string;
-  Modalidad: number;
-  Estado: number;
-  FechaPublicacion: string;
-}
+import { Curso, Evento, OfertaJunior, OfferApi, PagedResult } from '../models/junior.models';
 
 @Injectable({ providedIn: 'root' })
 export class JuniorService {

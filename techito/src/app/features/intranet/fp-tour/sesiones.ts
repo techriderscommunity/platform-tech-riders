@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, combineLatest, of, tap } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
+import { PublicContentService } from '@core/content/public-content.service';
 import { EmbajadoresService } from '../embajadores/services/embajadores.service';
 import { Embajador } from '../embajadores/models/embajadores.models';
 import { Sesion } from './models/sesiones.models';
@@ -24,8 +25,10 @@ export class Sesiones {
   private readonly authService = inject(AuthService);
   private readonly sesionesService = inject(SesionesService);
   private readonly embajadoresService = inject(EmbajadoresService);
+  private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly publicContent = toSignal(this.publicContentService.getPublicContent(), { initialValue: null });
 
   readonly filtroCentro = signal('');
   readonly filtroFecha = signal('');
@@ -38,7 +41,7 @@ export class Sesiones {
   readonly success = signal<string | null>(null);
   readonly sessionOverrides = signal<Record<string, Partial<Sesion>>>({});
 
-  readonly estados = ['Pendiente', 'Realizada', 'Cancelada'];
+  readonly estados = computed(() => this.publicContent()?.intranet.sessionStatusOptions ?? []);
   readonly sesiones = signal<Sesion[]>([]);
   readonly embajadores = signal<Embajador[]>([]);
 
@@ -52,10 +55,10 @@ export class Sesiones {
     ...this.categorias().map(cat => ({ label: cat, value: cat }))
   ]);
 
-  readonly estadoOptions: UiSelectOption[] = [
+  readonly estadoOptions = computed<UiSelectOption[]>(() => [
     { label: 'Todos estados', value: '' },
-    ...this.estados.map(est => ({ label: est, value: est }))
-  ];
+    ...this.estados().map(est => ({ label: est, value: est }))
+  ]);
 
   readonly context = computed(() => {
     const url = this.router.url;

@@ -16,16 +16,16 @@ public class IntranetController : ControllerBase
 
     private readonly IIntranetService _intranetService;
     private readonly ILogger<IntranetController> _logger;
-    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
+    private readonly IMvpRuntimeRepository _mvpRuntimeRepository;
 
     public IntranetController(
         IIntranetService intranetService,
         ILogger<IntranetController> logger,
-        IMvpRuntimeStateStore mvpRuntimeStateStore)
+        IMvpRuntimeRepository mvpRuntimeRepository)
     {
         _intranetService = intranetService ?? throw new ArgumentNullException(nameof(intranetService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        this.mvpRuntimeStateStore = mvpRuntimeStateStore ?? throw new ArgumentNullException(nameof(mvpRuntimeStateStore));
+        _mvpRuntimeRepository = mvpRuntimeRepository ?? throw new ArgumentNullException(nameof(mvpRuntimeRepository));
     }
 
     [HttpGet("perfil")]
@@ -33,7 +33,7 @@ public class IntranetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberProfileState))]
     public IActionResult GetMemberProfile([FromQuery] string? userKey, [FromQuery] string? email)
     {
-        var profile = mvpRuntimeStateStore.GetOrCreateMemberProfile(userKey ?? email ?? string.Empty, email);
+        var profile = _mvpRuntimeRepository.GetOrCreateMemberProfile(userKey ?? email ?? string.Empty, email);
         return Ok(profile);
     }
 
@@ -59,7 +59,7 @@ public class IntranetController : ControllerBase
             Organization = request.Organization ?? string.Empty,
         };
 
-        mvpRuntimeStateStore.UpsertMemberProfile(request.UserKey ?? request.Email, profile);
+        _mvpRuntimeRepository.UpsertMemberProfile(request.UserKey ?? request.Email, profile);
         return Ok(profile);
     }
 
@@ -68,7 +68,7 @@ public class IntranetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AmbassadorPortalState))]
     public IActionResult GetAmbassadorPortal([FromQuery] string? userKey, [FromQuery] string? email)
     {
-        var profile = mvpRuntimeStateStore.GetOrCreateAmbassadorPortal(userKey ?? email ?? string.Empty, email);
+        var profile = _mvpRuntimeRepository.GetOrCreateAmbassadorPortal(userKey ?? email ?? string.Empty, email);
         return Ok(profile);
     }
 
@@ -91,7 +91,7 @@ public class IntranetController : ControllerBase
             Availability = request.Availability,
         };
 
-        mvpRuntimeStateStore.UpsertAmbassadorPortal(request.UserKey ?? request.Email, profile);
+        _mvpRuntimeRepository.UpsertAmbassadorPortal(request.UserKey ?? request.Email, profile);
         return Ok(profile);
     }
 
@@ -100,7 +100,7 @@ public class IntranetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
     public IActionResult GetMyCategories([FromQuery] string? userKey)
     {
-        var categories = mvpRuntimeStateStore.GetUserCategories(userKey ?? string.Empty);
+        var categories = _mvpRuntimeRepository.GetUserCategories(userKey ?? string.Empty);
         return Ok(categories);
     }
 
@@ -115,7 +115,7 @@ public class IntranetController : ControllerBase
             return BadRequest(new { error = "At least one category is required." });
         }
 
-        mvpRuntimeStateStore.UpsertUserCategories(request.UserKey ?? string.Empty, request.Categories);
+        _mvpRuntimeRepository.UpsertUserCategories(request.UserKey ?? string.Empty, request.Categories);
         return Ok(request.Categories);
     }
 
@@ -130,7 +130,7 @@ public class IntranetController : ControllerBase
             return ValidationProblem(ModelState);
         }
 
-        mvpRuntimeStateStore.AddTrace(new IntranetTraceEntry
+        _mvpRuntimeRepository.AddTrace(new IntranetTraceEntry
         {
             Kind = request.Kind,
             Route = request.Route,
@@ -145,7 +145,7 @@ public class IntranetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDictionary<string, SessionActionState>))]
     public IActionResult GetSessionActions([FromQuery] string? userKey)
     {
-        var actions = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey);
+        var actions = _mvpRuntimeRepository.GetSessionActions(SessionWorkflowKey);
         return Ok(actions);
     }
 
@@ -171,7 +171,7 @@ public class IntranetController : ControllerBase
             },
             StringComparer.OrdinalIgnoreCase);
 
-        mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, mappedActions);
+        _mvpRuntimeRepository.UpsertSessionActions(SessionWorkflowKey, mappedActions);
         return Ok(mappedActions);
     }
 

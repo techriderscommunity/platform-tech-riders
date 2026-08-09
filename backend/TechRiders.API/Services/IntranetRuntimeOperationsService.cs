@@ -20,18 +20,18 @@ public sealed class IntranetRuntimeOperationsService : IIntranetRuntimeOperation
 
     private static readonly string[] AllowedWorkflowStatuses = ["Pendiente", "Confirmada", "Cancelada"];
 
-    private readonly IMvpRuntimeStateStore _mvpRuntimeStateStore;
+    private readonly IMvpRuntimeRepository _mvpRuntimeRepository;
 
-    public IntranetRuntimeOperationsService(IMvpRuntimeStateStore mvpRuntimeStateStore)
+    public IntranetRuntimeOperationsService(IMvpRuntimeRepository mvpRuntimeRepository)
     {
-        _mvpRuntimeStateStore = mvpRuntimeStateStore ?? throw new ArgumentNullException(nameof(mvpRuntimeStateStore));
+        _mvpRuntimeRepository = mvpRuntimeRepository ?? throw new ArgumentNullException(nameof(mvpRuntimeRepository));
     }
 
     public void SaveTrace(SaveTraceRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        _mvpRuntimeStateStore.AddTrace(new IntranetTraceEntry
+        _mvpRuntimeRepository.AddTrace(new IntranetTraceEntry
         {
             Kind = request.Kind,
             Route = request.Route,
@@ -41,7 +41,7 @@ public sealed class IntranetRuntimeOperationsService : IIntranetRuntimeOperation
 
     public IReadOnlyDictionary<string, SessionActionState> GetSessionActions()
     {
-        return _mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey);
+        return _mvpRuntimeRepository.GetSessionActions(SessionWorkflowKey);
     }
 
     public IReadOnlyDictionary<string, SessionActionState> SaveSessionActions(SaveSessionActionsRequest request)
@@ -64,7 +64,7 @@ public sealed class IntranetRuntimeOperationsService : IIntranetRuntimeOperation
             },
             StringComparer.OrdinalIgnoreCase);
 
-        _mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, mappedActions);
+        _mvpRuntimeRepository.UpsertSessionActions(SessionWorkflowKey, mappedActions);
         return mappedActions;
     }
 
@@ -78,7 +78,7 @@ public sealed class IntranetRuntimeOperationsService : IIntranetRuntimeOperation
             throw new InvalidOperationException("Status must be Pendiente, Confirmada or Cancelada.");
         }
 
-        var workflow = _mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey)
+        var workflow = _mvpRuntimeRepository.GetSessionActions(SessionWorkflowKey)
             .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
 
         var normalizedSessionId = sessionId.ToString();
@@ -92,7 +92,7 @@ public sealed class IntranetRuntimeOperationsService : IIntranetRuntimeOperation
             UpdatedAt = DateTimeOffset.UtcNow,
         };
 
-        _mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, workflow);
+        _mvpRuntimeRepository.UpsertSessionActions(SessionWorkflowKey, workflow);
         return workflow[normalizedSessionId];
     }
 }

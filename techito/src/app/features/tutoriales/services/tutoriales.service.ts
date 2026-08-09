@@ -2,25 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
-import { PagedResult, Tutorial, TutorialesQueryParams } from '../models/tutoriales.models';
-
-interface TutorialApi {
-  Id: string;
-  Slug: string;
-  Titulo: string;
-  Extracto: string;
-  Autor: string;
-  FechaPublicacion: string;
-  CategoriasJson: string;
-  Url: string;
-}
-
-interface TutorialPagedApi {
-  items: TutorialApi[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-}
+import { PagedResult, Tutorial, TutorialApi, TutorialesQueryParams, TutorialPagedApi } from '../models/tutoriales.models';
 
 @Injectable({ providedIn: 'root' })
 export class TutorialesService {

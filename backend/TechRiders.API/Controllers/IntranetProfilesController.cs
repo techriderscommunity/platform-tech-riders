@@ -10,11 +10,11 @@ namespace TechRiders.Api.Controllers;
 [Produces("application/json")]
 public sealed class IntranetProfilesController : ControllerBase
 {
-    private readonly IMvpRuntimeStateStore _mvpRuntimeStateStore;
+    private readonly IMvpRuntimeRepository _mvpRuntimeRepository;
 
-    public IntranetProfilesController(IMvpRuntimeStateStore mvpRuntimeStateStore)
+    public IntranetProfilesController(IMvpRuntimeRepository mvpRuntimeRepository)
     {
-        _mvpRuntimeStateStore = mvpRuntimeStateStore ?? throw new ArgumentNullException(nameof(mvpRuntimeStateStore));
+        _mvpRuntimeRepository = mvpRuntimeRepository ?? throw new ArgumentNullException(nameof(mvpRuntimeRepository));
     }
 
     [HttpGet("perfil")]
@@ -22,7 +22,7 @@ public sealed class IntranetProfilesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberProfileState))]
     public IActionResult GetMemberProfile([FromQuery] string? userKey, [FromQuery] string? email)
     {
-        var profile = _mvpRuntimeStateStore.GetOrCreateMemberProfile(userKey ?? email ?? string.Empty, email);
+        var profile = _mvpRuntimeRepository.GetOrCreateMemberProfile(userKey ?? email ?? string.Empty, email);
         return Ok(profile);
     }
 
@@ -48,7 +48,7 @@ public sealed class IntranetProfilesController : ControllerBase
             Organization = request.Organization ?? string.Empty,
         };
 
-        _mvpRuntimeStateStore.UpsertMemberProfile(request.UserKey ?? request.Email, profile);
+        _mvpRuntimeRepository.UpsertMemberProfile(request.UserKey ?? request.Email, profile);
         return Ok(profile);
     }
 
@@ -57,7 +57,7 @@ public sealed class IntranetProfilesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AmbassadorPortalState))]
     public IActionResult GetAmbassadorPortal([FromQuery] string? userKey, [FromQuery] string? email)
     {
-        var profile = _mvpRuntimeStateStore.GetOrCreateAmbassadorPortal(userKey ?? email ?? string.Empty, email);
+        var profile = _mvpRuntimeRepository.GetOrCreateAmbassadorPortal(userKey ?? email ?? string.Empty, email);
         return Ok(profile);
     }
 
@@ -80,7 +80,7 @@ public sealed class IntranetProfilesController : ControllerBase
             Availability = request.Availability,
         };
 
-        _mvpRuntimeStateStore.UpsertAmbassadorPortal(request.UserKey ?? request.Email, profile);
+        _mvpRuntimeRepository.UpsertAmbassadorPortal(request.UserKey ?? request.Email, profile);
         return Ok(profile);
     }
 
@@ -89,7 +89,7 @@ public sealed class IntranetProfilesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
     public IActionResult GetCurrentUserCategories([FromQuery] string? userKey)
     {
-        var categories = _mvpRuntimeStateStore.GetUserCategories(userKey ?? string.Empty);
+        var categories = _mvpRuntimeRepository.GetUserCategories(userKey ?? string.Empty);
         return Ok(categories);
     }
 
@@ -104,7 +104,7 @@ public sealed class IntranetProfilesController : ControllerBase
             return BadRequest(new { error = "At least one category is required." });
         }
 
-        _mvpRuntimeStateStore.UpsertUserCategories(request.UserKey ?? string.Empty, request.Categories);
+        _mvpRuntimeRepository.UpsertUserCategories(request.UserKey ?? string.Empty, request.Categories);
         return Ok(request.Categories);
     }
 }

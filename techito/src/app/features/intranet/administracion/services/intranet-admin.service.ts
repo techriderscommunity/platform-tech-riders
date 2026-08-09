@@ -1,34 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
-
-export interface IntranetAuditRecord {
-  id: string;
-  createdUtc: string;
-  actorUserId?: string | null;
-  actorEmail?: string | null;
-  module: string;
-  action: string;
-  result: string;
-  detail?: string | null;
-}
-
-export interface IntranetSettingRecord {
-  id: string;
-  key: string;
-  module: string;
-  value: string;
-  status: string;
-  updatedUtc: string;
-  updatedBy?: string | null;
-}
-
-export interface UpdateIntranetSettingPayload {
-  key: string;
-  module: string;
-  value: string;
-  status: 'activo' | 'revision';
-}
+import {
+  IntranetAuditRecord,
+  IntranetSettingRecord,
+  UpdateIntranetSettingPayload,
+} from '../models/intranet-admin.models';
 
 @Injectable({ providedIn: 'root' })
 export class IntranetAdminService {

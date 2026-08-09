@@ -155,7 +155,7 @@
           <div class="form-group">
             <app-ui-select
               label="Disponibilidad"
-              [options]="disponibilidadOptions"
+              [options]="disponibilidadOptions()"
               [value]="perfilPrivado().disponibilidad"
               (valueChange)="updatePerfilPrivado('disponibilidad', $event)"
             ></app-ui-select>

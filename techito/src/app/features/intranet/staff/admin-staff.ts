@@ -1,36 +1,11 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { environment } from '@env/environment';
 import { UiButton  } from '@shared/ui/button/button';
 import { catchError, finalize } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
-
-interface StaffItem {
-  id: string;
-  nombre: string;
-  email: string;
-  rolPrincipal: string;
-  roles: string[];
-  estado: 'activo' | 'inactivo';
-}
-
-interface GovernanceUserResponse {
-  id: string;
-  email: string;
-  name: string;
-  primaryRole: string;
-  active: boolean;
-  roles: string[];
-}
-
-interface GovernanceRoleResponse {
-  id: string;
-  name: string;
-  description?: string | null;
-  active: boolean;
-}
+import { of } from 'rxjs';
+import { StaffItem } from './models/staff-governance.models';
+import { StaffGovernanceService } from './services/staff-governance.service';
 
 @Component({
   selector: 'app-admin-staff',
@@ -41,9 +16,8 @@ interface GovernanceRoleResponse {
   styleUrl: './admin-staff.scss'
 })
 export class AdminStaff {
-  private readonly http = inject(HttpClient);
+  private readonly staffGovernanceService = inject(StaffGovernanceService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly baseUrl = environment.apiUrl;
 
   readonly feedback = signal<string | null>(null);
   readonly loading = signal(false);
@@ -61,28 +35,18 @@ export class AdminStaff {
 
   loadGovernanceData() {
     this.loading.set(true);
-    forkJoin({
-      users: this.http.get<GovernanceUserResponse[]>(`${this.baseUrl}/admin/staff/usuarios`),
-      roles: this.http.get<GovernanceRoleResponse[]>(`${this.baseUrl}/admin/staff/roles`),
-    })
+    this.staffGovernanceService.getGovernanceData()
       .pipe(
         catchError(() => {
           this.feedback.set('No se pudo cargar el panel de gobierno. Revisa permisos superadmin.');
-          return of({ users: [], roles: [] as GovernanceRoleResponse[] });
+          return of({ staff: [], roles: [] as string[] });
         }),
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ users, roles }) => {
-        this.roleCatalog.set(roles.map(role => role.name));
-        this.staff.set(users.map(user => ({
-          id: user.id,
-          nombre: user.name,
-          email: user.email,
-          rolPrincipal: user.primaryRole,
-          roles: user.roles ?? [user.primaryRole],
-          estado: user.active ? 'activo' : 'inactivo',
-        })));
+      .subscribe(({ staff, roles }) => {
+        this.roleCatalog.set(roles);
+        this.staff.set(staff);
       });
   }
 
@@ -134,7 +98,7 @@ export class AdminStaff {
 
     const active = member.estado !== 'activo';
     this.savingUserId.set(id);
-    this.http.put(`${this.baseUrl}/admin/staff/usuarios/${id}/estado`, { activo: active })
+    this.staffGovernanceService.updateEstado(id, active)
       .pipe(
         finalize(() => this.savingUserId.set(null)),
         takeUntilDestroyed(this.destroyRef),
@@ -159,10 +123,7 @@ export class AdminStaff {
 
   private saveRoles(id: string, primaryRole: string, roles: string[]) {
     this.savingUserId.set(id);
-    this.http.put(`${this.baseUrl}/admin/staff/usuarios/${id}/roles`, {
-      primaryRole,
-      roles,
-    })
+    this.staffGovernanceService.updateRoles(id, primaryRole, roles)
       .pipe(
         finalize(() => this.savingUserId.set(null)),
         takeUntilDestroyed(this.destroyRef),

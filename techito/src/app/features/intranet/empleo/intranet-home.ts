@@ -1,52 +1,22 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
-import { environment } from '@env/environment';
+import { PublicContentService } from '@core/content/public-content.service';
 import { catchError, of } from 'rxjs';
 import { filter, startWith } from 'rxjs/operators';
+import {
+  ActivitySummaryItem,
+  DashboardModuleCard,
+  DashboardNotification,
+  MySpaceItem,
+  QuickAccess,
+  RecentActivityItem,
+  RoleHeroContent,
+} from './models/intranet-home.models';
 import { INTRANET_NAV_SECTIONS } from './intranet-nav.config';
-
-interface DashboardNotification {
-  title: string;
-  detail: string;
-}
-
-interface QuickAccess {
-  label: string;
-  description: string;
-  route: string;
-}
-
-interface MySpaceItem {
-  label: string;
-  route: string;
-}
-
-interface ActivitySummaryItem {
-  module: string;
-  pending: string;
-}
-
-interface RoleHeroContent {
-  title: string;
-  subtitle: string;
-  contextLabel: string;
-}
-
-interface RecentActivityItem {
-  label: string;
-  detail: string;
-  time: string;
-}
-
-interface DashboardModuleCard {
-  title: string;
-  description: string;
-  route: string;
-}
+import { IntranetHomeService } from './services/intranet-home.service';
 
 const ROLE_LABELS: Record<string, string> = {
   superadmin: 'Superadmin',
@@ -70,17 +40,17 @@ const ROLE_LABELS: Record<string, string> = {
 })
 export class IntranetHome {
   private readonly authService = inject(AuthService);
-  private readonly http = inject(HttpClient);
+  private readonly publicContentService = inject(PublicContentService);
+  private readonly intranetHomeService = inject(IntranetHomeService);
   private readonly router = inject(Router);
-  private readonly baseUrl = environment.apiUrl;
   private readonly navigationDone = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       startWith(null),
     ),
   );
-  readonly selectedCategories = signal<string[]>(['FP Tour', 'Eventos']);
-  readonly availableCategories = ['FP Tour', 'Eventos', 'Mentorias', 'Podcast', 'Comunidad'];
+  readonly selectedCategories = signal<string[]>([]);
+  availableCategories: string[] = [];
   readonly categoriesSaving = signal(false);
 
   readonly userName = computed(() => this.authService.user()?.name || 'Usuario');
@@ -304,6 +274,23 @@ export class IntranetHome {
   });
 
   constructor() {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        catchError(() => of(null)),
+        takeUntilDestroyed(),
+      )
+      .subscribe(content => {
+        if (!content) {
+          return;
+        }
+
+        this.availableCategories = content.intranet.memberCategoryOptions;
+        if (this.selectedCategories().length === 0) {
+          this.selectedCategories.set(this.availableCategories.slice(0, 2));
+        }
+      });
+
     this.emitLandingTrace();
 
     if (this.canManageCategories()) {
@@ -328,11 +315,7 @@ export class IntranetHome {
   }
 
   private loadMyCategories() {
-    this.http.get<string[]>(`${this.baseUrl}/intranet/mis-categorias`, {
-      params: {
-        userKey: this.resolveUserKey(),
-      },
-    })
+    this.intranetHomeService.getMyCategories(this.resolveUserKey())
       .pipe(
         catchError(() => of([] as string[])),
         takeUntilDestroyed(),
@@ -346,10 +329,7 @@ export class IntranetHome {
 
   private saveMyCategories(categories: string[]) {
     this.categoriesSaving.set(true);
-    this.http.put(`${this.baseUrl}/intranet/mis-categorias`, {
-      userKey: this.resolveUserKey(),
-      categories,
-    })
+    this.intranetHomeService.saveMyCategories(this.resolveUserKey(), categories)
       .pipe(
         catchError(() => of(null)),
         takeUntilDestroyed(),
@@ -360,11 +340,7 @@ export class IntranetHome {
   }
 
   private emitLandingTrace() {
-    this.http.post(`${this.baseUrl}/intranet/trazas`, {
-      kind: 'landing',
-      route: '/intranet',
-      detail: 'home_loaded',
-    })
+    this.intranetHomeService.emitLandingTrace()
       .pipe(
         catchError(() => of(null)),
         takeUntilDestroyed(),

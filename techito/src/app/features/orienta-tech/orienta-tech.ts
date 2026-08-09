@@ -2,17 +2,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, WritableSignal,
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, EMPTY, tap } from 'rxjs';
+import { PublicContentService } from '@core/content/public-content.service';
+import { FeatureCardItem, MetricItem, ProgressCardItem } from '@core/content/public-content.models';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 import { UiFeatureCards } from '@shared/ui/feature-cards/feature-cards';
 import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
 import { UiCarouselItem, UiMediaCarousel } from '@shared/ui/media-carousel/media-carousel';
+import { OrientaPlaylistKey, YoutubePlaylistSection } from './models/orienta-tech.models';
 import { OrientaTechPlaylistsService } from './services/orienta-tech-playlists.service';
-
-interface YoutubePlaylistSection {
-  key: 'profiles' | 'success-stories' | 'interviews';
-  title: string;
-  url: string;
-}
 
 function playlistVideoItem(title: string, videoId: string, listId: string): UiCarouselItem {
   return {
@@ -33,96 +30,13 @@ function playlistVideoItem(title: string, videoId: string, listId: string): UiCa
 })
 export class OrientaTech implements OnInit {
   private readonly orientaTechPlaylistsService = inject(OrientaTechPlaylistsService);
+  private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly orientaMetrics = [
-    { icon: '📚', value: '4', label: 'Programas base' },
-    { icon: '💼', value: '20+', label: 'Empresas conectadas' },
-    { icon: '🎯', value: '1:1', label: 'Mentoring personalizado' },
-    { icon: '🚀', value: '360°', label: 'Orientación de carrera' },
-  ];
-
-  readonly coreFeatures = [
-    {
-      icon: '📚',
-      title: 'Formaciones regladas',
-      description: 'Programas formales para iniciar o transformar tu carrera tecnológica.',
-      points: ['Ciclos formativos', 'Bootcamps certificados', 'Rutas guiadas']
-    },
-    {
-      icon: '💼',
-      title: 'Empleo Tech',
-      description: 'Conexión con empresas reales que contratan talento junior y en transición.',
-      points: ['Ofertas curadas', 'Prácticas', 'Networking de hiring']
-    },
-    {
-      icon: '🎯',
-      title: 'Mentoría personalizada',
-      description: 'Acompañamiento por profesionales en activo para acelerar tu evolución.',
-      points: ['Mentor asignado', 'Sesiones periódicas', 'Seguimiento de objetivos']
-    },
-    {
-      icon: '🚀',
-      title: 'Orientación estratégica',
-      description: 'Plan de carrera con objetivos accionables y revisión continua.',
-      points: ['Especialización', 'Roadmap', 'Revisión trimestral']
-    }
-  ];
-
-  readonly participationTracks = [
-    {
-      title: 'Empresas colaboradoras',
-      status: 'Activa',
-      progress: 78,
-      detail: 'Red de organizaciones que abren oportunidades reales de empleabilidad.',
-      ctaLabel: 'Ver oportunidades',
-      ctaLink: '/join'
-    },
-    {
-      title: 'Recruiters y RRHH',
-      status: 'Activa',
-      progress: 74,
-      detail: 'Sesiones de mercado laboral, procesos de selección y feedback estructurado.',
-      ctaLabel: 'Participar',
-      ctaLink: '/join'
-    },
-    {
-      title: 'Recursos y contenidos',
-      status: 'En crecimiento',
-      progress: 69,
-      detail: 'Videoteca, guías y casos para crecer en soft skills y carrera profesional.',
-      ctaLabel: 'Explorar',
-      ctaLink: '/tutorials'
-    }
-  ];
-
-  readonly studySections = [
-    {
-      title: 'FP',
-      description: 'Itinerarios base en desarrollo, sistemas, data y ciberseguridad para iniciar carrera tech.',
-      points: ['SMR', 'ASIR', 'DAW', 'DAM']
-    },
-    {
-      title: 'Másteres FP',
-      description: 'Especialización en áreas con alta demanda y enfoque práctico para empleabilidad.',
-      points: ['Big Data', 'Ciberseguridad', 'Cloud', 'IA aplicada']
-    },
-    {
-      title: 'Certificados',
-      description: 'Rutas cortas para validar competencias y acelerar inserción laboral.',
-      points: ['Qué son', 'Cuándo elegirlos', 'FAQ']
-    },
-    {
-      title: 'Grados y Másteres',
-      description: 'Opciones universitarias orientadas a perfiles técnicos y de especialización avanzada.',
-      points: ['Grados base', 'Másteres de especialidad', 'Comparativa por perfil']
-    },
-    {
-      title: 'Certificaciones',
-      description: 'Credenciales por fabricante para reforzar tu perfil profesional.',
-      points: ['Ruta por proveedor', 'Nivel recomendado', 'Preparación guiada']
-    }
-  ];
+  orientaMetrics: MetricItem[] = [];
+  coreFeatures: FeatureCardItem[] = [];
+  participationTracks: ProgressCardItem[] = [];
+  studySections: FeatureCardItem[] = [];
 
   readonly youtubePlaylistsUrl = 'https://www.youtube.com/@TechRidersMedia/playlists';
   readonly loadingProfiles = signal(false);
@@ -174,13 +88,27 @@ export class OrientaTech implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.orientaMetrics = content.orientaTech.metrics;
+          this.coreFeatures = content.orientaTech.coreFeatures;
+          this.participationTracks = content.orientaTech.participationTracks;
+          this.studySections = content.orientaTech.studySections;
+        }),
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+
     this.loadPlaylist('profiles', this.profilesItems, this.profilesFallback, this.loadingProfiles);
     this.loadPlaylist('success-stories', this.successStoriesItems, this.successStoriesFallback, this.loadingSuccessStories);
     this.loadPlaylist('interviews', this.interviewsItems, this.interviewsFallback, this.loadingInterviews);
   }
 
   private loadPlaylist(
-    playlist: 'profiles' | 'success-stories' | 'interviews',
+    playlist: OrientaPlaylistKey,
     target: WritableSignal<UiCarouselItem[]>,
     fallback: UiCarouselItem[],
     loading: WritableSignal<boolean>

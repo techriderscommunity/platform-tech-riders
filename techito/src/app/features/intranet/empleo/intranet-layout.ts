@@ -1,10 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
-import { environment } from '@env/environment';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
+import { IntranetLayoutTraceService } from './services/intranet-layout-trace.service';
 import { INTRANET_NAV_SECTIONS, IntranetNavItem, IntranetNavSection } from './intranet-nav.config';
 
 @Component({
@@ -18,9 +17,8 @@ import { INTRANET_NAV_SECTIONS, IntranetNavItem, IntranetNavSection } from './in
 export class IntranetLayout {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly http = inject(HttpClient);
+  private readonly intranetLayoutTraceService = inject(IntranetLayoutTraceService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly baseUrl = environment.apiUrl;
 
   private readonly navSections: IntranetNavSection[] = INTRANET_NAV_SECTIONS;
 
@@ -55,11 +53,7 @@ export class IntranetLayout {
     interval(5 * 60 * 1000)
       .pipe(
         startWith(0),
-        switchMap(() => this.http.post(`${this.baseUrl}/intranet/trazas`, {
-          kind: 'heartbeat',
-          route: this.router.url,
-          detail: 'intranet_layout_alive',
-        }).pipe(catchError(() => of(null)))),
+        switchMap(() => this.intranetLayoutTraceService.emitHeartbeatTrace(this.router.url).pipe(catchError(() => of(null)))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();

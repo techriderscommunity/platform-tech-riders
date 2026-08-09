@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { RouterLink } from '@angular/router';
+import { PublicContentService } from '@core/content/public-content.service';
+import { FeatureCardItem, ProgressCardItem } from '@core/content/public-content.models';
 import { UiFeatureCards } from '@shared/ui/feature-cards/feature-cards';
 import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
 
@@ -11,46 +15,24 @@ import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
   templateUrl: './empresas.html',
   styleUrl: './empresas.scss'
 })
-export class Empresas {
-  readonly valueCards = [
-    {
-      icon: '🎤',
-      title: 'Propón una sesión',
-      description: 'Comparte casos reales y aprendizajes prácticos desde tu organización.',
-      points: ['Formato adaptable', 'Audiencias concretas', 'Coordinación operativa']
-    },
-    {
-      icon: '🧠',
-      title: 'Participa en actividades',
-      description: 'Impulsa workshops, retos y formatos de comunidad con impacto formativo.',
-      points: ['Co-creación con Tech Riders', 'Visibilidad de marca técnica', 'Continuidad anual']
-    },
-    {
-      icon: '🚀',
-      title: 'Conecta con talento',
-      description: 'Activa itinerarios para detectar perfiles junior y senior alineados con tu stack.',
-      points: ['Perfiles filtrados', 'Canales de contacto', 'Seguimiento de pipeline']
-    }
-  ];
+export class Empresas implements OnInit {
+  private readonly publicContentService = inject(PublicContentService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly processCards = [
-    {
-      title: 'Definición de colaboración',
-      detail: 'Identificamos objetivo, formato y audiencia de la iniciativa.',
-      progress: 100,
-      status: 'Paso 1'
-    },
-    {
-      title: 'Planificación y calendario',
-      detail: 'Alineamos fechas, recursos y coordinación con la comunidad.',
-      progress: 100,
-      status: 'Paso 2'
-    },
-    {
-      title: 'Ejecución y seguimiento',
-      detail: 'Publicamos, ejecutamos y medimos resultados para repetir impacto.',
-      progress: 100,
-      status: 'Paso 3'
-    }
-  ];
+  valueCards: FeatureCardItem[] = [];
+  processCards: ProgressCardItem[] = [];
+
+  ngOnInit(): void {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.valueCards = content.companies.valueCards;
+          this.processCards = content.companies.processCards;
+        }),
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 }

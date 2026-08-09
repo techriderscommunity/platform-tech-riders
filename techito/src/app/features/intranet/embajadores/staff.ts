@@ -1,30 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal, computed, inject, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '\.\./\.\./\.\./\.\./environments/environment';
+import { PublicContentService } from '@core/content/public-content.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { Embajador, PagedResult } from './models/embajadores.models';
+import { TalkItem } from './models/embajadores.models';
+import { EmbajadoresService } from './services/embajadores.service';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
-
-interface AmbassadorApi {
-  Id: string;
-  Name: string;
-  LastName: string;
-  CategoryName?: string | null;
-  OtherCategory?: string | null;
-  UpdatedAt?: string | null;
-  CreatedAt: string;
-}
-
-interface TalkItem {
-  topic: string;
-  speaker: string;
-  date: string;
-  rating: number;
-}
 
 @Component({
   selector: 'app-staff',
@@ -35,19 +18,12 @@ interface TalkItem {
   styleUrl: './staff.scss'
 })
 export class Staff {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly embajadoresService = inject(EmbajadoresService);
+  private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly periodOptions = [
-    { label: 'Este mes', value: 'month' },
-    { label: 'Este año', value: 'year' },
-    { label: 'Todo', value: 'all' }
-  ];
-  readonly periodSelectOptions: UiSelectOption[] = this.periodOptions.map(option => ({
-    label: option.label,
-    value: option.value
-  }));
+  periodOptions: Array<{ label: string; value: string }> = [];
+  periodSelectOptions: UiSelectOption[] = [];
   readonly selectedPeriod = signal('month');
   readonly loading = signal(true);
   readonly talks = signal<TalkItem[]>([]);
@@ -91,25 +67,34 @@ export class Staff {
   readonly colorScheme = 'vivid';
 
   constructor() {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.periodSelectOptions = content.intranet.staffPeriodOptions;
+          this.periodOptions = content.intranet.staffPeriodOptions.map((option) => ({
+            label: option.label,
+            value: option.value,
+          }));
+        }),
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+
     this.loadTalks();
   }
 
   private loadTalks() {
-    this.http.get<AmbassadorApi[]>(`${this.baseUrl}/ambassadors`)
+    this.embajadoresService.getTalks()
       .pipe(
         tap((result) => {
-          const talks = (result ?? []).map((embajador): TalkItem => ({
-            topic: embajador.CategoryName ?? embajador.OtherCategory ?? 'General',
-            speaker: [embajador.Name, embajador.LastName].filter(Boolean).join(' ').trim(),
-            date: embajador.UpdatedAt ?? embajador.CreatedAt,
-            rating: 3,
-          }));
-          this.talks.set(talks);
+          this.talks.set(result ?? []);
           this.loading.set(false);
         }),
         catchError(() => {
           this.loading.set(false);
-          return of([] as AmbassadorApi[]);
+          return of([] as TalkItem[]);
         }),
         takeUntilDestroyed(this.destroyRef)
       )

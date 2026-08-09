@@ -4,15 +4,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { UiCarouselItem  } from '@shared/ui/media-carousel/media-carousel';
-
-interface PodcastVideoDto {
-  videoId: string;
-  title: string;
-  url: string;
-  embedUrl: string;
-  publishedAt?: string | null;
-  thumbnailUrl?: string | null;
-}
+import { PodcastVideoDto } from '../models/podcast.models';
 
 @Injectable({ providedIn: 'root' })
 export class PodcastService {

@@ -2,31 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '\.\./\.\./\.\./\.\./\.\./environments/environment';
-import { PagedResult, Sesion } from '../models/sesiones.models';
-
-interface SessionApi {
-  Id: string;
-  Title: string;
-  Level?: string | null;
-  MaxCapacity?: number | null;
-  IsActive: boolean;
-  Event?: {
-    Name: string;
-    StartDate: string;
-  } | null;
-}
-
-interface SessionWorkflowApi {
-  SessionId: string;
-  Status?: string;
-  AmbassadorAssignedId?: string | null;
-  UpdatedAt: string;
-}
-
-interface UpdateSessionWorkflowRequest {
-  status?: string;
-  ambassadorAssignedId?: string | null;
-}
+import { PagedResult, Sesion, SessionApi, SessionWorkflowApi, UpdateSessionWorkflowRequest } from '../models/sesiones.models';
 
 @Injectable({ providedIn: 'root' })
 export class SesionesService {

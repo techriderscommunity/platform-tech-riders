@@ -3,28 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { environment } from '\.\./\.\./\.\./\.\./\.\./\.\./environments/environment';
-import { Candidato, EmpresaDashboard, Oferta, PagedResult } from '../models/empresa.models';
-
-interface OfferApi {
-  Id: string;
-  Titulo: string;
-  Empresa: string;
-  Salario: number;
-  Ubicacion: string;
-  Modalidad: number;
-  Estado: number;
-  FechaPublicacion: string;
-}
-
-interface ApplicationApi {
-  Id: string;
-  OfertaId: string;
-  JuniorId: string;
-  NombreJunior: string;
-  EmailJunior: string;
-  Estado: number;
-  FechaSolicitud: string;
-}
+import { ApplicationApi, Candidato, EmpresaDashboard, Oferta, OfferApi, PagedResult } from '../models/empresa.models';
 
 @Injectable({ providedIn: 'root' })
 export class EmpresaService {

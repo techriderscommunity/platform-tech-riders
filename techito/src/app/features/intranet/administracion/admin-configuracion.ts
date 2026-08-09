@@ -3,15 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { IntranetAdminService, IntranetSettingRecord } from './services/intranet-admin.service';
+import { ConfigItem, IntranetSettingRecord } from './models/intranet-admin.models';
+import { IntranetAdminService } from './services/intranet-admin.service';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
-
-interface ConfigItem {
-  key: string;
-  modulo: string;
-  valor: string;
-  estado: 'activo' | 'revision';
-}
 
 @Component({
   selector: 'app-admin-configuracion',

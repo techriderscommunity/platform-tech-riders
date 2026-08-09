@@ -97,9 +97,10 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 // 3.1 Estado MVP en memoria para flujos locales mientras no exista persistencia definitiva.
-builder.Services.AddSingleton<IMvpRuntimeStateStore, InMemoryMvpRuntimeStateStore>();
+builder.Services.AddSingleton<IMvpRuntimeRepository, InMemoryMvpRuntimeRepository>();
 builder.Services.AddScoped<IIntranetRuntimeOperationsService, IntranetRuntimeOperationsService>();
 builder.Services.AddScoped<IPublicEngagementIntakeService, PublicEngagementIntakeService>();
+builder.Services.AddSingleton<IPublicContentService, PublicContentService>();
 builder.Services.AddScoped<ILocalAuthenticationService, LocalAuthenticationService>();
 
 // 4. Configuración de Controllers con validación de modelo automática

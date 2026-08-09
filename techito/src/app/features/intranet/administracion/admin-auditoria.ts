@@ -2,15 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
-import { IntranetAdminService, IntranetAuditRecord } from './services/intranet-admin.service';
-
-interface AuditRow {
-  fecha: string;
-  usuario: string;
-  modulo: string;
-  accion: string;
-  resultado: 'ok' | 'warning';
-}
+import { AuditRow, IntranetAuditRecord } from './models/intranet-admin.models';
+import { IntranetAdminService } from './services/intranet-admin.service';
 
 @Component({
   selector: 'app-admin-auditoria',

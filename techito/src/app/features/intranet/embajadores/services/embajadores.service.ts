@@ -2,25 +2,20 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '\.\./\.\./\.\./\.\./\.\./environments/environment';
-import { Embajador, PagedResult } from '../models/embajadores.models';
-
-interface AmbassadorApi {
-  Id: string;
-  Name: string;
-  LastName: string;
-  Email: string;
-  Phone?: string | null;
-  CategoryName?: string | null;
-  OtherCategory?: string | null;
-  UpdatedAt?: string | null;
-  CreatedAt: string;
-  IsActive: boolean;
-}
+import {
+  AmbassadorApi,
+  AmbassadorPortalApi,
+  Embajador,
+  PagedResult,
+  TalkItem,
+  UpdateAmbassadorPortalPayload,
+} from '../models/embajadores.models';
 
 @Injectable({ providedIn: 'root' })
 export class EmbajadoresService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/ambassadors`;
+  private readonly intranetBaseUrl = `${environment.apiUrl}/intranet`;
 
   getEmbajadores(page = 1, pageSize = 50, estado?: string) {
     const params = new HttpParams();
@@ -62,6 +57,30 @@ export class EmbajadoresService {
 
   createEmbajador(embajador: { nombre: string; email: string; telefono: string; categoria: string; }) {
     return this.http.post<string>(this.baseUrl, embajador);
+  }
+
+  getTalks() {
+    return this.http.get<AmbassadorApi[]>(this.baseUrl).pipe(
+      map((items) => (items ?? []).map((embajador): TalkItem => ({
+        topic: embajador.CategoryName ?? embajador.OtherCategory ?? 'General',
+        speaker: [embajador.Name, embajador.LastName].filter(Boolean).join(' ').trim(),
+        date: embajador.UpdatedAt ?? embajador.CreatedAt,
+        rating: 3,
+      }))),
+    );
+  }
+
+  getAmbassadorPortalProfile(userKey: string, email: string) {
+    return this.http.get<AmbassadorPortalApi>(`${this.intranetBaseUrl}/ambassador-profile`, {
+      params: {
+        userKey,
+        email,
+      },
+    });
+  }
+
+  updateAmbassadorPortalProfile(payload: UpdateAmbassadorPortalPayload) {
+    return this.http.put<AmbassadorPortalApi>(`${this.intranetBaseUrl}/ambassador-profile`, payload);
   }
 }
 

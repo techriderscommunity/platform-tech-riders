@@ -1,34 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal, inject, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '@env/environment';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { UiButton  } from '@shared/ui/button/button';
 import { UiModal } from '@shared/ui/modal/modal';
 import { UiTextField } from '@shared/ui/text-field/text-field';
-
-interface ColaboradorItem {
-  id: string;
-  nombre: string;
-  especialidad: string;
-  proyectos: number;
-  pagos_pendientes: number;
-  estado: 'activo' | 'inactivo';
-  fecha_inicio: string;
-  email: string;
-  roles: string[];
-}
-
-interface StaffUserResponse {
-  id: string;
-  email: string;
-  name: string;
-  primaryRole: string;
-  active: boolean;
-  roles: string[];
-}
+import { ColaboradorItem } from './models/colaboradores.models';
+import { ColaboradoresService } from './services/colaboradores.service';
 
 @Component({
   selector: 'app-admin-colaboradores',
@@ -39,8 +18,7 @@ interface StaffUserResponse {
   styleUrl: './admin-colaboradores.scss'
 })
 export class AdminColaboradores {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly colaboradoresService = inject(ColaboradoresService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly loading = signal(true);
@@ -62,20 +40,10 @@ export class AdminColaboradores {
   }
 
   private loadColaboradores() {
-    this.http.get<StaffUserResponse[]>(`${this.baseUrl}/admin/staff/colaboradores`)
+    this.colaboradoresService.getColaboradores()
       .pipe(
         tap((data) => {
-          this.colaboradores.set(data.map(item => ({
-            id: item.id,
-            nombre: item.name,
-            especialidad: item.roles.filter(role => role !== 'colaborador').join(', ') || 'Colaborador',
-            proyectos: 0,
-            pagos_pendientes: 0,
-            estado: item.active ? 'activo' : 'inactivo',
-            fecha_inicio: '',
-            email: item.email,
-            roles: item.roles,
-          })));
+          this.colaboradores.set(data);
           this.loading.set(false);
         }),
         catchError(() => {
@@ -121,7 +89,7 @@ export class AdminColaboradores {
     this.modalError.set(null);
 
     this.saving.set(true);
-    this.http.post(`${this.baseUrl}/admin/staff/colaboradores`, {
+    this.colaboradoresService.createColaborador({
       email,
       nombre,
       password,
@@ -166,7 +134,7 @@ export class AdminColaboradores {
     const activar = item.estado !== 'activo';
 
     this.saving.set(true);
-    this.http.put(`${this.baseUrl}/admin/staff/usuarios/${item.id}/estado`, { activo: activar })
+    this.colaboradoresService.updateEstado(item.id, activar)
       .pipe(
         tap(() => {
           this.feedback.set(`Colaborador ${activar ? 'reactivado' : 'desactivado'} correctamente.`);

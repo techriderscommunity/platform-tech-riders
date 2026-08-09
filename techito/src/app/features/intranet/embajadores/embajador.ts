@@ -1,24 +1,16 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
-import { environment } from '@env/environment';
+import { PublicContentService } from '@core/content/public-content.service';
 import { EmbajadoresService } from './services/embajadores.service';
-import { Embajador } from './models/embajadores.models';
+import { AmbassadorPortalApi, Embajador } from './models/embajadores.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
 import { UiButton  } from '@shared/ui/button/button';
 import { UiTextarea } from '@shared/ui/textarea/textarea';
-
-interface AmbassadorPortalApi {
-  Email: string;
-  Bio: string;
-  Specialties: string;
-  Availability: string;
-}
 
 @Component({
   selector: 'app-embajador',
@@ -29,11 +21,10 @@ interface AmbassadorPortalApi {
   styleUrl: './embajador.scss'
 })
 export class EmbajadorComponent {
-  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly publicContentService = inject(PublicContentService);
   private readonly embajadoresService = inject(EmbajadoresService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly baseUrl = environment.apiUrl;
 
   readonly searchName = signal('');
   readonly searchStatus = signal('pendiente');
@@ -46,29 +37,31 @@ export class EmbajadorComponent {
   readonly especialidades = signal('Cloud, desarrollo web, mentoring, empleabilidad');
   readonly disponibilidad = signal('Martes y jueves por la tarde; viernes por la mañana con aviso previo.');
 
-  readonly estados = [
-    { label: 'Todos', value: '' },
-    { label: 'Activos', value: 'activo' },
-    { label: 'Desactivados', value: 'desactivado' },
-    { label: 'Pendientes', value: 'pendiente' }
-  ];
-
-  readonly estadoOptions: UiSelectOption[] = this.estados.map(estado => ({
-    label: estado.label,
-    value: estado.value
-  }));
-
-  readonly availabilityOptions: UiSelectOption[] = [
-    { label: 'Baja disponibilidad', value: '1 bloque semanal' },
-    { label: 'Disponibilidad media', value: '2 o 3 bloques semanales' },
-    { label: 'Alta disponibilidad', value: '4 o más bloques semanales' }
-  ];
+  estados: Array<{ label: string; value: string }> = [];
+  estadoOptions: UiSelectOption[] = [];
+  availabilityOptions: UiSelectOption[] = [];
 
   readonly query = computed(() => ({
     estado: this.searchStatus()
   }));
 
   constructor() {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.estados = content.intranet.ambassadorStatusOptions.map((option) => ({
+            label: option.label,
+            value: option.value,
+          }));
+          this.estadoOptions = content.intranet.ambassadorStatusOptions;
+          this.availabilityOptions = content.intranet.ambassadorAvailabilityOptions;
+        }),
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+
     this.hydrateDraftFromLocalStorage();
 
     toObservable(this.query)
@@ -216,7 +209,7 @@ export class EmbajadorComponent {
       availability: this.disponibilidad(),
     };
 
-    this.http.put<AmbassadorPortalApi>(`${this.baseUrl}/intranet/ambassador-profile`, payload)
+    this.embajadoresService.updateAmbassadorPortalProfile(payload)
       .pipe(
         tap(() => {
           this.persistPortalLocally();
@@ -269,12 +262,7 @@ export class EmbajadorComponent {
       }
     }
 
-    this.http.get<AmbassadorPortalApi>(`${this.baseUrl}/intranet/ambassador-profile`, {
-      params: {
-        userKey: this.resolveUserKey(),
-        email: this.resolveCurrentEmail(),
-      },
-    })
+    this.embajadoresService.getAmbassadorPortalProfile(this.resolveUserKey(), this.resolveCurrentEmail())
       .pipe(
         tap(profile => {
           if (profile.Bio) this.bio.set(profile.Bio);

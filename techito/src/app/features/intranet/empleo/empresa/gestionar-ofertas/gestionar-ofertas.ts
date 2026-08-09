@@ -4,21 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { catchError, of, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmpresaService } from '../services/empresa.service';
-import { Oferta } from '../models/empresa.models';
+import { NuevaOfertaForm, Oferta } from '../models/empresa.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
 import { UiButton  } from '@shared/ui/button/button';
-
-interface NuevaOfertaForm {
-  titulo: string;
-  descripcion: string;
-  requisitos: string;
-  ubicacion: string;
-  salario: string;
-  tipo: string;
-  modalidad: string;
-}
 
 @Component({
   selector: 'app-gestionar-ofertas',

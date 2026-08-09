@@ -4,6 +4,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { TutorialesService } from './services/tutoriales.service';
 import { PagedResult, Tutorial } from './models/tutoriales.models';
+import { PublicContentService } from '@core/content/public-content.service';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/resource-cards';
@@ -20,12 +21,10 @@ import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/r
 export class Tutoriales {
   readonly destroyRef = inject(DestroyRef);
   readonly tutorialesService = inject(TutorialesService);
+  readonly publicContentService = inject(PublicContentService);
   private readonly platformId = inject(PLATFORM_ID);
 
-  readonly featuredCategories = [
-    'Azure', '.NET', 'C#', 'Desarrollo', 'Windows Server',
-    'Docker', 'Kubernetes', 'Full Stack', 'Seguridad'
-  ];
+  featuredCategories: string[] = [];
 
   readonly pageSize = 12;
   readonly selectedCategoria = signal('');
@@ -75,6 +74,17 @@ export class Tutoriales {
   });
 
   constructor() {
+    this.publicContentService
+      .getPublicContent()
+      .pipe(
+        tap((content) => {
+          this.featuredCategories = content.tutorials.featuredCategories;
+        }),
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+
     if (isPlatformBrowser(this.platformId)) toObservable(this.tutorialesQuery)
       .pipe(
         tap(() => {
