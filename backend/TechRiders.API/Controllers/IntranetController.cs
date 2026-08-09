@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Contracts.Requests.Intranet;
 using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Responses;
 using TechRiders.Application.Interfaces;
@@ -292,96 +292,4 @@ public class IntranetController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
         }
     }
-}
-
-public sealed class SaveMemberProfileRequest
-{
-    [StringLength(254)]
-    public string? UserKey { get; set; }
-
-    [Required]
-    [StringLength(150)]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    [EmailAddress]
-    [StringLength(254)]
-    public string Email { get; set; } = string.Empty;
-
-    [StringLength(2000)]
-    public string Bio { get; set; } = string.Empty;
-
-    [StringLength(500)]
-    public string Interests { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(80)]
-    public string Audience { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(50)]
-    public string CommunityRole { get; set; } = string.Empty;
-
-    [StringLength(200)]
-    public string? Organization { get; set; }
-}
-
-public sealed class SaveAmbassadorPortalRequest
-{
-    [StringLength(254)]
-    public string? UserKey { get; set; }
-
-    [Required]
-    [EmailAddress]
-    [StringLength(254)]
-    public string Email { get; set; } = string.Empty;
-
-    [StringLength(2000)]
-    public string Bio { get; set; } = string.Empty;
-
-    [StringLength(500)]
-    public string Specialties { get; set; } = string.Empty;
-
-    [StringLength(500)]
-    public string Availability { get; set; } = string.Empty;
-}
-
-public sealed class SaveCategoriesRequest
-{
-    [StringLength(254)]
-    public string? UserKey { get; set; }
-
-    public List<string> Categories { get; set; } = [];
-}
-
-public sealed class SaveTraceRequest
-{
-    [Required]
-    [StringLength(80)]
-    public string Kind { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(200)]
-    public string Route { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(200)]
-    public string Detail { get; set; } = string.Empty;
-}
-
-public sealed class SaveSessionActionsRequest
-{
-    [StringLength(254)]
-    public string? UserKey { get; set; }
-
-    public Dictionary<string, SaveSessionActionItem> Actions { get; set; } = new(StringComparer.OrdinalIgnoreCase);
-}
-
-public sealed class SaveSessionActionItem
-{
-    [StringLength(50)]
-    public string? Status { get; set; }
-
-    [StringLength(80)]
-    public string? AmbassadorAssignedId { get; set; }
 }

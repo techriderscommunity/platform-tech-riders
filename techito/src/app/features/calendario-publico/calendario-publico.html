@@ -1,0 +1,78 @@
+<section id="calendario-publico">
+  <header class="agenda-hero">
+    <div>
+      <span class="section-label">Agenda Pública</span>
+      <h2>Calendario de eventos Tech Riders</h2>
+      <p class="section-desc">Explora actividades por tipo, modalidad y temática para encontrar lo que encaja contigo.</p>
+    </div>
+    <app-ui-metrics-strip [items]="metrics()"></app-ui-metrics-strip>
+  </header>
+
+  <div class="agenda-shell">
+    <aside class="agenda-filtros" aria-label="Filtros de agenda">
+      <h3>Filtros <small>({{ filteredEvents().length }} resultados)</small></h3>
+
+      <app-ui-text-field
+        label="Buscar"
+        type="search"
+        name="search-agenda"
+        class="agenda-search"
+        placeholder="Buscar eventos..."
+        [value]="searchText()"
+        (valueChange)="updateSearch($event)"
+      ></app-ui-text-field>
+
+      <div class="filtro-bloque">
+        <p>Tipo</p>
+        <button type="button" class="filtro-chip" [class.active]="selectedType() === ''" (click)="setType('')">Todos</button>
+        @for (type of types; track type) {
+          <button type="button" class="filtro-chip" [class.active]="selectedType() === type" (click)="setType(type)">
+            {{ type }}
+          </button>
+        }
+      </div>
+
+      <div class="filtro-bloque">
+        <p>Modalidad</p>
+        <button type="button" class="filtro-chip" [class.active]="selectedModality() === ''" (click)="setModality('')">Todas</button>
+        @for (modality of modalities; track modality) {
+          <button type="button" class="filtro-chip" [class.active]="selectedModality() === modality" (click)="setModality(modality)">
+            {{ modality }}
+          </button>
+        }
+      </div>
+
+      <div class="filtro-bloque">
+        <p>Temática</p>
+        <button type="button" class="filtro-chip" [class.active]="selectedTopic() === ''" (click)="setTopic('')">Todas</button>
+        @for (topic of topics; track topic) {
+          <button type="button" class="filtro-chip" [class.active]="selectedTopic() === topic" (click)="setTopic(topic)">
+            {{ topic }}
+          </button>
+        }
+      </div>
+    </aside>
+
+    <div class="agenda-resultados">
+      <div class="agenda-toolbar">
+        <p>Filtrado por</p>
+        <span class="filtro-activo">{{ activeFilterLabel() }}</span>
+        <button type="button" class="limpiar" (click)="clearFilters()">Borrar todo</button>
+      </div>
+
+      <p class="agenda-meta">{{ filteredEvents().length }} eventos encontrados</p>
+
+      @if (filteredEvents().length === 0) {
+        <p class="agenda-feedback">No hay eventos para los filtros actuales.</p>
+      } @else {
+        <app-ui-resource-cards [items]="eventCards()"></app-ui-resource-cards>
+      }
+    </div>
+  </div>
+
+  <div class="agenda-actions">
+    <a href="https://luma.com/cal-24k3WtXkbkzA2tg" target="_blank" rel="noopener" class="btn btn-secondary">Abrir agenda completa en Luma</a>
+    <a routerLink="/events" class="btn btn-secondary">Ver eventos destacados</a>
+    <a routerLink="/contact" class="btn btn-primary">Solicitar sesión</a>
+  </div>
+</section>

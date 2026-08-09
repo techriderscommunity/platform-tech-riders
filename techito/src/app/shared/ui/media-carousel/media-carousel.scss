@@ -21,6 +21,10 @@
   padding-bottom: var(--space-2);
 }
 
+.ui-carousel-track.ui-carousel-track-fixed {
+  grid-auto-columns: calc((100% - (var(--space-4) * (var(--ui-carousel-fixed-cols) - 1))) / var(--ui-carousel-fixed-cols));
+}
+
 .ui-carousel-track.ui-carousel-track-single {
   grid-auto-columns: minmax(var(--ui-carousel-card-min), 560px);
 }
@@ -61,6 +65,82 @@
     font-weight: var(--font-weight-semibold);
     padding: var(--space-2) var(--space-3);
     pointer-events: none;
+    display: grid;
+    gap: 2px;
+
+    strong {
+      font-size: var(--font-size-sm);
+      line-height: 1.25;
+    }
+  }
+}
+
+.ui-carousel-card-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ui-carousel-slide-clickable {
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--tr-blue-alpha-35);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.ui-carousel-slide.ui-carousel-slide-person {
+  aspect-ratio: auto;
+  display: grid;
+  grid-template-rows: 220px auto;
+
+  img {
+    height: 220px;
+    object-fit: cover;
+  }
+}
+
+.ui-carousel-caption-person {
+  position: static !important;
+  inset: auto !important;
+  background: color-mix(in srgb, var(--bg-elevated) 92%, #0f172a 8%) !important;
+  border-top: 1px solid var(--border-default);
+  padding: var(--space-3) var(--space-3) var(--space-3) !important;
+}
+
+.ui-carousel-subtitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.ui-carousel-socials {
+  pointer-events: auto;
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  flex-wrap: wrap;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    background: var(--tr-blue-alpha-08);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+
+    &:hover {
+      border-color: var(--tr-blue);
+      color: var(--tr-blue);
+      background: var(--tr-blue-alpha-16);
+    }
   }
 }
 
@@ -92,6 +172,10 @@
   }
 
   .ui-carousel-track {
+    grid-auto-columns: minmax(220px, 78vw);
+  }
+
+  .ui-carousel-track.ui-carousel-track-fixed {
     grid-auto-columns: minmax(220px, 78vw);
   }
 

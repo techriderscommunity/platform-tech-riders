@@ -9,11 +9,15 @@ describe('auth guards', () => {
   const authMock = {
     isAuthenticated: jasmine.createSpy('isAuthenticated'),
     user: jasmine.createSpy('user'),
+    hasRole: jasmine.createSpy('hasRole'),
+    getDefaultRoute: jasmine.createSpy('getDefaultRoute'),
   };
 
   beforeEach(() => {
     authMock.isAuthenticated.calls.reset();
     authMock.user.calls.reset();
+    authMock.hasRole.calls.reset();
+    authMock.getDefaultRoute.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -43,7 +47,7 @@ describe('auth guards', () => {
 
   it('roleGuard should allow matching role', () => {
     authMock.isAuthenticated.and.returnValue(true);
-    authMock.user.and.returnValue({ role: 'admin' });
+    authMock.hasRole.and.returnValue(true);
 
     const result = TestBed.runInInjectionContext(() => roleGuard('admin')({} as any, {} as any));
 
@@ -52,7 +56,8 @@ describe('auth guards', () => {
 
   it('roleGuard should redirect to role area on role mismatch', () => {
     authMock.isAuthenticated.and.returnValue(true);
-    authMock.user.and.returnValue({ role: 'empresa' });
+    authMock.hasRole.and.returnValue(false);
+    authMock.getDefaultRoute.and.returnValue('/intranet/empresa');
 
     const result = TestBed.runInInjectionContext(() => roleGuard('admin')({} as any, {} as any)) as UrlTree;
 

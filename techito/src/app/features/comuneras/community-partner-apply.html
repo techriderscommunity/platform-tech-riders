@@ -1,0 +1,78 @@
+<section class="apply-page">
+  <header class="apply-header">
+    <a class="btn-back" routerLink="/community-partners">← Volver a Comuñeras</a>
+    <span class="section-label">Solicitud</span>
+    <h1 class="section-heading">Quiero ser Comuñera</h1>
+    <p class="section-subheading">
+      Queremos conoceros mejor para construir colaboraciones reales dentro del ecosistema Tech Riders.
+    </p>
+  </header>
+
+  @if (submitted()) {
+  <section class="apply-success" role="status" aria-live="polite">
+    <h2>Solicitud enviada</h2>
+    <p>Hemos recibido vuestra solicitud. El equipo de staff la revisará y os contactará.</p>
+    <a class="btn btn-primary" routerLink="/community-partners">Volver al directorio</a>
+  </section>
+  } @else {
+  <form class="apply-form" (submit)="submit($event)">
+    <section class="form-block">
+      <h2>Datos básicos</h2>
+      <app-ui-text-field label="Nombre comunidad" [required]="true" [value]="name()" (valueChange)="name.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Logo (URL)" [value]="logoUrl()" (valueChange)="logoUrl.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Web" [required]="true" [value]="website()" (valueChange)="website.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Email contacto" type="email" [required]="true" [value]="contactEmail()" (valueChange)="contactEmail.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Persona contacto" [required]="true" [value]="contactName()" (valueChange)="contactName.set($event)"></app-ui-text-field>
+    </section>
+
+    <section class="form-block">
+      <h2>Sobre la comunidad</h2>
+      <app-ui-textarea label="Quiénes sois" [required]="true" [value]="whoYouAre()" (valueChange)="whoYouAre.set($event)"></app-ui-textarea>
+      <app-ui-textarea label="Qué hacéis" [required]="true" [value]="whatYouDo()" (valueChange)="whatYouDo.set($event)"></app-ui-textarea>
+      <app-ui-textarea label="Misión" [required]="true" [value]="mission()" (valueChange)="mission.set($event)"></app-ui-textarea>
+      <app-ui-text-field label="Temáticas (separadas por comas)" [value]="topicsRaw()" (valueChange)="topicsRaw.set($event)"></app-ui-text-field>
+    </section>
+
+    <section class="form-block">
+      <h2>Alcance</h2>
+      <app-ui-select label="Ámbito" [options]="scopeOptions" [value]="scope()" (valueChange)="onScopeChange($event)"></app-ui-select>
+    </section>
+
+    <section class="form-block">
+      <h2>Redes sociales</h2>
+      <app-ui-text-field label="LinkedIn" [value]="linkedin()" (valueChange)="linkedin.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Instagram" [value]="instagram()" (valueChange)="instagram.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="X" [value]="x()" (valueChange)="x.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="YouTube" [value]="youtube()" (valueChange)="youtube.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Discord" [value]="discord()" (valueChange)="discord.set($event)"></app-ui-text-field>
+      <app-ui-text-field label="Telegram" [value]="telegram()" (valueChange)="telegram.set($event)"></app-ui-text-field>
+    </section>
+
+    <section class="form-block">
+      <h2>Motivación y colaboración</h2>
+      <app-ui-textarea
+        label="¿Por qué os gustaría formar parte del ecosistema Tech Riders?"
+        [required]="true"
+        [value]="motivation()"
+        (valueChange)="motivation.set($event)"
+      ></app-ui-textarea>
+      <app-ui-textarea
+        label="¿Cómo creéis que podemos colaborar?"
+        [required]="true"
+        [value]="collaborationIdeas()"
+        (valueChange)="collaborationIdeas.set($event)"
+      ></app-ui-textarea>
+    </section>
+
+    @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+    }
+
+    <div class="form-actions">
+      <app-ui-button type="submit" [disabled]="saving() || !canSubmit()">
+        {{ saving() ? 'Enviando...' : 'Enviar solicitud' }}
+      </app-ui-button>
+    </div>
+  </form>
+  }
+</section>

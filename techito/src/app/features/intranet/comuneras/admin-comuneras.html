@@ -1,0 +1,123 @@
+<section class="admin-comuneras">
+  <div class="page-header">
+    <a routerLink="/intranet/admin" class="btn-back">← Volver</a>
+    <h1>🤝 Gestión de Comuñeras</h1>
+    <p>Revisión y administración de comunidades compañeras.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <span>Total solicitudes</span>
+      <p>{{ items().length }}</p>
+    </div>
+    <div class="stat">
+      <span>Pendientes / Revisión</span>
+      <p>{{ pendingCount() }}</p>
+    </div>
+    <div class="stat">
+      <span>Aprobadas</span>
+      <p>{{ items().filter(item => item.status === 'approved').length }}</p>
+    </div>
+  </div>
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">{{ feedback() }}</div>
+  }
+
+  <div class="filters-bar">
+    <app-ui-text-field
+      label="Buscar"
+      name="community-partner-search"
+      placeholder="Nombre, contacto, email o temática"
+      [value]="searchTerm()"
+      (valueChange)="searchTerm.set($event)"
+    ></app-ui-text-field>
+    <app-ui-select
+      label="Estado"
+      [options]="statusOptions"
+      [value]="statusFilter()"
+      (valueChange)="onStatusFilterChange($event)"
+    ></app-ui-select>
+  </div>
+
+  <div class="card">
+    <h2>Solicitudes de Comuñeras</h2>
+    <div class="table-responsive">
+      <table class="comuneras-table">
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Nombre</th>
+            <th>Contacto</th>
+            <th>Estado</th>
+            <th>Fecha solicitud</th>
+            <th>Fecha aprobación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filteredItems(); track item.id) {
+          <tr>
+            <td><img class="logo" [src]="item.logoUrl" [alt]="'Logo de ' + item.name" /></td>
+            <td>
+              <strong>{{ item.name }}</strong>
+              <p class="mini">{{ item.cityOrScope }}</p>
+            </td>
+            <td>
+              <strong>{{ item.contactName }}</strong>
+              <p class="mini">{{ item.contactEmail }}</p>
+            </td>
+            <td>
+              <span class="badge" [class]="statusClass(item.status)">
+                {{ toStatusLabel(item.status) }}
+              </span>
+            </td>
+            <td>{{ formatDate(item.requestedAt) }}</td>
+            <td>{{ formatDate(item.joinedAt) }}</td>
+            <td>
+              <div class="actions">
+                <app-ui-button class="btn-sm" (click)="applyStatus(item, 'approved')">Aprobar</app-ui-button>
+                <app-ui-button class="btn-sm" (click)="applyStatus(item, 'rejected')">Rechazar</app-ui-button>
+                <app-ui-button class="btn-sm" (click)="applyStatus(item, 'more-info')">Solicitar info</app-ui-button>
+                <app-ui-button class="btn-sm" variant="secondary" (click)="openEdit(item)">Editar</app-ui-button>
+                <app-ui-button class="btn-sm" variant="secondary" (click)="applyStatus(item, 'suspended')">Desactivar</app-ui-button>
+                <app-ui-button class="btn-sm" variant="secondary" (click)="applyStatus(item, 'review')">Reactivar</app-ui-button>
+              </div>
+            </td>
+          </tr>
+          }
+          @if (filteredItems().length === 0) {
+          <tr>
+            <td colspan="7" class="empty-state">No hay Comuñeras que coincidan con el filtro actual.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (showEditModal() && selected(); as partner) {
+  <app-ui-modal (close)="closeEdit()">
+    <span modal-title>Editar Comuñera</span>
+    <form class="edit-form" (submit)="$event.preventDefault(); saveEdit()">
+      <app-ui-text-field label="Nombre" [value]="partner.name" [required]="true"></app-ui-text-field>
+      <app-ui-textarea
+        label="Descripción corta"
+        [value]="editShortDescription()"
+        [required]="true"
+        (valueChange)="editShortDescription.set($event)"
+      ></app-ui-textarea>
+      <app-ui-textarea
+        label="Misión"
+        [value]="editMission()"
+        [required]="true"
+        (valueChange)="editMission.set($event)"
+      ></app-ui-textarea>
+      <div class="modal-actions">
+        <app-ui-button type="button" variant="secondary" (click)="closeEdit()">Cancelar</app-ui-button>
+        <app-ui-button type="submit">Guardar</app-ui-button>
+      </div>
+    </form>
+  </app-ui-modal>
+  }
+</section>

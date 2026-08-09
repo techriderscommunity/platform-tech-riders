@@ -1,0 +1,33 @@
+<section
+  class="ui-feature-grid"
+  [class.ui-feature-grid--single-line-titles]="singleLineTitles"
+  [class.ui-feature-grid--fixed-columns]="!!columns"
+  [style.--ui-feature-columns]="columns"
+  role="list"
+  aria-label="Bloques de contenido"
+>
+  @for (item of items; track item.title) {
+    <article class="ui-feature-card" role="listitem">
+      @if (item.badge) {
+        <span class="ui-feature-badge">{{ item.badge }}</span>
+      }
+      @if (item.icon) {
+        <span class="ui-feature-icon" aria-hidden="true">{{ item.icon }}</span>
+      }
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.description }}</p>
+      @if (item.points && item.points.length > 0) {
+        <ul>
+          @for (point of item.points; track point) {
+            <li>{{ point }}</li>
+          }
+        </ul>
+      }
+      @if (item.ctaLabel && item.ctaLink) {
+        <a [routerLink]="item.ctaLink">{{ item.ctaLabel }}</a>
+      } @else if (item.ctaLabel && item.ctaHref) {
+        <a [href]="item.ctaHref" target="_blank" rel="noopener noreferrer">{{ item.ctaLabel }}</a>
+      }
+    </article>
+  }
+</section>

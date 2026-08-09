@@ -1,0 +1,76 @@
+<section class="partner-detail-page">
+  <a class="btn-back" routerLink="/community-partners">← Volver al directorio</a>
+
+  @if (partner(); as item) {
+  <article class="partner-detail-card">
+    <header class="detail-header">
+      <img [src]="item.logoUrl" [alt]="'Logo de ' + item.name" loading="lazy" />
+      <div>
+        <h1>{{ item.name }}</h1>
+        <p>{{ item.cityOrScope }}</p>
+      </div>
+    </header>
+
+    <section class="detail-block">
+      <h2>Información principal</h2>
+      <p>{{ item.description }}</p>
+      <p><strong>Misión:</strong> {{ item.mission }}</p>
+      <p><strong>Miembros aprox.:</strong> {{ item.memberCount ?? 'No informado' }}</p>
+      <p><strong>Fecha incorporación:</strong> {{ formatDate(item.joinedAt) }}</p>
+      <div class="topics">
+        @for (topic of item.topics; track topic) {
+        <span>{{ topic }}</span>
+        }
+      </div>
+    </section>
+
+    <section class="detail-block">
+      <h2>Redes</h2>
+      <div class="links-grid">
+        @if (item.website) {
+        <a [href]="item.website" target="_blank" rel="noopener noreferrer">Web</a>
+        }
+        @if (item.linkedin) {
+        <a [href]="item.linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        }
+        @if (item.instagram) {
+        <a [href]="item.instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
+        }
+        @if (item.x) {
+        <a [href]="item.x" target="_blank" rel="noopener noreferrer">X</a>
+        }
+        @if (item.youtube) {
+        <a [href]="item.youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
+        }
+        @if (item.discord) {
+        <a [href]="item.discord" target="_blank" rel="noopener noreferrer">Discord</a>
+        }
+        @if (item.telegram) {
+        <a [href]="item.telegram" target="_blank" rel="noopener noreferrer">Telegram</a>
+        }
+      </div>
+    </section>
+
+    <section class="detail-block">
+      <h2>Colaboración con Tech Riders</h2>
+      <ul>
+        @for (collab of item.collaborations; track collab) {
+        <li>{{ collab }}</li>
+        }
+      </ul>
+    </section>
+
+    @if (item.website) {
+    <a class="btn btn-primary" [href]="item.website" target="_blank" rel="noopener noreferrer" (click)="onCardClick()">
+      Visitar comunidad
+    </a>
+    }
+  </article>
+  } @else {
+  <div class="not-found">
+    <h2>Comuñera no encontrada</h2>
+    <p>La comunidad no existe o ya no está disponible en el directorio.</p>
+    <a class="btn btn-secondary" routerLink="/community-partners">Volver al directorio</a>
+  </div>
+  }
+</section>

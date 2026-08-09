@@ -23,14 +23,15 @@ public static class ApplicationServiceExtensions
 
         // Registrar servicios de aplicación
         services.AddScoped<IAmbassadorService, AmbassadorService>();
+        services.AddScoped<IAdminDashboardService, AdminDashboardService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICenterService, CenterService>();
-        services.AddScoped<IEmpleoService, EmpleoService>();
+        services.AddScoped<IEmploymentService, EmploymentService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IFPTourService, FPTourService>();
         services.AddScoped<IIntranetService, IntranetService>();
         services.AddScoped<ISessionService, SessionService>();
-        services.AddScoped<ITutorialesService, TutorialesService>();
+        services.AddScoped<ITutorialsService, TutorialsService>();
 
         return services;
     }

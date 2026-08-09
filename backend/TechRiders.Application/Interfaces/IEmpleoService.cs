@@ -6,7 +6,7 @@ namespace TechRiders.Application.Interfaces;
 /// <summary>
 /// Service interface for job offer and application management
 /// </summary>
-public interface IEmpleoService
+public interface IEmploymentService
 {
     // Oferta operations
     

@@ -1,24 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
-import { environment } from '@env/environment';
 import { catchError, of, tap } from 'rxjs';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton } from '@shared/ui/button/button';
-
-interface MemberProfileApi {
-  Name: string;
-  Email: string;
-  Bio: string;
-  Interests: string;
-  Audience: string;
-  CommunityRole: string;
-  Organization: string;
-}
+import { MemberProfileApi, MemberProfileService } from './services/member-profile.service';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -29,9 +18,8 @@ interface MemberProfileApi {
   styleUrl: './perfil-usuario.scss'
 })
 export class PerfilUsuario {
-  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly memberProfileService = inject(MemberProfileService);
 
   readonly audienceOptions: UiSelectOption[] = [
     { label: 'Estudiante / junior', value: 'junior' },
@@ -75,7 +63,7 @@ export class PerfilUsuario {
       organization: this.organizacion(),
     };
 
-    this.http.put<MemberProfileApi>(`${this.baseUrl}/intranet/perfil`, payload)
+    this.memberProfileService.saveProfile(payload)
       .pipe(
         tap(() => {
           if (typeof localStorage !== 'undefined') {
@@ -89,7 +77,7 @@ export class PerfilUsuario {
               organizacion: this.organizacion(),
             }));
           }
-          this.success.set('Perfil member guardado en backend MVP y en caché local.');
+          this.success.set('Perfil member guardado en backend y en caché local.');
         }),
         catchError(() => {
           if (typeof localStorage !== 'undefined') {
@@ -103,7 +91,7 @@ export class PerfilUsuario {
               organizacion: this.organizacion(),
             }));
           }
-          this.success.set('Perfil guardado solo en caché local; el backend MVP no respondió.');
+          this.success.set('Perfil guardado solo en caché local; el backend no respondió.');
           return of(null);
         })
       )
@@ -139,12 +127,7 @@ export class PerfilUsuario {
     this.nombre.set(currentUser?.name ?? '');
     this.email.set(currentUser?.email ?? '');
 
-    this.http.get<MemberProfileApi>(`${this.baseUrl}/intranet/perfil`, {
-      params: {
-        userKey: this.resolveUserKey(),
-        email: currentUser?.email ?? this.resolveFallbackEmail(),
-      },
-    })
+    this.memberProfileService.getProfile(this.resolveUserKey(), currentUser?.email ?? this.resolveFallbackEmail())
       .pipe(
         tap(profile => {
           this.nombre.set(profile.Name);

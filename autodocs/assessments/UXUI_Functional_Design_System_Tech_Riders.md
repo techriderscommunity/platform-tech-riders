@@ -2359,6 +2359,63 @@ Crear badge de roles.
 
 Crear card de perfil reusable.
 
+---
+
+# 52. Estado de consolidación UX/UI (2026-08-09)
+
+Este estado refleja la consolidación aplicada en el frontend público para alinear implementación real con este documento maestro.
+
+## 52.1 Criterios de verificación usados
+
+- Reutilización de bloques visuales desde `src/app/shared/ui`.
+- Uso de tokens de diseño (sin hardcode visual nuevo).
+- Sin creación de componentes visuales ad hoc dentro de páginas.
+- Storybook consolidado al catálogo shared/ui.
+- Build de Angular en verde tras cambios.
+
+## 52.2 Matriz de cumplimiento por módulo
+
+| Página | Shared/UI | Tokens | Storybook alineado | Estado |
+|---|---|---|---|---|
+| Home | Sí (metrics-strip, progress-cards, journey-steps) | Sí | Sí | Cumple |
+| Únete | Sí (progress-cards, journey-steps) | Sí | Sí | Cumple |
+| Eventos | Sí (metrics-strip, progress-cards) | Sí | Sí | Cumple |
+| Quiénes somos | Sí (metrics-strip, profile-cards) | Sí | Sí | Cumple |
+| OrientaTech | Sí (metrics-strip, feature-cards, progress-cards) | Sí | Sí | Cumple |
+| Contacto | Sí (metrics-strip, journey-steps) | Sí | Sí | Cumple |
+| Tutoriales | Sí (metrics-strip, feature-cards) | Sí | Sí | Cumple |
+| Intranet · Admin Dashboard | Sí (metrics-strip, progress-cards) | Sí | N/A | Cumple |
+| Intranet · Admin Configuración | Sí (metrics-strip + primitives de formulario) | Sí | N/A | Cumple |
+| Intranet · Admin Auditoría | Sí (primitives/shared base) | Sí | N/A | Cumple |
+
+## 52.3 Componentes shared/ui consolidados
+
+- metrics-strip
+- progress-cards
+- journey-steps
+- feature-cards
+- profile-cards
+
+Cada componente dispone de story dedicada en Storybook bajo `src/app/shared/ui/**`.
+
+## 52.4 Decisiones de consolidación aplicadas
+
+1. Storybook se limita a historias del catálogo shared/ui para evitar demos legacy desacopladas del sistema real.
+2. La composición de páginas públicas se movió a bloques reutilizables con contratos de entrada claros (view models por página).
+3. Intranet/admin incorporó el mismo enfoque en paneles de resumen y estado operativo (metrics/progress shared).
+4. Se redujo CSS local duplicado en páginas migradas y se priorizó shell estructural tokenizado.
+5. Tutoriales se realineó a patrón de catálogo funcional con panel lateral de filtros + tarjetas de recurso y CTA de registro/detalles, consumiendo datos reales del backend paginado.
+
+## 52.5 Gaps pendientes
+
+- Sin gaps críticos de consolidación UX/UI para el alcance actual.
+
+## 52.6 Evidencia de validación técnica
+
+- Diagnósticos editor: sin errores en archivos migrados.
+- Build Angular: OK (`ng build`), salida generada en `dist/techito`.
+
+
 ### DS-032 SessionCard
 
 Crear card de sesión.

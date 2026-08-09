@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-08-07T23:42:00.103742+00:00",
+  "sources": {
+    "routing": "observability/logs/routing-decisions.jsonl",
+    "feedback": "observability/logs/learning-feedback.jsonl",
+    "metrics": "observability/logs/iteration-metrics.jsonl"
+  },
+  "totals": {
+    "events": 8,
+    "events_with_event_id": 8,
+    "metrics_covered": 0,
+    "feedback_confirmed": 8,
+    "confirmed_success": 8
+  },
+  "kpis": {
+    "metrics_coverage_rate": 0.0,
+    "confirmed_feedback_rate": 1.0,
+    "confirmed_success_rate": 1.0,
+    "total_tokens": 0,
+    "total_cost_usd": 0.0,
+    "tokens_per_confirmed_success": 0.0,
+    "cost_per_confirmed_success_usd": 0.0
+  },
+  "breakdown": {
+    "tool_mode": {},
+    "model": {},
+    "engine": {}
+  },
+  "assessment": {
+    "has_value_signal": false,
+    "notes": "Insufficient confirmed outcomes or metrics coverage."
+  }
+}

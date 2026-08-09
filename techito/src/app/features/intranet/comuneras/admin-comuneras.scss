@@ -1,0 +1,135 @@
+.admin-comuneras {
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.page-header {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
+
+  .btn-back {
+    color: var(--tr-blue);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: var(--space-3);
+  }
+
+  h1 {
+    margin: 0 0 var(--space-2);
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.stat {
+  @extend .stat-card !optional;
+
+  p {
+    margin: var(--space-1) 0 0;
+    font-weight: var(--font-weight-extrabold);
+    font-size: var(--font-size-xl);
+    color: var(--tr-blue);
+  }
+}
+
+.feedback-banner {
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.filters-bar {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card {
+  padding: var(--surface-padding);
+}
+
+.comuneras-table {
+  @extend .table !optional;
+
+  .logo {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--border-default);
+  }
+
+  .mini {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: var(--space-5);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.estado-pending,
+.estado-more-info {
+  background: var(--badge-warning-bg);
+  color: var(--badge-warning-text);
+}
+
+.estado-review {
+  background: var(--badge-info-bg);
+  color: var(--badge-info-text);
+}
+
+.estado-approved {
+  background: var(--badge-success-bg);
+  color: var(--badge-success-text);
+}
+
+.estado-rejected {
+  background: var(--badge-error-bg);
+  color: var(--badge-error-text);
+}
+
+.estado-suspended {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.edit-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .filters-bar {
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+    align-items: end;
+  }
+}

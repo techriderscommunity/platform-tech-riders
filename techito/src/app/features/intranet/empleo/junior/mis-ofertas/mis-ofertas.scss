@@ -2,10 +2,13 @@
   padding: var(--page-block-padding) var(--page-inline-padding);
   max-width: var(--page-content-max);
   margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
 }
 
 .page-header {
-  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
 
   h1 {
     font-size: 2rem;
@@ -25,7 +28,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  margin-bottom: var(--space-8);
   gap: var(--space-4);
 }
 
@@ -84,11 +86,10 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--surface-gap);
-  margin-bottom: var(--space-8);
 }
 
 .oferta-card {
-  @extend .card-elevated !optional;
+  @extend .card !optional;
   padding: var(--surface-padding);
   transition: all var(--transition-slow);
   display: flex;
@@ -251,13 +252,13 @@
 }
 
 .btn-text {
+  @extend .btn !optional;
+  @extend .btn-sm !optional;
   background: none;
   color: var(--text-secondary);
   border: none;
   font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
   transition: all var(--transition-base);
 
   &:hover {

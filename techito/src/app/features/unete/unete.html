@@ -1,246 +1,235 @@
-<section class="unete-hero">
-  <div class="unete-hero-content">
-    <h1>Únete a la comunidad Tech Riders</h1>
-    <p>El MVP de Tech Riders empieza aquí: alta como miembro, solicitud Ambassador y solicitud de sesión, con el mismo lenguaje visual del producto.</p>
-  </div>
-</section>
-
-<!-- TABS: FLUJOS MVP -->
-<section class="unete-tabs">
-  <button
-    class="tab-btn"
-    [class.activo]="flujoActivo() === 'member'"
-    (click)="seleccionarFlujo('member')"
-    type="button"
-  >
-    Alta miembro
-  </button>
-  <button
-    class="tab-btn"
-    [class.activo]="flujoActivo() === 'ambassador'"
-    (click)="seleccionarFlujo('ambassador')"
-    type="button"
-  >
-    Solicitud Ambassador
-  </button>
-  <button
-    class="tab-btn"
-    [class.activo]="flujoActivo() === 'session'"
-    (click)="seleccionarFlujo('session')"
-    type="button"
-  >
-    Solicitud de sesión
-  </button>
-</section>
-
-@if (flujoActivo() === 'member') {
-  <section class="rol-section">
-    <div class="rol-content">
-      <h2>Alta como miembro Tech Riders</h2>
-      <ul class="rol-list">
-        <li>Conecta con una comunidad tecnológica real y activa.</li>
-        <li>Accede a sesiones, eventos y contenidos compartidos por la comunidad.</li>
-        <li>Empieza como member y evoluciona hacia otros roles cuando tenga sentido.</li>
-        <li>Mantén un perfil vivo con tus intereses y tu manera de participar.</li>
-      </ul>
-    </div>
-  </section>
-}
-
-@if (flujoActivo() === 'ambassador') {
-  <section class="rol-section">
-    <div class="rol-content">
-      <h2>Solicitud para ser Ambassador</h2>
-      <ul class="rol-list">
-        <li>Comparte experiencia real con estudiantes, miembros y comunidad.</li>
-        <li>Participa en sesiones, actividades y mentoring cuando encaje contigo.</li>
-        <li>Declara tu disponibilidad y tus áreas de conocimiento.</li>
-        <li>Forma parte del motor que extiende la comunidad Tech Riders.</li>
-      </ul>
-    </div>
-  </section>
-}
-
-@if (flujoActivo() === 'session') {
-  <section class="rol-section">
-    <div class="rol-content">
-      <h2>Solicitud de sesión</h2>
-      <ul class="rol-list">
-        <li>Solicita una sesión para tu centro, grupo o colectivo.</li>
-        <li>Indica tema, formato y contexto para encajar mejor la propuesta.</li>
-        <li>El equipo Staff revisará la petición y propondrá siguiente paso.</li>
-        <li>Este flujo forma parte del core del MVP y sustituye la gestión ad hoc.</li>
-      </ul>
-    </div>
-  </section>
-}
-
-<section class="rol-carrusel">
-  <h3>La comunidad en movimiento</h3>
-  <div class="carrusel">
-    <button class="carrusel-btn carrusel-btn-left" aria-label="Anterior" (click)="scrollCarrusel(-1)" type="button">&#8592;</button>
-    <div class="carrusel-track" #carruselTrack>
-      <img src="../../assets/Tetxito/techito_bici.jpg" alt="Comunidad Tech Riders en actividad exterior" />
-      <img src="../../assets/Tetxito/techito_montania.jpg" alt="Tech Riders compartiendo experiencias" />
-      <img src="../../assets/Tetxito/techito_cervezas.jpg" alt="Networking informal de la comunidad" />
-      <img src="../../assets/Tetxito/techito_helado.jpg" alt="Celebración y vida comunitaria en Tech Riders" />
-    </div>
-    <button class="carrusel-btn carrusel-btn-right" aria-label="Siguiente" (click)="scrollCarrusel(1)" type="button">&#8594;</button>
-  </div>
-</section>
-
-<!-- FEEDBACK DE EMBAJADORES Y CENTROS -->
-<section class="feedback-section">
-  <h2>Lo que mueve a la comunidad</h2>
-  <p class="feedback-intro">Tres motivos recurrentes detrás del MVP: pertenencia, contribución y conexión real con el ecosistema tech.</p>
-
-  <div class="feedback-grid">
-    <div class="feedback-card">
-      <div class="feedback-avatar">🤝</div>
-      <strong>Member</strong>
-      <span class="feedback-rol">Alta y participación</span>
-      <p>Entrar en Tech Riders debe ser sencillo, claro y accionable desde la primera visita.</p>
+<section class="join-hero">
+  <div class="join-hero-content">
+    <span class="join-eyebrow">Forma parte de Tech Riders</span>
+    <h1>No recorras el camino solo.</h1>
+    <p>
+      Tech Riders es una comunidad donde estudiantes, profesionales, docentes y empresas comparten
+      conocimiento, experiencias y oportunidades para crecer juntos en el mundo de la tecnología.
+    </p>
+    <div class="join-hero-actions">
+      <a class="join-btn join-btn-primary" href="#join-form">Quiero formar parte</a>
+      <a class="join-btn join-btn-ghost" href="#como-funciona">Descubrir cómo funciona</a>
     </div>
 
-    <div class="feedback-card">
-      <div class="feedback-avatar">🎤</div>
-      <strong>Ambassador</strong>
-      <span class="feedback-rol">Contribución activa</span>
-      <p>El rol Ambassador debe tener una puerta de entrada visible y diferenciada.</p>
-    </div>
-
-    <div class="feedback-card">
-      <div class="feedback-avatar">🏫</div>
-      <strong>Solicitud de sesión</strong>
-      <span class="feedback-rol">Centros y colectivos</span>
-      <p>Centros, profesorado y entidades deben poder solicitar actividad sin fricción ni ambigüedad.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PROCESO DE INSCRIPCIÓN -->
-<section class="proceso-section">
-  <h2>Cómo funciona el flujo MVP</h2>
-  <p class="proceso-intro">Un único punto de entrada, tres recorridos funcionales y revisión humana cuando toca.</p>
-
-  <div class="pasos-container">
-    <div class="paso">
-      <div class="paso-numero">1️⃣</div>
-      <div class="paso-content">
-        <h3>Rellena la solicitud</h3>
-        <p>Selecciona el flujo correcto y aporta el contexto mínimo necesario para que el equipo pueda actuar.</p>
+    <div class="join-hero-trustline" aria-label="Comunidad activa">
+      <div class="trust-avatars" aria-hidden="true">
+        <img src="/assets/staff/ana-pereira.jpg" alt="" loading="lazy">
+        <img src="/assets/staff/borja-piris.jpg" alt="" loading="lazy">
+        <img src="/assets/staff/diego-zapico.png" alt="" loading="lazy">
       </div>
+      <p>Únete a personas que ya están creciendo dentro de la comunidad.</p>
     </div>
 
-    <div class="paso-separator">→</div>
+    <p class="join-hero-claim">Encuentra tu sitio en Tech Riders.</p>
+  </div>
 
-    <div class="paso">
-      <div class="paso-numero">2️⃣</div>
-      <div class="paso-content">
-        <h3>El staff revisa (en serio)</h3>
-        <p>El equipo revisa el caso y lo enruta: alta, solicitud Ambassador o petición de sesión.</p>
-      </div>
-    </div>
+  <div class="join-social-proof" aria-label="Credenciales de la comunidad">
+    <span>Comunidad activa desde 2013</span>
+    <span>Sesiones con profesionales en activo</span>
+    <span>Mentoría y conexiones reales</span>
+  </div>
+  <small>Puedes unirte para aprender, compartir, colaborar o simplemente empezar a descubrir la comunidad.</small>
+</section>
 
-    <div class="paso-separator">→</div>
+<app-ui-metrics-strip [items]="joinMetrics"></app-ui-metrics-strip>
 
-    <div class="paso">
-      <div class="paso-numero">3️⃣</div>
-      <div class="paso-content">
-        <h3>Siguiente acción clara</h3>
-        <p>Recibirás confirmación y el siguiente paso operativo: activación, validación o propuesta de coordinación.</p>
-      </div>
-    </div>
+<section class="join-section join-section-narrow">
+  <h2>Todas las personas empiezan en algún sitio</h2>
+  <p>
+    A veces llegas buscando aprender algo nuevo. Otras veces quieres compartir lo que ya sabes.
+    Y muchas veces simplemente necesitas encontrar personas que entiendan el momento en el que estás.
+  </p>
+  <p>
+    Tech Riders nace para crear ese espacio: una comunidad donde la tecnología se aprende mejor
+    porque se comparte con otras personas.
+  </p>
+  <blockquote>El talento crece más rápido cuando encuentra comunidad.</blockquote>
+</section>
+
+<section class="join-section">
+  <h2>¿Qué es Tech Riders?</h2>
+  <p>
+    Tech Riders es una comunidad tecnológica que conecta a personas que quieren aprender, enseñar,
+    compartir experiencias y construir oportunidades alrededor de la tecnología.
+  </p>
+  <div class="join-grid join-grid-3">
+    <article class="join-card">
+      <h3>No es solo una web</h3>
+      <p>Es un punto de encuentro para conectar personas, conocimiento y oportunidades.</p>
+    </article>
+    <article class="join-card">
+      <h3>No es solo formación</h3>
+      <p>Las sesiones, eventos y recursos son una parte del camino, pero el valor está en la comunidad.</p>
+    </article>
+    <article class="join-card">
+      <h3>No es solo para expertos</h3>
+      <p>Puedes unirte aunque estés empezando o aún no sepas qué camino tech quieres seguir.</p>
+    </article>
   </div>
 </section>
 
-<!-- FORMULARIO UNIFICADO -->
-<section class="solicitud-form-section">
-  <h2>Cuéntanos qué necesitas</h2>
+<section class="join-section">
+  <h2>¿Qué encontrarás en Tech Riders?</h2>
+  <p class="join-subtext">Comunidad real, aprendizaje práctico y oportunidades que sí puedes accionar.</p>
+  <div class="join-grid join-grid-4">
+    <article class="join-card">
+      <span class="card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>
+      </span>
+      <h3>Una comunidad cercana</h3>
+      <p>Conecta con personas que comparten tus intereses e intercambia experiencias reales.</p>
+    </article>
+    <article class="join-card">
+      <span class="card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </span>
+      <h3>Aprendizaje práctico</h3>
+      <p>Accede a sesiones, tutoriales, eventos y experiencias reales contadas por profesionales.</p>
+    </article>
+    <article class="join-card">
+      <span class="card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+      </span>
+      <h3>Crecimiento profesional</h3>
+      <p>Descubre nuevas áreas, mejora tus habilidades y encuentra oportunidades para avanzar.</p>
+    </article>
+    <article class="join-card">
+      <span class="card-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-6.7-4.4-9.2-7.8A5.7 5.7 0 0 1 12 5.4a5.7 5.7 0 0 1 9.2 7.8C18.7 16.6 12 21 12 21z"/></svg>
+      </span>
+      <h3>Impacto en otras personas</h3>
+      <p>Comparte lo que sabes y ayuda a que más personas descubran su camino en tecnología.</p>
+    </article>
+  </div>
+</section>
+
+<section class="join-section">
+  <h2>Hay un sitio para ti en Tech Riders</h2>
+  <p class="join-subtext">Da igual desde dónde llegues: hay una forma de participar que encaja contigo.</p>
+  <div class="join-grid join-grid-3">
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></span><h3>Estoy estudiando o empezando</h3><p>Descubre áreas tech y aprende de profesionales en activo.</p><a routerLink="/orienta-tech">Quiero aprender</a></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M22 10v6"/><path d="M2 10v6"/><path d="M12 4v8"/><path d="M4 10h16"/><path d="M7 20h10"/></svg></span><h3>Soy docente</h3><p>Conecta el aula con la realidad del sector tecnológico.</p><a routerLink="/centers">Quiero conectar mi aula</a></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></span><h3>Trabajo en tecnología</h3><p>Comparte experiencias y participa en iniciativas con impacto real.</p><a routerLink="/events">Quiero participar</a></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 12h2"/><path d="M13 12h2"/></svg></span><h3>Represento una empresa</h3><p>Conecta con talento y participa en encuentros de comunidad.</p><a routerLink="/companies">Quiero colaborar</a></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><path d="M12 12v4"/><path d="M12 8h.01"/></svg></span><h3>Acompaño a otras personas</h3><p>Encuentra recursos y sesiones para orientar mejor.</p><a routerLink="/orienta-tech">Quiero orientar mejor</a></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><h3>Solo tengo curiosidad</h3><p>No necesitas experiencia previa para empezar.</p><a routerLink="/tutorials">Quiero descubrirlo</a></article>
+  </div>
+</section>
+
+<section class="join-section">
+  <h2>Participa a tu ritmo</h2>
+  <div class="join-grid join-grid-4">
+    <article class="join-card"><h3>Miembro</h3><p>Descubres sesiones, accedes a recursos y recibes oportunidades alineadas contigo.</p></article>
+    <article class="join-card"><h3>Centro</h3><p>Quieres llevar a tus alumnxs a otro nivel.</p></article>
+    <article class="join-card"><h3>Ambassador</h3><p>Participas activamente en sesiones, eventos, podcasts, formaciones o mentorías.</p></article>
+    <article class="join-card"><h3>Staff</h3><p>Coordina, impulsa y cuida la evolución de Tech Riders.</p></article>
+  </div>
+</section>
+
+<section id="como-funciona" class="join-section">
+  <h2>Cómo empezar</h2>
+  <div class="join-steps">
+    <article><strong>1.</strong><h3>Crea tu perfil</h3><p>Cuéntanos quién eres y qué te interesa.</p></article>
+    <article><strong>2.</strong><h3>Explora la comunidad</h3><p>Descubre sesiones, eventos, contenidos y personas.</p></article>
+    <article><strong>3.</strong><h3>Participa cuando quieras</h3><p>Asiste, comparte ideas o propón actividades.</p></article>
+    <article><strong>4.</strong><h3>Ayuda a crecer</h3><p>Cuando te apetezca, comparte experiencia y colabora.</p></article>
+  </div>
+</section>
+
+<section class="join-section">
+  <h2>Después de unirte, la comunidad empieza a adaptarse a ti</h2>
+  <p>
+    Al crear tu perfil, podrás indicar tus intereses y el tipo de relación que quieres tener con Tech Riders.
+    Con esa información podremos mostrarte sesiones, recursos y oportunidades más alineadas contigo.
+  </p>
+  <div class="join-grid join-grid-4">
+    <article class="join-card"><h3>Tu perfil</h3><p>Define tus intereses, áreas tech, experiencia y forma de participar.</p></article>
+    <article class="join-card"><h3>Tus recomendaciones</h3><p>Encuentra sesiones, eventos y contenidos relacionados con lo que te interesa.</p></article>
+    <article class="join-card"><h3>Tu comunidad</h3><p>Descubre personas, Ambassadors y colaboradores con intereses similares.</p></article>
+    <article class="join-card"><h3>Tu evolución</h3><p>Empieza como miembro y participa más cuando tenga sentido para ti.</p></article>
+  </div>
+</section>
+
+<section class="join-section join-stories">
+  <h2>Historias que empiezan con una conversación</h2>
+  <p class="join-subtext">
+    Muchas oportunidades nacen de una sesión, una pregunta, una conversación o una persona que decide compartir lo que sabe.
+  </p>
+  <div class="story-grid">
+    <article class="story-card">
+      <img src="/assets/staff/ana-pereira.jpg" alt="Testimonio de Ana" loading="lazy">
+      <blockquote>“Llegué con dudas sobre por dónde empezar en cloud y acabé con un plan claro y personas que me acompañaron de verdad.”</blockquote>
+      <p class="story-meta">Ana Pereira · Estudiante de DAM</p>
+    </article>
+    <article class="story-card">
+      <img src="/assets/staff/borja-piris.jpg" alt="Testimonio de Borja" loading="lazy">
+      <blockquote>“En dos sesiones conecté con gente que estaba resolviendo los mismos retos que yo en backend. Esa red me ha acelerado muchísimo.”</blockquote>
+      <p class="story-meta">Borja Piris · Backend Engineer</p>
+    </article>
+    <article class="story-card">
+      <img src="/assets/staff/diego-zapico.png" alt="Testimonio de Diego" loading="lazy">
+      <blockquote>“Compartir una sesión me recordó que aportar no va de ser perfecto, va de ayudar a alguien justo cuando lo necesita.”</blockquote>
+      <p class="story-meta">Diego Zapico · Ambassador</p>
+    </article>
+  </div>
+</section>
+
+<section class="join-section join-impact">
+  <h2>Una comunidad que se construye con hechos</h2>
+  <p>
+    Cada sesión, cada recurso compartido y cada persona que se implica ayuda a que la comunidad crezca y genere nuevas oportunidades.
+  </p>
+  <p class="impact-placeholder">Muy pronto compartiremos aquí el impacto de la comunidad Tech Riders.</p>
+</section>
+
+<section class="join-section">
+  <h2>También puedes aportar más de lo que imaginas</h2>
+  <p>
+    En Tech Riders no hace falta saberlo todo para aportar. A veces ayuda más contar cómo empezaste,
+    compartir un error que te enseñó algo o acompañar a alguien que está dando sus primeros pasos.
+  </p>
+  <div class="join-grid join-grid-3">
+    <article class="join-card"><h3>Compartir experiencia</h3><p>Cuenta cómo llegaste al mundo tech y qué te habría gustado saber antes.</p></article>
+    <article class="join-card"><h3>Participar en sesiones</h3><p>Aporta tu visión en sesiones técnicas, de orientación, empleabilidad o comunidad.</p></article>
+    <article class="join-card"><h3>Crear recursos</h3><p>Comparte guías, tutoriales, referencias o contenidos útiles para otras personas.</p></article>
+    <article class="join-card"><h3>Conectar personas</h3><p>Ayuda a que estudiantes, profesionales, centros y empresas se encuentren.</p></article>
+    <article class="join-card"><h3>Colaborar en iniciativas</h3><p>Participa en eventos, actividades y proyectos de la comunidad.</p></article>
+  </div>
+</section>
+
+<section id="join-form" class="join-section join-form-wrap">
+  <h2>Únete ahora</h2>
+  <p class="join-subtext">Cuéntanos lo esencial y te guiamos al siguiente paso.</p>
+
+  <div class="join-form-intro">
+    <h3>{{ flowTitle() }}</h3>
+    <p>{{ flowHint() }}</p>
+  </div>
+
+  <div class="join-form-highlights" aria-label="Lo que pasara despues">
+    <span>Respuesta humana, no automatica</span>
+    <span>Te orientamos segun tu momento</span>
+    <span>Sin compromiso de permanencia</span>
+  </div>
 
   <form class="solicitud-form" (submit)="onSubmit($event)">
-    <app-ui-select
-      label="Tipo de solicitud"
-      [options]="intakeOptions"
-      [value]="formulario().requestType"
-      (valueChange)="seleccionarFlujoDesdeSelect($event)"
-    ></app-ui-select>
+    <app-ui-select label="Tipo de solicitud" [options]="intakeOptions" [value]="formulario().requestType" (valueChange)="seleccionarFlujoDesdeSelect($event)"></app-ui-select>
 
-    <app-ui-text-field
-      label="Nombre completo"
-      type="text"
-      name="nombre"
-      [value]="formulario().nombre"
-      (valueChange)="updateNombre($event)"
-      placeholder="¿Cómo te llamas?"
-      [required]="true"
-    ></app-ui-text-field>
+    <app-ui-text-field label="Nombre completo" type="text" name="nombre" [value]="formulario().nombre" (valueChange)="updateNombre($event)" placeholder="¿Cómo te llamas?" [required]="true"></app-ui-text-field>
 
-    <app-ui-text-field
-      label="Email"
-      type="email"
-      name="email"
-      [value]="formulario().email"
-      (valueChange)="updateEmail($event)"
-      placeholder="Tu email para contactarte"
-      [required]="true"
-    ></app-ui-text-field>
-
-    <app-ui-select
-      label="Tu perfil actual"
-      [options]="audienceOptions"
-      [value]="formulario().audience"
-      (valueChange)="updateAudience($event)"
-    ></app-ui-select>
+    <app-ui-text-field label="Email" type="email" name="email" [value]="formulario().email" (valueChange)="updateEmail($event)" placeholder="Tu email para contactarte" [required]="true"></app-ui-text-field>
 
     @if (flujoActivo() === 'session') {
-      <app-ui-text-field
-        label="Centro, empresa o colectivo"
-        type="text"
-        name="organizacion"
-        [value]="formulario().organizacion"
-        (valueChange)="updateOrganizacion($event)"
-        placeholder="¿Cómo se llama tu centro?"
-        [required]="true"
-      ></app-ui-text-field>
-
-      <app-ui-text-field
-        label="Tema o necesidad de la sesión"
-        type="text"
-        name="sessionTopic"
-        [value]="formulario().sessionTopic"
-        (valueChange)="updateSessionTopic($event)"
-        placeholder="Ej. empleabilidad tech, introducción a cloud, orientación FP"
-        [required]="true"
-      ></app-ui-text-field>
-
-      <app-ui-select
-        label="Formato preferido"
-        [options]="[
-          { label: 'Talk', value: 'tech-talk' },
-          { label: 'Taller práctico', value: 'workshop' },
-          { label: 'Orientación', value: 'orientation' },
-          { label: 'Mesa redonda', value: 'panel' }
-        ]"
-        [value]="formulario().sessionFormat"
-        (valueChange)="updateSessionFormat($event)"
-      ></app-ui-select>
+      <app-ui-text-field label="Centro, empresa o colectivo" type="text" name="organizacion" [value]="formulario().organizacion" (valueChange)="updateOrganizacion($event)" placeholder="¿Cómo se llama tu centro?" [required]="true"></app-ui-text-field>
+      <app-ui-text-field label="Tema o necesidad de la sesión" type="text" name="sessionTopic" [value]="formulario().sessionTopic" (valueChange)="updateSessionTopic($event)" placeholder="Ej. empleabilidad tech, introducción a cloud, orientación FP" [required]="true"></app-ui-text-field>
     }
 
     <app-ui-textarea
-      [label]="flujoActivo() === 'member'
-        ? '¿Por qué quieres unirte a Tech Riders?'
-        : flujoActivo() === 'ambassador'
-          ? '¿Qué puedes aportar como Ambassador?'
-          : 'Cuéntanos el contexto y el objetivo de la sesión'"
+      [label]="flujoActivo() === 'member' ? '¿Por qué quieres unirte a Tech Riders?' : flujoActivo() === 'ambassador' ? '¿Qué puedes aportar como Ambassador?' : 'Cuéntanos el contexto y el objetivo de la sesión'"
       name="motivacion"
       [value]="formulario().motivacion"
       (valueChange)="updateMotivacion($event)"
-      [placeholder]="flujoActivo() === 'member'
-        ? 'Tu motivación, intereses y cómo quieres participar en la comunidad'
-        : flujoActivo() === 'ambassador'
-          ? 'Experiencia, áreas de conocimiento, disponibilidad o tipo de contribución'
-          : 'Nivel del público, fechas orientativas, necesidades y resultado esperado'"
+      [placeholder]="flujoActivo() === 'member' ? 'Tu motivación, intereses y cómo quieres participar en la comunidad' : flujoActivo() === 'ambassador' ? 'Experiencia, áreas de conocimiento, disponibilidad o tipo de contribución' : 'Nivel del público, fechas orientativas, necesidades y resultado esperado'"
       [rows]="4"
       [required]="true"
     ></app-ui-textarea>
@@ -249,9 +238,9 @@
       <div class="error-message">{{ error() }}</div>
     }
 
-    <app-ui-button type="submit" [disabled]="loading()">
-      {{ loading() ? 'Enviando...' : flujoActivo() === 'session' ? 'Solicitar sesión' : 'Enviar solicitud' }}
-    </app-ui-button>
+    <div class="submit-wrap">
+      <app-ui-button type="submit" [disabled]="loading()">{{ loading() ? 'Enviando...' : flujoActivo() === 'session' ? 'Solicitar sesión' : 'Enviar solicitud' }}</app-ui-button>
+    </div>
 
     @if (enviado()) {
       <div class="toaster toaster-exito">
@@ -266,11 +255,17 @@
   </form>
 </section>
 
-<!-- CTA FINAL -->
 <section class="cta-final">
   <div class="cta-content">
-    <h2>¿Alguna duda?</h2>
-    <p>Si tu caso no encaja en estos tres flujos del MVP, usa el formulario de contacto y lo canalizamos manualmente.</p>
-    <a routerLink="/contact" class="btn btn-primary">Ir a contacto</a>
+    <h2>Tu próximo paso puede empezar hoy.</h2>
+    <p>
+      Puedes llegar para aprender, compartir, conocer personas, encontrar oportunidades o ayudar a que otras personas crezcan.
+      Sea cual sea tu motivo, aquí hay un sitio para ti.
+    </p>
+    <div class="cta-actions">
+      <a href="#join-form" class="join-btn join-btn-primary">Únete a Tech Riders</a>
+      <a href="#como-funciona" class="join-btn join-btn-ghost">Quiero saber más</a>
+    </div>
+    <p class="cta-claim">Porque nadie debería recorrer solo su camino en tecnología.</p>
   </div>
 </section>

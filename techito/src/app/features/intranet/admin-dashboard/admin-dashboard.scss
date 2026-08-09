@@ -2,13 +2,16 @@
   padding: var(--page-block-padding) var(--page-inline-padding);
   max-width: var(--container-max);
   margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
 }
 
 .page-header {
-  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
 
   h1 {
-    font-size: 2rem;
+    font-size: var(--font-size-4xl);
     color: var(--text-primary);
     font-weight: 800;
     margin-bottom: var(--space-2);
@@ -20,25 +23,18 @@
   }
 }
 
-/* Stats Grid - Uses .grid-auto-fit from _components.scss */
-.stats-grid {
-  @extend .grid-auto-fit !optional;
-  gap: var(--surface-gap);
-  margin-bottom: var(--space-8);
-}
-
-/* Stat Card - Already defined in _components.scss */
-/* Just override border-top color if needed */
-.stat-card {
-  border-top: 4px solid var(--tr-blue);
+.metrics-section {
+  margin-top: var(--space-1);
 }
 
 .navigation-note {
   @extend .card !optional;
   padding: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-6);
-  border-left: 3px solid var(--tr-blue);
+  border-left: 4px solid var(--tr-blue);
   color: var(--text-secondary);
+  display: grid;
+  gap: var(--space-2);
+  background: color-mix(in srgb, var(--bg-elevated) 88%, var(--tr-blue-alpha-10) 12%);
 
   strong {
     color: var(--text-primary);
@@ -46,18 +42,31 @@
   }
 }
 
+.admin-quick-link {
+  width: fit-content;
+  color: var(--tr-blue-light);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--tr-blue-alpha-25);
+  background: var(--tr-blue-alpha-10);
+}
+
 /* Recent Actions - Uses .card from _components.scss */
 .recent-actions {
   @extend .card !optional;
   padding: var(--surface-padding);
-  margin-bottom: var(--space-6);
 
   h2 {
-    font-size: 1.35rem;
+    font-size: var(--font-size-2xl);
     color: var(--text-primary);
     font-weight: 700;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
   }
+}
+
+.table-wrap {
+  overflow-x: auto;
 }
 
 /* Table - Uses .table from _components.scss */
@@ -65,58 +74,20 @@
   @extend .table !optional;
 }
 
-/* System Health - Uses .card from _components.scss */
 .system-health {
   @extend .card !optional;
   padding: var(--surface-padding);
 
   h2 {
-    font-size: 1.35rem;
+    font-size: var(--font-size-2xl);
     color: var(--text-primary);
     font-weight: 700;
-    margin-bottom: var(--space-6);
-  }
-}
-
-.health-grid {
-  @extend .grid-auto-fit !optional;
-}
-
-.health-item {
-  @extend .stat-card !optional;
-  text-align: center;
-
-  span {
-    display: block;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: var(--space-3);
-    text-transform: uppercase;
-  }
-
-  p {
-    font-size: 1.35rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--text-primary);
-  }
-
-  .status {
-    color: var(--text-secondary);
-
-    &.online {
-      color: var(--accent-success);
-    }
+    margin-bottom: var(--space-4);
   }
 }
 
 @media (min-width: 768px) {
   .page-header h1 {
-    font-size: 2rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    font-size: var(--font-size-4xl);
   }
 }

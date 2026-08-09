@@ -1,0 +1,95 @@
+<section class="comuneras-page">
+  <header class="comuneras-hero">
+    <span class="section-label">Comunidad</span>
+    <h1 class="section-heading">Comuñeras</h1>
+    <p class="section-subheading">{{ subtitle }}</p>
+
+    <section class="join-cta join-cta-hero">
+      <h2>¿Tienes una comunidad?</h2>
+      <p>
+        Nos encanta colaborar con personas y comunidades que comparten nuestros valores y
+        nuestra pasión por ayudar a crecer a otras personas.
+      </p>
+      <a class="btn btn-secondary" routerLink="/community-partners/apply" (click)="onApplyClick()">Quiero ser Comuñera</a>
+    </section>
+
+    <ul class="topic-chips" aria-label="Temáticas del ecosistema">
+      @for (topic of topicSummary(); track topic) {
+      <li>{{ topic }}</li>
+      }
+    </ul>
+  </header>
+
+  <section class="directory-filters" aria-label="Filtros del directorio">
+    <app-ui-text-field
+      label="Buscar comunidad"
+      name="community-partners-search"
+      placeholder="Nombre, temática o ámbito"
+      [value]="searchTerm()"
+      (valueChange)="searchTerm.set($event)"
+    ></app-ui-text-field>
+    <app-ui-select
+      label="Ámbito"
+      [options]="scopeOptions"
+      [value]="scopeFilter()"
+      (valueChange)="onScopeFilterChange($event)"
+    ></app-ui-select>
+  </section>
+
+  <section class="comuneras-grid" aria-label="Directorio de comunidades compañeras">
+    @for (partner of filteredPartners(); track partner.id) {
+    <article class="comunera-card">
+      <header class="card-header">
+        <img [src]="partner.logoUrl" [alt]="'Logo de ' + partner.name" loading="lazy" />
+        <div>
+          <h2>{{ partner.name }}</h2>
+          <p>{{ partner.cityOrScope }}</p>
+        </div>
+      </header>
+
+      <p class="card-description">{{ partner.shortDescription }}</p>
+
+      <ul class="card-topics" aria-label="Temáticas">
+        @for (topic of partner.topics; track topic) {
+        <li>{{ topic }}</li>
+        }
+      </ul>
+
+      <div class="card-links">
+        @if (partner.website) {
+        <a [href]="partner.website" target="_blank" rel="noopener noreferrer">Web</a>
+        }
+        @if (partner.linkedin) {
+        <a [href]="partner.linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        }
+        @if (partner.instagram) {
+        <a [href]="partner.instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
+        }
+        @if (partner.x) {
+        <a [href]="partner.x" target="_blank" rel="noopener noreferrer">X</a>
+        }
+        @if (partner.youtube) {
+        <a [href]="partner.youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
+        }
+        @if (partner.discord) {
+        <a [href]="partner.discord" target="_blank" rel="noopener noreferrer">Discord</a>
+        }
+        @if (partner.telegram) {
+        <a [href]="partner.telegram" target="_blank" rel="noopener noreferrer">Telegram</a>
+        }
+      </div>
+
+      <a class="btn btn-primary" [routerLink]="['/community-partners', partner.id]" (click)="onCardClick(partner.id, partner.name)">
+        Ver comunidad
+      </a>
+    </article>
+    }
+    @if (filteredPartners().length === 0) {
+    <article class="comunera-empty-state">
+      <h2>No hay comunidades que coincidan con tu búsqueda</h2>
+      <p>Prueba otro texto o cambia el ámbito para ver más Comuñeras.</p>
+    </article>
+    }
+  </section>
+
+</section>

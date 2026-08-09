@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
+using TechRiders.Api.Contracts.Responses.Events;
 using TechRiders.Application.DTOs.Requests.Event;
 using TechRiders.Application.DTOs.Responses.Event;
 using TechRiders.Application.Interfaces;
@@ -203,14 +203,150 @@ public class EventsController : BaseApiController
     [AllowAnonymous]
     [SwaggerOperation(
         Summary = "Get podcast videos",
-        Description = "Returns curated public podcast videos for the events page",
+        Description = "Returns curated public podcast videos for the events page. Use playlist to filter specific collections.",
         OperationId = "GetPodcastVideos"
     )]
     [SwaggerResponse(200, "Podcast videos", typeof(IEnumerable<PodcastVideoResponse>))]
     [ProducesResponseType(typeof(IEnumerable<PodcastVideoResponse>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<PodcastVideoResponse>> GetPodcastVideos([FromQuery] int maxResults = 8)
+    public ActionResult<IEnumerable<PodcastVideoResponse>> GetPodcastVideos(
+        [FromQuery] int maxResults = 8,
+        [FromQuery] string? playlist = null)
     {
-        var videos = new[]
+        var safeLimit = Math.Clamp(maxResults, 1, 20);
+        var normalizedPlaylist = (playlist ?? string.Empty).Trim().ToLowerInvariant();
+
+        var videos = normalizedPlaylist switch
+        {
+            "profiles" => new[]
+            {
+                new PodcastVideoResponse
+                {
+                    VideoId = "J25VQJ7Wx34",
+                    Title = "Perfiles profesionales · Episodio 1",
+                    Url = "https://www.youtube.com/watch?v=J25VQJ7Wx34&list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/J25VQJ7Wx34?list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/J25VQJ7Wx34/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "X4mIfCx6XPU",
+                    Title = "Perfiles profesionales · Episodio 2",
+                    Url = "https://www.youtube.com/watch?v=X4mIfCx6XPU&list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/X4mIfCx6XPU?list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/X4mIfCx6XPU/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "vncHQDNPjEw",
+                    Title = "Perfiles profesionales · Episodio 3",
+                    Url = "https://www.youtube.com/watch?v=vncHQDNPjEw&list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/vncHQDNPjEw?list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/vncHQDNPjEw/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "A856m8nAx6g",
+                    Title = "Perfiles profesionales · Episodio 4",
+                    Url = "https://www.youtube.com/watch?v=A856m8nAx6g&list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/A856m8nAx6g?list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/A856m8nAx6g/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "5zfaHALRmis",
+                    Title = "Perfiles profesionales · Episodio 5",
+                    Url = "https://www.youtube.com/watch?v=5zfaHALRmis&list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/5zfaHALRmis?list=PLxVLmPZVJwGEdXBvyBphPA_YxYjL8QNKO",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/5zfaHALRmis/hqdefault.jpg"
+                }
+            },
+            "success-stories" => new[]
+            {
+                new PodcastVideoResponse
+                {
+                    VideoId = "HKgt8H8o-nI",
+                    Title = "Historias de éxito · Episodio 1",
+                    Url = "https://www.youtube.com/watch?v=HKgt8H8o-nI&list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/HKgt8H8o-nI?list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/HKgt8H8o-nI/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "RXRqB_Ul_oI",
+                    Title = "Historias de éxito · Episodio 2",
+                    Url = "https://www.youtube.com/watch?v=RXRqB_Ul_oI&list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/RXRqB_Ul_oI?list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/RXRqB_Ul_oI/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "zlZwB1VlY28",
+                    Title = "Historias de éxito · Episodio 3",
+                    Url = "https://www.youtube.com/watch?v=zlZwB1VlY28&list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/zlZwB1VlY28?list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/zlZwB1VlY28/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "TAxnDg0kyRI",
+                    Title = "Historias de éxito · Episodio 4",
+                    Url = "https://www.youtube.com/watch?v=TAxnDg0kyRI&list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/TAxnDg0kyRI?list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/TAxnDg0kyRI/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "NwEhryRqSio",
+                    Title = "Historias de éxito · Episodio 5",
+                    Url = "https://www.youtube.com/watch?v=NwEhryRqSio&list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/NwEhryRqSio?list=PLxVLmPZVJwGESQcMxlUozaHcXVDBkigUo",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/NwEhryRqSio/hqdefault.jpg"
+                }
+            },
+            "interviews" => new[]
+            {
+                new PodcastVideoResponse
+                {
+                    VideoId = "WQp9pZb8shU",
+                    Title = "Entrevistas · IA, Copilot y el futuro del desarrollo",
+                    Url = "https://www.youtube.com/watch?v=WQp9pZb8shU&list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/WQp9pZb8shU?list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/WQp9pZb8shU/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "SvZ50wArtaM",
+                    Title = "Entrevistas · Agentes de IA en empresa",
+                    Url = "https://www.youtube.com/watch?v=SvZ50wArtaM&list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/SvZ50wArtaM?list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/SvZ50wArtaM/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "baKNCZUbvL8",
+                    Title = "Entrevistas · Estudiantes AcademyVerso",
+                    Url = "https://www.youtube.com/watch?v=baKNCZUbvL8&list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/baKNCZUbvL8?list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/baKNCZUbvL8/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "-biqjBJN_cI",
+                    Title = "Entrevistas · IA con imágenes",
+                    Url = "https://www.youtube.com/watch?v=-biqjBJN_cI&list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/-biqjBJN_cI?list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/-biqjBJN_cI/hqdefault.jpg"
+                },
+                new PodcastVideoResponse
+                {
+                    VideoId = "Gc2sLw3vcvM",
+                    Title = "Entrevistas · Microsoft Student Ambassador",
+                    Url = "https://www.youtube.com/watch?v=Gc2sLw3vcvM&list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    EmbedUrl = "https://www.youtube-nocookie.com/embed/Gc2sLw3vcvM?list=PLxVLmPZVJwGFXrUIxJdfJ9fB5QYuHyI-q",
+                    ThumbnailUrl = "https://i.ytimg.com/vi/Gc2sLw3vcvM/hqdefault.jpg"
+                }
+            },
+            _ => new[]
         {
             new PodcastVideoResponse
             {
@@ -252,9 +388,9 @@ public class EventsController : BaseApiController
                 EmbedUrl = "https://www.youtube-nocookie.com/embed/o6bGKi8y2eY",
                 ThumbnailUrl = "https://i.ytimg.com/vi/o6bGKi8y2eY/hqdefault.jpg"
             },
+        }
         };
 
-        var safeLimit = Math.Clamp(maxResults, 1, 20);
         return Ok(videos.Take(safeLimit));
     }
 
@@ -395,25 +531,4 @@ public class EventsController : BaseApiController
             return StatusCode(500, "Error al eliminar el evento");
         }
     }
-}
-
-public sealed class PodcastVideoResponse
-{
-    [JsonPropertyName("videoId")]
-    public string VideoId { get; set; } = string.Empty;
-
-    [JsonPropertyName("title")]
-    public string Title { get; set; } = string.Empty;
-
-    [JsonPropertyName("url")]
-    public string Url { get; set; } = string.Empty;
-
-    [JsonPropertyName("embedUrl")]
-    public string EmbedUrl { get; set; } = string.Empty;
-
-    [JsonPropertyName("publishedAt")]
-    public DateTime? PublishedAt { get; set; }
-
-    [JsonPropertyName("thumbnailUrl")]
-    public string? ThumbnailUrl { get; set; }
 }

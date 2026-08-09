@@ -1,4 +1,5 @@
 using TechRiders.Application.DTOs.Responses;
+using TechRiders.Application.DTOs.Requests.Intranet;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Interfaces;
 using Mapster;
@@ -76,6 +77,21 @@ public class IntranetService : IIntranetService
     {
         var setting = await _unitOfWork.IntranetSettings.GetByModuleAndKeyAsync(module, key, cancellationToken);
         return _mapper.Map<IntranetSettingResponse?>(setting);
+    }
+
+    public async Task<IntranetSettingResponse?> UpdateSettingAsync(UpdateIntranetSettingRequest request, string? updatedBy, CancellationToken cancellationToken = default)
+    {
+        var setting = await _unitOfWork.IntranetSettings.GetByKeyAsync(request.Key, cancellationToken);
+        if (setting is null)
+        {
+            return null;
+        }
+
+        setting.Update(request.Module, request.Value, request.Status, updatedBy);
+        await _unitOfWork.IntranetSettings.UpdateAsync(setting, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return _mapper.Map<IntranetSettingResponse>(setting);
     }
 
     // User category operations

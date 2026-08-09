@@ -1,98 +1,190 @@
 <div class="intranet-home">
-  <div class="welcome-section">
-    <h1>Home personalizada</h1>
-    <p>Bienvenido, {{ userName() }}.</p>
-    <small class="role-chip">Roles: {{ userRoles().join(', ') || 'sin rol' }}</small>
-  </div>
+  <header class="home-topbar" aria-label="Barra de utilidades intranet">
+    <label class="search-wrap" for="intranet-search-input">
+      <span aria-hidden="true">⌕</span>
+      <input id="intranet-search-input" type="search" placeholder="Buscar en TechRiders..." />
+      <kbd>Ctrl K</kbd>
+    </label>
+
+    <div class="topbar-actions" aria-hidden="true">
+      <button type="button">🔔</button>
+      <button type="button">✉</button>
+      <button type="button">⚙</button>
+    </div>
+  </header>
+
+  <section class="hero-card" aria-labelledby="home-title">
+    <div class="hero-content">
+      <h1 id="home-title">¡Bienvenido, {{ userName() }}! 👋</h1>
+      <p>{{ roleHero().subtitle }}</p>
+      <small class="role-chip">{{ roleHero().contextLabel }} · Rol activo: {{ activeRoleLabel() }}</small>
+
+      <div class="hero-ctas">
+        <a class="hero-cta hero-cta--violet" [routerLink]="talkRequestRoute()">
+          <span aria-hidden="true">🎙</span>
+          <span>Solicitar nueva charla</span>
+        </a>
+        <a class="hero-cta hero-cta--blue" [routerLink]="resourcesRoute()">
+          <span aria-hidden="true">📘</span>
+          <span>Explorar recursos</span>
+        </a>
+        <a class="hero-cta hero-cta--teal" [routerLink]="'/intranet/calendar'">
+          <span aria-hidden="true">🗓</span>
+          <span>Ver próximos eventos</span>
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero-visual" aria-hidden="true"></aside>
+  </section>
 
   <section class="dashboard-grid">
-    <article class="panel my-space">
-      <h2>Mi espacio</h2>
-      <ul class="my-space-list">
-        @for (item of mySpace(); track item.label) {
-        <li>
-          <a [routerLink]="item.route">{{ item.label }}</a>
-        </li>
-        }
-      </ul>
-    </article>
-
-    <article class="panel notifications">
-      <h2>Notificaciones pendientes</h2>
-      <ul>
-        @for (item of notifications(); track item.title) {
-        <li>
-          <strong>{{ item.title }}</strong>
-          <span>{{ item.detail }}</span>
-        </li>
-        }
-      </ul>
-    </article>
-
-    <article class="panel">
-      <h2>Resumen de actividad</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Modulo</th>
-            <th>Pendiente</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of activitySummary(); track item.module) {
-          <tr>
-            <td>{{ item.module }}</td>
-            <td>{{ item.pending }}</td>
-          </tr>
+    <div class="main-column">
+      <article class="panel" aria-labelledby="modules-title-main">
+        <div class="panel-head">
+          <h2 id="modules-title-main">Módulos prioritarios</h2>
+          <a [routerLink]="resourcesRoute()">Ir al módulo principal</a>
+        </div>
+        <div class="module-list">
+          @for (module of dashboardModules(); track module.route) {
+          <a class="module-card" [routerLink]="module.route">
+            <h3>{{ module.title }}</h3>
+            <p>{{ module.description }}</p>
+          </a>
           }
-        </tbody>
-      </table>
-    </article>
-  </section>
+        </div>
+      </article>
 
-  @if (canManageCategories()) {
-  <section class="panel categories" aria-label="Mis categorias">
-    <h2>Mis categorias</h2>
-    <p>Activa una o varias categorias para filtrar tu operativa.</p>
-    <div class="category-chips">
-      @for (category of availableCategories; track category) {
-      <button
-        type="button"
-        class="category-chip"
-        [class.active]="selectedCategories().includes(category)"
-        (click)="toggleCategory(category)"
-      >
-        {{ category }}
-      </button>
-      }
+      <article class="panel table-panel" aria-labelledby="eventos-title">
+        <div class="panel-head">
+          <h2 id="eventos-title">Pendientes por módulo</h2>
+          <a [routerLink]="requestsRoute()">Gestionar pendientes</a>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Módulo</th>
+                <th>Pendiente</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of activitySummary(); track item.module) {
+              <tr>
+                <td>{{ item.module }}</td>
+                <td>{{ item.pending }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel table-panel" aria-labelledby="knowledge-title">
+        <div class="panel-head">
+          <h2 id="knowledge-title">Notificaciones operativas</h2>
+          <a [routerLink]="requestsRoute()">Ver flujo completo</a>
+        </div>
+        <ul class="ops-list">
+          @for (item of notifications(); track item.title) {
+          <li>
+            <strong>{{ item.title }}</strong>
+            <span>{{ item.detail }}</span>
+          </li>
+          }
+        </ul>
+      </article>
+
+      <article class="panel activity-panel" aria-labelledby="activity-title">
+        <div class="panel-head">
+          <h2 id="activity-title">Actividad reciente</h2>
+        </div>
+        <ul>
+          @for (activity of recentActivity(); track activity.label + activity.time) {
+          <li>
+            <span class="activity-dot"></span>
+            <div>
+              <p>{{ activity.label }}</p>
+              <small>{{ activity.detail }}</small>
+            </div>
+            <time>{{ activity.time }}</time>
+          </li>
+          }
+        </ul>
+      </article>
     </div>
-  </section>
-  }
 
-  <section class="summary-strip" aria-label="Resumen operativo">
-    <article>
-      <p class="kpi-label">Pendientes</p>
-      <p class="kpi-value">{{ notifications().length }}</p>
-    </article>
-    <article>
-      <p class="kpi-label">Modulos visibles</p>
-      <p class="kpi-value">{{ activitySummary().length }}</p>
-    </article>
-    <article>
-      <p class="kpi-label">Estado</p>
-      <p class="kpi-value">Operativo</p>
-    </article>
-  </section>
+    <aside class="side-column">
+      <article class="panel profile-panel" aria-labelledby="profile-title">
+        <div class="avatar">{{ userInitials() }}</div>
+        <div>
+          <h2 id="profile-title">{{ userName() }}</h2>
+          <p>{{ activeRoleLabel() }}</p>
+          <small>{{ userEmail() }}</small>
+        </div>
+        <a class="edit-profile" [routerLink]="profileRoute()">Editar perfil</a>
+      </article>
 
-  <section class="panel quick-access">
-    <h2>Acceso rapido por rol</h2>
-    <div class="quick-list">
-      @for (item of quickAccess(); track item.route) {
-      <a class="quick-item" [routerLink]="item.route">
-        <h3>{{ item.label }}</h3>
-        <p>{{ item.description }}</p>
-      </a>
-      }
-    </div>
+      <article class="panel interests-panel" aria-labelledby="interests-title">
+        <div class="panel-head">
+          <h2 id="interests-title">Mis intereses</h2>
+          <a [routerLink]="profileRoute()">Editar</a>
+        </div>
+        <div class="chips">
+          @for (tag of interestTags; track tag) {
+          <span>{{ tag }}</span>
+          }
+        </div>
+      </article>
+
+      <article class="panel modules-panel" aria-labelledby="modules-title">
+        <div class="panel-head">
+          <h2 id="modules-title">Submenús disponibles</h2>
+          <span>{{ totalVisibleModules() }} módulos</span>
+        </div>
+        <div class="submenu-groups">
+          @for (section of visibleSubmenuSections(); track section.title) {
+          <section>
+            <h3>{{ section.icon }} {{ section.title }}</h3>
+            <ul>
+              @for (item of section.items; track item.route) {
+              <li>
+                <a [routerLink]="item.route!">{{ item.label }}</a>
+              </li>
+              }
+            </ul>
+          </section>
+          }
+        </div>
+      </article>
+
+      <article class="panel" aria-labelledby="context-title">
+        <div class="panel-head">
+          <h2 id="context-title">Contexto actual</h2>
+        </div>
+        <div class="context-box">
+          <p><strong>Ruta:</strong> {{ currentRoute() }}</p>
+          <p><strong>Sección activa:</strong> {{ currentSection()?.title || 'Inicio' }}</p>
+        </div>
+      </article>
+
+      <article class="panel featured-panel" aria-labelledby="featured-title">
+        <h2 id="featured-title">Resumen operativo</h2>
+        <div class="kpi-grid">
+          <div>
+            <small>Notificaciones</small>
+            <strong>{{ notifications().length }}</strong>
+          </div>
+          <div>
+            <small>Secciones activas</small>
+            <strong>{{ visibleSubmenuSections().length }}</strong>
+          </div>
+          <div>
+            <small>Módulos visibles</small>
+            <strong>{{ totalVisibleModules() }}</strong>
+          </div>
+        </div>
+      </article>
+    </aside>
   </section>
 </div>

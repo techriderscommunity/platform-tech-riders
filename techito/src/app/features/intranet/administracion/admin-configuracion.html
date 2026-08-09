@@ -5,16 +5,7 @@
     <p>Parametros transversales de Intranet para categorias, estados y reglas operativas.</p>
   </div>
 
-  <section class="summary-grid">
-    <article>
-      <span>Bloques de configuracion</span>
-      <p>{{ items().length }}</p>
-    </article>
-    <article>
-      <span>En revision</span>
-      <p>{{ inRevisionCount() }}</p>
-    </article>
-  </section>
+  <app-ui-metrics-strip [items]="configMetrics()"></app-ui-metrics-strip>
 
   <section class="card">
     <h2>Catalogo de configuracion</h2>
@@ -27,7 +18,8 @@
     @if (error()) {
     <p>{{ error() }}</p>
     }
-    <table>
+    <div class="table-responsive">
+    <table class="config-table">
       <thead>
         <tr>
           <th>Clave</th>
@@ -63,23 +55,27 @@
             />
           </td>
           <td>
-            <select
-              class="table-select"
-              [value]="item.estado"
-              (change)="updateEstado(item.key, $any($event.target).value)"
-            >
-              <option value="activo">activo</option>
-              <option value="revision">revision</option>
-            </select>
+            <span class="badge" [class.revision]="item.estado === 'revision'">{{ item.estado }}</span>
           </td>
           <td>
-            <button type="button" class="save-btn" [disabled]="isSaving(item.key)" (click)="saveRow(item)">
-              {{ isSaving(item.key) ? 'Guardando...' : 'Guardar' }}
-            </button>
+            <div class="config-actions">
+              <select
+                class="table-select"
+                [value]="item.estado"
+                (change)="updateEstado(item.key, $any($event.target).value)"
+              >
+                <option value="activo">activo</option>
+                <option value="revision">revision</option>
+              </select>
+              <button type="button" class="save-btn" [disabled]="isSaving(item.key)" (click)="saveRow(item)">
+                {{ isSaving(item.key) ? 'Guardando...' : 'Guardar' }}
+              </button>
+            </div>
           </td>
         </tr>
         }
       </tbody>
     </table>
+    </div>
   </section>
 </div>

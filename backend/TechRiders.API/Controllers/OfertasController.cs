@@ -7,15 +7,15 @@ using TechRiders.Application.Interfaces;
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/ofertas")]
 [Route("api/offers")]
 [Produces("application/json")]
-public class OfertasController : ControllerBase
+public class JobOffersController : ControllerBase
 {
-    private readonly IEmpleoService _empleoService;
-    private readonly ILogger<OfertasController> _logger;
+    private readonly IEmploymentService _empleoService;
+    private readonly ILogger<JobOffersController> _logger;
 
-    public OfertasController(IEmpleoService empleoService, ILogger<OfertasController> logger)
+    public JobOffersController(IEmploymentService empleoService, ILogger<JobOffersController> logger)
     {
         _empleoService = empleoService ?? throw new ArgumentNullException(nameof(empleoService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

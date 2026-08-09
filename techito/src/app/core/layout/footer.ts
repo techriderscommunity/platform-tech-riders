@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -11,6 +11,16 @@ import { RouterLink } from '@angular/router';
 })
 export class Footer {
   readonly year = new Date().getFullYear();
+  readonly isDarkMode = signal(true);
+
+  ngOnInit(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const savedTheme = localStorage.getItem('tr-theme') || 'dark';
+    this.isDarkMode.set(savedTheme === 'dark');
+  }
 }
 
 

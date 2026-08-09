@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Contracts.Requests.Sessions;
 using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
@@ -18,20 +18,18 @@ namespace TechRiders.Api.Controllers;
 [Produces("application/json")]
 public class SessionsController : BaseApiController
 {
-    private const string SessionWorkflowKey = "intranet-session-workflow";
-
     private readonly ISessionService _sessionService;
     private readonly ILogger<SessionsController> _logger;
-    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
+    private readonly IIntranetRuntimeOperationsService _runtimeOperationsService;
 
     public SessionsController(
         ISessionService sessionService,
         ILogger<SessionsController> logger,
-        IMvpRuntimeStateStore mvpRuntimeStateStore)
+        IIntranetRuntimeOperationsService runtimeOperationsService)
     {
         _sessionService = sessionService;
         _logger = logger;
-        this.mvpRuntimeStateStore = mvpRuntimeStateStore;
+        _runtimeOperationsService = runtimeOperationsService;
     }
 
     /// <summary>
@@ -42,11 +40,11 @@ public class SessionsController : BaseApiController
     [SwaggerOperation(
         Summary = "Obtener todas las sesiones",
         Description = "Retorna una lista de todas las sesiones activas en el sistema",
-        OperationId = "GetAllSesiones"
+        OperationId = "GetAllSessions"
     )]
     [SwaggerResponse(200, "Lista de sesiones obtenida exitosamente", typeof(IEnumerable<SessionResponse>))]
     [ProducesResponseType(typeof(IEnumerable<SessionResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<SessionResponse>>> GetAllSesiones(
+    public async Task<ActionResult<IEnumerable<SessionResponse>>> GetAllSessions(
         CancellationToken cancellationToken)
     {
         try
@@ -71,7 +69,7 @@ public class SessionsController : BaseApiController
     [ProducesResponseType(typeof(IDictionary<string, SessionActionState>), StatusCodes.Status200OK)]
     public IActionResult GetWorkflow()
     {
-        var actions = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey);
+        var actions = _runtimeOperationsService.GetSessionActions();
         return Ok(actions);
     }
 
@@ -94,31 +92,16 @@ public class SessionsController : BaseApiController
             return BadRequest(ModelState);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Status)
-            && !AllowedSessionStatuses.Contains(request.Status.Trim(), StringComparer.OrdinalIgnoreCase))
+        try
         {
-            return BadRequest(new { error = "Status must be Pendiente, Confirmada or Cancelada." });
+            var updatedWorkflow = _runtimeOperationsService.UpdateSessionWorkflow(id, request);
+            return Ok(updatedWorkflow);
         }
-
-        var workflow = mvpRuntimeStateStore.GetSessionActions(SessionWorkflowKey)
-            .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
-
-        var sessionId = id.ToString();
-        workflow[sessionId] = new SessionActionState
+        catch (InvalidOperationException ex)
         {
-            SessionId = sessionId,
-            Status = request.Status?.Trim(),
-            AmbassadorAssignedId = string.IsNullOrWhiteSpace(request.AmbassadorAssignedId)
-                ? null
-                : request.AmbassadorAssignedId.Trim(),
-            UpdatedAt = DateTimeOffset.UtcNow,
-        };
-
-        mvpRuntimeStateStore.UpsertSessionActions(SessionWorkflowKey, workflow);
-        return Ok(workflow[sessionId]);
+            return BadRequest(new { error = ex.Message });
+        }
     }
-
-    private static readonly string[] AllowedSessionStatuses = ["Pendiente", "Confirmada", "Cancelada"];
 
     /// <summary>
     /// Obtiene una sesión específica por su ID
@@ -169,7 +152,7 @@ public class SessionsController : BaseApiController
     [SwaggerOperation(
         Summary = "Obtener sesiones por evento",
         Description = "Retorna todas las sesiones asociadas a un evento específico",
-        OperationId = "GetSesionesByEvento"
+        OperationId = "GetSessionsByEvent"
     )]
     [SwaggerResponse(200, "Lista de sesiones del evento", typeof(IEnumerable<SessionResponse>))]
     [ProducesResponseType(typeof(IEnumerable<SessionResponse>), StatusCodes.Status200OK)]
@@ -388,13 +371,4 @@ public class SessionsController : BaseApiController
             return StatusCode(500, "Error al eliminar la sesión");
         }
     }
-}
-
-public sealed class UpdateSessionWorkflowRequest
-{
-    [StringLength(50)]
-    public string? Status { get; set; }
-
-    [StringLength(80)]
-    public string? AmbassadorAssignedId { get; set; }
 }

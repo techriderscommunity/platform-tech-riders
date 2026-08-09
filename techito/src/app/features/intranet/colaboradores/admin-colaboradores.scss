@@ -2,10 +2,13 @@
   padding: var(--page-block-padding) var(--page-inline-padding);
   max-width: var(--container-max);
   margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
 }
 
 .page-header {
-  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
 
   .btn-back {
     background: none;
@@ -38,7 +41,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--surface-gap);
-  margin-bottom: var(--space-8);
 }
 
 .stat {
@@ -56,7 +58,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  margin-bottom: var(--space-8);
 }
 
 .card {
@@ -64,11 +65,10 @@
 }
 
 .feedback-banner {
-  margin-bottom: var(--space-4);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--line-weak);
-  background: var(--surface-elevated, var(--surface));
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
   color: var(--text-primary);
 }
 
@@ -101,8 +101,8 @@
   @extend .badge !optional;
 
   &.pending {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
   }
 }
 

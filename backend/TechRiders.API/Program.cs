@@ -18,62 +18,73 @@ const string LocalJwtScheme = "LocalJwt";
 // =====================================================================
 
 // 1. Configuración de autenticación JWT con Microsoft Identity y JWT local para desarrollo.
+var localAuthOptions = builder.Configuration
+    .GetSection(LocalAuthOptions.SectionName)
+    .Get<LocalAuthOptions>() ?? new LocalAuthOptions();
+
 var localJwtKey = builder.Configuration["JWT_KEY"]
     ?? builder.Configuration[$"{LocalAuthOptions.SectionName}:JwtKey"];
 
-if (string.IsNullOrWhiteSpace(localJwtKey))
-{
-    throw new InvalidOperationException("JWT key for local auth is required. Configure JWT_KEY or LocalAuth:JwtKey.");
-}
+var isLocalJwtEnabled = builder.Environment.IsDevelopment()
+    && localAuthOptions.Enabled
+    && !string.IsNullOrWhiteSpace(localJwtKey);
 
 builder.Services.Configure<LocalAuthOptions>(builder.Configuration.GetSection(LocalAuthOptions.SectionName));
 
-builder.Services.AddAuthentication(options =>
+var authenticationBuilder = builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = DynamicAuthScheme;
-    options.DefaultAuthenticateScheme = DynamicAuthScheme;
-    options.DefaultChallengeScheme = DynamicAuthScheme;
+    options.DefaultScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
+    options.DefaultAuthenticateScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
+    options.DefaultChallengeScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
 })
-    .AddPolicyScheme(DynamicAuthScheme, "Azure AD o JWT local", options =>
-    {
-        options.ForwardDefaultSelector = context =>
+    ;
+
+if (isLocalJwtEnabled)
+{
+    authenticationBuilder
+        .AddPolicyScheme(DynamicAuthScheme, "Azure AD or local JWT", options =>
         {
-            var authorization = context.Request.Headers.Authorization.ToString();
-            if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            options.ForwardDefaultSelector = context =>
             {
-                var token = authorization["Bearer ".Length..].Trim();
-                if (!string.IsNullOrWhiteSpace(token))
+                var authorization = context.Request.Headers.Authorization.ToString();
+                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 {
-                    var jwtHandler = new JwtSecurityTokenHandler();
-                    if (jwtHandler.CanReadToken(token))
+                    var token = authorization["Bearer ".Length..].Trim();
+                    if (!string.IsNullOrWhiteSpace(token))
                     {
-                        var parsedToken = jwtHandler.ReadJwtToken(token);
-                        if (string.Equals(parsedToken.Issuer, LocalAuthOptions.DefaultIssuer, StringComparison.OrdinalIgnoreCase))
+                        var jwtHandler = new JwtSecurityTokenHandler();
+                        if (jwtHandler.CanReadToken(token))
                         {
-                            return LocalJwtScheme;
+                            var parsedToken = jwtHandler.ReadJwtToken(token);
+                            if (string.Equals(parsedToken.Issuer, LocalAuthOptions.DefaultIssuer, StringComparison.OrdinalIgnoreCase))
+                            {
+                                return LocalJwtScheme;
+                            }
                         }
                     }
                 }
-            }
 
-            return AzureAdScheme;
-        };
-    })
-    .AddJwtBearer(LocalJwtScheme, options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
+                return AzureAdScheme;
+            };
+        })
+        .AddJwtBearer(LocalJwtScheme, options =>
         {
-            ValidateIssuer = true,
-            ValidIssuer = LocalAuthOptions.DefaultIssuer,
-            ValidateAudience = true,
-            ValidAudience = LocalAuthOptions.DefaultAudience,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtKey)),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(2),
-        };
-    })
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = LocalAuthOptions.DefaultIssuer,
+                ValidateAudience = true,
+                ValidAudience = LocalAuthOptions.DefaultAudience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtKey!)),
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(2),
+            };
+        });
+}
+
+authenticationBuilder
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"), jwtBearerScheme: AzureAdScheme)
         .EnableTokenAcquisitionToCallDownstreamApi()
             .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
@@ -87,6 +98,9 @@ builder.Services.AddApplicationServices();
 
 // 3.1 Estado MVP en memoria para flujos locales mientras no exista persistencia definitiva.
 builder.Services.AddSingleton<IMvpRuntimeStateStore, InMemoryMvpRuntimeStateStore>();
+builder.Services.AddScoped<IIntranetRuntimeOperationsService, IntranetRuntimeOperationsService>();
+builder.Services.AddScoped<IPublicEngagementIntakeService, PublicEngagementIntakeService>();
+builder.Services.AddScoped<ILocalAuthenticationService, LocalAuthenticationService>();
 
 // 4. Configuración de Controllers con validación de modelo automática
 builder.Services.AddControllers(options =>

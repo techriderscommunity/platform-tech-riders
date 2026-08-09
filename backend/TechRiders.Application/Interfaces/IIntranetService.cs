@@ -1,4 +1,5 @@
 using TechRiders.Application.DTOs.Responses;
+using TechRiders.Application.DTOs.Requests.Intranet;
 
 namespace TechRiders.Application.Interfaces;
 
@@ -56,6 +57,11 @@ public interface IIntranetService
     /// Gets a setting by module and key
     /// </summary>
     Task<IntranetSettingResponse?> GetSettingByModuleAndKeyAsync(string module, string key, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates an existing intranet setting.
+    /// </summary>
+    Task<IntranetSettingResponse?> UpdateSettingAsync(UpdateIntranetSettingRequest request, string? updatedBy, CancellationToken cancellationToken = default);
 
     // User category operations
 

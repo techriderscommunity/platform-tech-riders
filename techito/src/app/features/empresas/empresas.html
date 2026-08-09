@@ -1,0 +1,19 @@
+<section class="public-module-page">
+  <header class="public-module-hero">
+    <span class="section-label">Empresas</span>
+    <h1>Participa con Tech Riders</h1>
+    <p>Conecta con la comunidad para compartir conocimiento, impulsar talento y colaborar en actividades de valor.</p>
+  </header>
+
+  <app-ui-feature-cards [items]="valueCards"></app-ui-feature-cards>
+
+  <section class="public-module-panel">
+    <h2>Cómo trabajamos con empresas</h2>
+    <app-ui-progress-cards [items]="processCards"></app-ui-progress-cards>
+  </section>
+
+  <div class="public-module-actions">
+    <a routerLink="/contact" class="btn btn-primary">Quiero colaborar como empresa</a>
+    <a routerLink="/orienta-tech" class="btn btn-secondary">Ver ofertas y oportunidades</a>
+  </div>
+</section>

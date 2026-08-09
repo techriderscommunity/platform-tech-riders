@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, ViewChild, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton  } from '@shared/ui/button/button';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
+import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 
 type IntakeType = 'member' | 'ambassador' | 'session';
 
@@ -16,14 +16,11 @@ type IntakeType = 'member' | 'ambassador' | 'session';
   selector: 'app-unete',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, UiTextField, UiTextarea, UiButton, UiSelect],
+  imports: [CommonModule, FormsModule, RouterLink, UiTextField, UiTextarea, UiButton, UiSelect, UiMetricsStrip],
   templateUrl: './unete.html',
   styleUrl: './unete.scss'
 })
 export class Unete {
-  @ViewChild('carruselTrack', { static: false }) carruselTrack!: ElementRef<HTMLDivElement>;
-
-  private readonly renderer = inject(Renderer2);
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly baseUrl = environment.apiUrl;
@@ -34,12 +31,11 @@ export class Unete {
     { label: 'Quiero solicitar una sesión', value: 'session' }
   ];
 
-  readonly audienceOptions: UiSelectOption[] = [
-    { label: 'Soy estudiante o perfil junior', value: 'junior' },
-    { label: 'Soy profesional senior', value: 'senior' },
-    { label: 'Soy profesor u orientador', value: 'educator' },
-    { label: 'Represento a un centro educativo', value: 'centre' },
-    { label: 'Represento a una empresa', value: 'company' }
+  readonly joinMetrics = [
+    { value: '13', label: 'Años de comunidad', icon: '📅' },
+    { value: '1300+', label: 'Recursos compartidos', icon: '📚' },
+    { value: '80+', label: 'Sesiones #FPTOUR', icon: '🎤' },
+    { value: '1500+', label: 'Alumnos impactados', icon: '👥' },
   ];
 
   // Estado de flujo activo
@@ -51,44 +47,15 @@ export class Unete {
     email: '',
     requestType: 'member' as IntakeType,
     communityRole: 'member',
-    audience: 'junior',
     organizacion: '',
     motivacion: '',
     sessionTopic: '',
-    sessionFormat: 'tech-talk'
   });
 
   enviado = signal(false);
   loading = signal(false);
   error = signal('');
   successMessage = signal('');
-
-  scrollCarrusel(direction: number) {
-    const track = this.carruselTrack?.nativeElement;
-    if (track) {
-      const imgs = track.querySelectorAll('img');
-      if (imgs.length < 2) return;
-      const img = imgs[0];
-      const scrollAmount = img.clientWidth + 24;
-      if (direction > 0) {
-        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        setTimeout(() => {
-          if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 2) {
-            this.renderer.appendChild(track, imgs[0]);
-            track.scrollLeft -= scrollAmount;
-          }
-        }, 350);
-      } else {
-        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        setTimeout(() => {
-          if (track.scrollLeft <= 2) {
-            this.renderer.insertBefore(track, imgs[imgs.length - 1], imgs[0]);
-            track.scrollLeft += scrollAmount;
-          }
-        }, 350);
-      }
-    }
-  }
 
   seleccionarFlujo(requestType: IntakeType) {
     this.flujoActivo.set(requestType);
@@ -105,6 +72,28 @@ export class Unete {
     }
   }
 
+  flowTitle(): string {
+    switch (this.flujoActivo()) {
+      case 'ambassador':
+        return 'Comparte tu experiencia con impacto';
+      case 'session':
+        return 'Traemos una sesion adaptada a tu contexto';
+      default:
+        return 'Empieza por donde estes hoy';
+    }
+  }
+
+  flowHint(): string {
+    switch (this.flujoActivo()) {
+      case 'ambassador':
+        return 'Si te apetece aportar, difundimos tu conocimiento en formatos que encajen contigo.';
+      case 'session':
+        return 'Nos cuentas tu necesidad y co-disenamos una sesion util para tu grupo.';
+      default:
+        return 'No necesitas tenerlo todo claro. Te ayudamos a encontrar tu camino dentro de la comunidad.';
+    }
+  }
+
   onSubmit(event: Event) {
     event.preventDefault();
     this.loading.set(true);
@@ -115,11 +104,11 @@ export class Unete {
       email: this.formulario().email,
       requestType: this.formulario().requestType,
       communityRole: this.formulario().communityRole,
-      audience: this.formulario().audience,
+      audience: null,
       organization: this.formulario().organizacion || null,
       motivation: this.formulario().motivacion,
       sessionTopic: this.formulario().requestType === 'session' ? this.formulario().sessionTopic || null : null,
-      sessionFormat: this.formulario().requestType === 'session' ? this.formulario().sessionFormat || null : null,
+      sessionFormat: this.formulario().requestType === 'session' ? 'por-definir' : null,
     };
 
     this.http.post(`${this.baseUrl}/join`, payload).subscribe({
@@ -133,11 +122,9 @@ export class Unete {
           email: '',
           requestType: this.flujoActivo(),
           communityRole: this.getCommunityRoleForRequest(this.flujoActivo()),
-          audience: 'junior',
           organizacion: '',
           motivacion: '',
           sessionTopic: '',
-          sessionFormat: 'tech-talk'
         });
         setTimeout(() => this.enviado.set(false), 3000);
       },
@@ -161,16 +148,8 @@ export class Unete {
     this.formulario.update(f => ({ ...f, organizacion: value }));
   }
 
-  updateAudience(value: string) {
-    this.formulario.update(f => ({ ...f, audience: value }));
-  }
-
   updateSessionTopic(value: string) {
     this.formulario.update(f => ({ ...f, sessionTopic: value }));
-  }
-
-  updateSessionFormat(value: string) {
-    this.formulario.update(f => ({ ...f, sessionFormat: value }));
   }
 
   updateMotivacion(value: string) {
@@ -197,7 +176,7 @@ export class Unete {
     email: string;
     requestType: IntakeType;
     communityRole: string;
-    audience: string;
+    audience: string | null;
     organization: string | null;
     motivation: string;
     sessionTopic: string | null;
@@ -216,7 +195,7 @@ export class Unete {
         nombre: payload.name,
         email: payload.email,
         bio: payload.motivation,
-        intereses: payload.audience,
+        intereses: 'por-definir',
         organizacion: payload.organization,
         communityRole: payload.communityRole,
       }));
@@ -225,14 +204,14 @@ export class Unete {
 
   private buildSuccessMessage(requestType: IntakeType): string {
     if (requestType === 'ambassador') {
-      return 'Solicitud enviada. Si ya tienes acceso a intranet, el portal Ambassador quedará precargado con tu borrador.';
+      return 'Solicitud enviada. Si ya tienes acceso a la intranet, el portal Ambassador quedará precargado con tu borrador.';
     }
 
     if (requestType === 'session') {
       return 'Solicitud enviada. El equipo revisará el contexto y propondrá coordinación para la sesión.';
     }
 
-    return 'Solicitud enviada. Tu perfil de member queda registrado como base del MVP.';
+      return 'Solicitud enviada. Tu perfil de member ha quedado registrado.';
   }
 }
 

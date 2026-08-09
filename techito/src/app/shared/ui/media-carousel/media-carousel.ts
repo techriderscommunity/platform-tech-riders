@@ -8,17 +8,25 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 
 export interface UiCarouselItem {
   kind: 'image' | 'video';
   src: string;
   title: string;
   alt?: string;
+  subtitle?: string;
+  link?: string | readonly string[];
+  socials?: Array<{
+    platform: 'linkedin' | 'github' | 'x' | 'instagram' | 'youtube';
+    href: string;
+  }>;
 }
 
 @Component({
   selector: 'app-ui-media-carousel',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './media-carousel.html',
   styleUrl: './media-carousel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +40,7 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
   @Input() autoplayDelayMs = 3500;
   @Input() showCaptions = true;
   @Input() cardMinWidth = '260px';
+  @Input() fixedColumnsDesktop: number | null = null;
 
   @Input()
   set items(value: UiCarouselItem[]) {
@@ -45,6 +54,14 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
 
   get hasMultipleItems(): boolean {
     return this._items.length > 1;
+  }
+
+  get showControls(): boolean {
+    if (this.fixedColumnsDesktop === null || this.fixedColumnsDesktop === undefined) {
+      return this.hasMultipleItems;
+    }
+
+    return this._items.length > this.fixedColumnsDesktop;
   }
 
   private _items: UiCarouselItem[] = [];
@@ -64,11 +81,11 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
   }
 
   prev(): void {
-    this.scrollBy(-1);
+    this.scrollByDirection(-1);
   }
 
   next(): void {
-    this.scrollBy(1);
+    this.scrollByDirection(1);
   }
 
   onMouseEnter(): void {
@@ -100,7 +117,7 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
     const deltaY = touch.clientY - this.touchStartY;
 
     if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      this.scrollBy(deltaX < 0 ? 1 : -1);
+      this.scrollByDirection(deltaX < 0 ? 1 : -1);
     }
 
     this.startAutoplay();
@@ -118,11 +135,11 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
   }
 
   private startAutoplay(): void {
-    if (!this.autoplay || this.autoplayTimer || !this.track?.nativeElement || !this.hasMultipleItems) {
+    if (!this.autoplay || this.autoplayTimer || !this.track?.nativeElement || !this.showControls) {
       return;
     }
 
-    this.autoplayTimer = setInterval(() => this.scrollBy(1), this.autoplayDelayMs);
+    this.autoplayTimer = setInterval(() => this.scrollByDirection(1), this.autoplayDelayMs);
   }
 
   private stopAutoplay(): void {
@@ -134,29 +151,50 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
     this.autoplayTimer = null;
   }
 
-  private scrollBy(direction: 1 | -1): void {
+  private scrollByDirection(direction: 1 | -1): void {
     const trackEl = this.track?.nativeElement;
-    if (!trackEl || !this.hasMultipleItems) {
+    if (!trackEl || !this.showControls) {
       return;
     }
 
-    const firstSlide = trackEl.querySelector<HTMLElement>('.ui-carousel-slide');
-    const gap = 16;
-    const scrollAmount = firstSlide ? firstSlide.clientWidth + gap : Math.max(240, Math.floor(trackEl.clientWidth * 0.8));
-    const target = trackEl.scrollLeft + direction * scrollAmount;
-    const maxScroll = trackEl.scrollWidth - trackEl.clientWidth;
+    const maxScrollLeft = trackEl.scrollWidth - trackEl.clientWidth;
+    const edgeTolerance = 2;
 
-    if (direction > 0 && target >= maxScroll - 4) {
+    if (direction > 0 && trackEl.scrollLeft >= maxScrollLeft - edgeTolerance) {
       trackEl.scrollTo({ left: 0, behavior: 'smooth' });
       return;
     }
 
-    if (direction < 0 && target <= 0) {
-      trackEl.scrollTo({ left: maxScroll, behavior: 'smooth' });
+    if (direction < 0 && trackEl.scrollLeft <= edgeTolerance) {
+      trackEl.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
       return;
     }
 
-    trackEl.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    const slides = Array.from(trackEl.querySelectorAll<HTMLElement>('.ui-carousel-slide'));
+    if (!slides.length) {
+      return;
+    }
+
+    const currentScroll = trackEl.scrollLeft;
+    let currentIndex = 0;
+    let smallestDistance = Number.POSITIVE_INFINITY;
+
+    for (let index = 0; index < slides.length; index += 1) {
+      const distance = Math.abs(slides[index].offsetLeft - currentScroll);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        currentIndex = index;
+      }
+    }
+
+    const nextIndex = direction > 0
+      ? (currentIndex + 1) % slides.length
+      : (currentIndex - 1 + slides.length) % slides.length;
+
+    trackEl.scrollTo({
+      left: slides[nextIndex].offsetLeft,
+      behavior: 'smooth',
+    });
   }
 }
 

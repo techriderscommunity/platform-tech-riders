@@ -1,6 +1,6 @@
 <section class="perfil-area">
 	<header class="perfil-header">
-		<p class="perfil-eyebrow">Portal Member · MVP</p>
+		<p class="perfil-eyebrow">Portal Member</p>
 		<h2>Mi perfil Tech Riders</h2>
 		<p class="perfil-intro">Gestiona tu información base, tus intereses y tu relación con la comunidad desde un único punto.</p>
 	</header>
@@ -10,7 +10,7 @@
 			<h3>{{ currentUserName() }}</h3>
 			<p><strong>Email:</strong> {{ email() || 'pendiente' }}</p>
 			<p><strong>Roles actuales:</strong> {{ currentRoles().join(', ') || communityRole() }}</p>
-			<p><strong>Rol comunidad MVP:</strong> {{ communityRole() }}</p>
+			<p><strong>Rol comunidad:</strong> {{ communityRole() }}</p>
 		</article>
 
 		<article class="perfil-card">

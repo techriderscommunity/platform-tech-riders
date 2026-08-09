@@ -1,71 +1,78 @@
 <section id="tutoriales">
-    <h2>Tutoriales</h2>
-    <p class="section-desc">Encuentra tutoriales, cursos, guías y recursos de aprendizaje para mejorar tus habilidades técnicas.</p>
+    <header class="tutoriales-hero">
+        <div>
+            <span class="section-label">Tutoriales</span>
+            <h2>Recursos y sesiones</h2>
+            <p class="section-desc">Encuentra guías, tutoriales y materiales para acelerar tu aprendizaje técnico.</p>
+        </div>
+        <app-ui-metrics-strip [items]="tutorialesMetrics()"></app-ui-metrics-strip>
+    </header>
 
-    <div class="tutoriales-controls">
-        <app-ui-text-field
-            label="Buscar"
-            type="search"
-            name="search-tutoriales"
-            class="tutoriales-search"
-            placeholder="Buscar tutoriales..."
-            [value]="searchText()"
-            (valueChange)="updateSearch($event)"
-        ></app-ui-text-field>
+    <div class="tutoriales-shell">
+        <aside class="tutoriales-filtros" aria-label="Filtros de tutoriales">
+            <h3>Filtros <small>({{ tutorialesPaged().totalCount }} resultados)</small></h3>
 
-        <div class="tutoriales-categorias">
-            <button
-                type="button"
-                class="categoria-chip"
-                [class.active]="selectedCategoria() === ''"
-                (click)="setCategoria('')">
-                Todas
-            </button>
-            @for (categoria of featuredCategories; track categoria) {
-            <button
-                type="button"
-                class="categoria-chip"
-                [class.active]="selectedCategoria() === categoria"
-                (click)="setCategoria(categoria)">
-                {{ categoria }}
-            </button>
+            <app-ui-text-field
+                label="Buscar"
+                type="search"
+                name="search-tutoriales"
+                class="tutoriales-search"
+                placeholder="Buscar tutoriales..."
+                [value]="searchText()"
+                (valueChange)="updateSearch($event)"
+            ></app-ui-text-field>
+
+            <div class="filtro-bloque">
+                <p>Tema</p>
+                <button
+                    type="button"
+                    class="categoria-chip"
+                    [class.active]="selectedCategoria() === ''"
+                    (click)="setCategoria('')">
+                    Todos
+                </button>
+                @for (categoria of featuredCategories; track categoria) {
+                <button
+                    type="button"
+                    class="categoria-chip"
+                    [class.active]="selectedCategoria() === categoria"
+                    (click)="setCategoria(categoria)">
+                    {{ categoria }}
+                </button>
+                }
+            </div>
+        </aside>
+
+        <div class="tutoriales-resultados">
+            <div class="tutoriales-toolbar">
+                <p>Filtrado por</p>
+                <span class="filtro-activo">{{ activeFilterLabel() }}</span>
+                <button type="button" class="limpiar" (click)="setCategoria('')">Borrar todo</button>
+            </div>
+
+            @if (loadingTutoriales()) {
+            <p class="tutoriales-feedback">Cargando tutoriales...</p>
+            } @else if (tutorialesError()) {
+            <p class="tutoriales-feedback tutoriales-feedback-error">{{ tutorialesError() }}</p>
+            } @else {
+            <p class="tutoriales-meta">{{ tutorialesPaged().totalCount }} tutoriales encontrados</p>
+
+            @if (tutorialesPaged().items.length === 0) {
+            <p class="tutoriales-feedback">No hay tutoriales para los filtros actuales.</p>
+            } @else {
+            <app-ui-resource-cards [items]="tutorialCards()"></app-ui-resource-cards>
+            }
+
+            <div class="tutoriales-paginacion">
+                <button type="button" (click)="prevTutorialesPage()" [disabled]="!tutorialesPaged().hasPreviousPage">
+                    Anterior
+                </button>
+                <span>Página {{ tutorialesPaged().page }} de {{ tutorialesPaged().totalPages || 1 }}</span>
+                <button type="button" (click)="nextTutorialesPage()" [disabled]="!tutorialesPaged().hasNextPage">
+                    Siguiente
+                </button>
+            </div>
             }
         </div>
     </div>
-
-    @if (loadingTutoriales()) {
-    <p class="tutoriales-feedback">Cargando tutoriales...</p>
-    } @else if (tutorialesError()) {
-    <p class="tutoriales-feedback tutoriales-feedback-error">{{ tutorialesError() }}</p>
-    } @else {
-    <p class="tutoriales-meta">{{ tutorialesPaged().totalCount }} tutoriales encontrados</p>
-
-    <div class="tutoriales-grid">
-        @for (tutorial of tutorialesPaged().items; track tutorial.id) {
-        <article class="tutorial-card">
-            <h3>{{ tutorial.titulo }}</h3>
-            <p class="tutorial-extracto">{{ tutorial.extracto }}</p>
-            <div class="tutorial-footer">
-                <span class="tutorial-fecha">{{ formatFecha(tutorial.fechaPublicacion) }}</span>
-                <div class="tutorial-categorias tutorial-categorias-inline">
-                    @for (categoria of tutorial.categorias; track categoria) {
-                    <span class="tutorial-categoria">{{ categoria }}</span>
-                    }
-                </div>
-                <a [href]="tutorial.url" target="_blank" rel="noopener noreferrer">Leer →</a>
-            </div>
-        </article>
-        }
-    </div>
-
-    <div class="tutoriales-paginacion">
-        <button type="button" (click)="prevTutorialesPage()" [disabled]="!tutorialesPaged().hasPreviousPage">
-            Anterior
-        </button>
-        <span>Página {{ tutorialesPaged().page }} de {{ tutorialesPaged().totalPages || 1 }}</span>
-        <button type="button" (click)="nextTutorialesPage()" [disabled]="!tutorialesPaged().hasNextPage">
-            Siguiente
-        </button>
-    </div>
-    }
 </section>

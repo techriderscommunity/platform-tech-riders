@@ -5,12 +5,13 @@ import { tap, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { EventosService, EventoResumen } from '../intranet/fp-tour/services/eventos.service';
 import { UiCarouselItem, UiMediaCarousel  } from '@shared/ui/media-carousel/media-carousel';
+import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiMediaCarousel],
+  imports: [RouterLink, UiMediaCarousel, UiMetricsStrip],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -45,24 +46,72 @@ export class Home implements OnInit {
 
   ];
 
-  readonly roles = [
+  readonly profilePanelCards = [
     {
-      icon: '👩‍💻',
-      title: 'Particular',
-      subtitle: 'Voluntario / Ponente',
-      desc: '¿Quieres compartir tu conocimiento? Únete como voluntario o propón una charla técnica.',
-      cta: 'Quiero colaborar',
-      link: '/join'
+      title: 'Docentes',
+      description: 'Impulsa el talento tecnológico de tu alumnado. Comparte conocimiento y accede a recursos para el aula.',
+      icon: '🎓',
+      cta: 'Explorar',
+      link: '/centers',
+      accent: 'violet'
     },
     {
-      icon: '🎓',
-      title: 'Centro Formador',
-      subtitle: 'Solicita una sesión gratuita',
-      desc: '¿Diriges un centro de formación? Solicita sesiones gratuitas de expertos del sector.',
-      cta: 'Solicitar sesión',
-      link: '/join'
+      title: 'Estudiantes',
+      description: 'Aprende tecnologías, descubre formación y accede a oportunidades para desarrollar tu futuro.',
+      icon: '🧑‍💻',
+      cta: 'Explorar',
+      link: '/orienta-tech',
+      accent: 'cyan'
+    },
+    {
+      title: 'Profesionales',
+      description: 'Impulsa tu carrera en tecnología, comparte experiencia y amplía tu red de contactos.',
+      icon: '💼',
+      cta: 'Explorar',
+      link: '/events',
+      accent: 'blue'
+    },
+    {
+      title: 'Empresas',
+      description: 'Conecta con el talento, participa en eventos y comparte conocimiento real con la comunidad.',
+      icon: '🏢',
+      cta: 'Explorar',
+      link: '/companies',
+      accent: 'amber'
+    },
+    {
+      title: 'Orientadores',
+      description: 'Accede a recursos y actividades tecnológicas para tu alumnado y descubre iniciativas STEM.',
+      icon: '🧭',
+      cta: 'Explorar',
+      link: '/orienta-tech',
+      accent: 'pink'
+    },
+    {
+      title: 'Starters',
+      description: 'Descubre profesiones, formaciones y tus primeros pasos en el mundo tech. No necesitas experiencia.',
+      icon: '🚀',
+      cta: 'Explorar',
+      link: '/tutorials',
+      accent: 'teal'
+    },
+    {
+      title: 'Women in Tech',
+      description: 'Referentes, ayudas, comunidad y oportunidades para mujeres que quieren crecer en tecnología.',
+      icon: '♀️',
+      cta: 'Explorar',
+      link: '/woman-tech',
+      accent: 'fuchsia'
+    },
+    {
+      title: 'Conócenos',
+      description: 'Descubre quiénes somos, nuestra misión, valores y cómo trabajamos para impulsar el talento tech.',
+      icon: '👥',
+      cta: 'Explorar',
+      link: '/about-us',
+      accent: 'sky'
     }
-  ];
+  ] as const;
 
   ngOnInit(): void {
     this.loadingEventos.set(true);

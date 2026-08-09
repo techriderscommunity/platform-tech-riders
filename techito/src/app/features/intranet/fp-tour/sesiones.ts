@@ -168,22 +168,22 @@ export class Sesiones {
     this.patchSession(id, {
       embajadorAsignadoId: ownEmbajador.id,
       estado: 'Confirmada'
-    }, 'Te has asignado la sesión en local para el MVP.');
+    }, 'Te has asignado la sesión en local.');
   }
 
   liberarSesion(id: string) {
     this.patchSession(id, {
       embajadorAsignadoId: null,
       estado: 'Pendiente'
-    }, 'La sesión vuelve a estado pendiente en local para el MVP.');
+    }, 'La sesión vuelve a estado pendiente en local.');
   }
 
   confirmarSesion(id: string) {
-    this.patchSession(id, { estado: 'Confirmada' }, 'Sesión marcada como confirmada en local para el MVP.');
+    this.patchSession(id, { estado: 'Confirmada' }, 'Sesión marcada como confirmada en local.');
   }
 
   cancelarSesion(id: string) {
-    this.patchSession(id, { estado: 'Cancelada' }, 'Sesión marcada como cancelada en local para el MVP.');
+    this.patchSession(id, { estado: 'Cancelada' }, 'Sesión marcada como cancelada en local.');
   }
 
   private patchSession(id: string, patch: Partial<Sesion>, successMessage: string) {

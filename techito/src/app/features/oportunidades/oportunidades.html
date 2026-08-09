@@ -1,0 +1,21 @@
+<section class="public-module-page">
+  <header class="public-module-hero">
+    <span class="section-label">Ofertas y oportunidades</span>
+    <h1>Tu siguiente paso en tecnología</h1>
+    <p>Explora itinerarios, recursos y conexiones con comunidad y empresas para activar oportunidades reales.</p>
+  </header>
+
+  <section class="public-module-panel">
+    <h2>Itinerarios por perfil</h2>
+    <app-ui-progress-cards [items]="tracks"></app-ui-progress-cards>
+  </section>
+
+  <section class="public-module-panel">
+    <h2>Accesos rápidos</h2>
+    <app-ui-resource-cards [items]="resources"></app-ui-resource-cards>
+  </section>
+
+  <div class="public-module-actions">
+    <a routerLink="/contact" class="btn btn-primary">Quiero orientación personalizada</a>
+  </div>
+</section>

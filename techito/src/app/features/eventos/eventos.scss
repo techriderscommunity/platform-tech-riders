@@ -17,7 +17,10 @@ section:first-of-type {
 }
 
 .eventos-header {
-  background: var(--bg-elevated);
+  background:
+    radial-gradient(circle at 12% 20%, rgba(14, 165, 233, 0.18), transparent 40%),
+    radial-gradient(circle at 88% 0, rgba(245, 158, 11, 0.2), transparent 36%),
+    var(--bg-elevated);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   padding: var(--space-8);
@@ -33,6 +36,69 @@ section:first-of-type {
     margin: 0;
     color: var(--text-secondary);
     max-width: 70ch;
+    line-height: var(--line-height-relaxed);
+  }
+}
+
+.eventos-kpi-strip {
+  margin-top: var(--space-6);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.eventos-kpi-item {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--tr-blue) 24%, var(--border-default) 76%);
+  background: color-mix(in srgb, var(--bg-secondary) 86%, var(--tr-blue-alpha-10) 14%);
+}
+
+.kpi-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.kpi-value {
+  color: var(--text-primary);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.eventos-participation {
+  background: color-mix(in srgb, var(--bg-elevated) 90%, var(--tr-blue-alpha-10) 10%);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.participation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.participation-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  padding: var(--space-5);
+
+  h3 {
+    margin: 0 0 var(--space-2);
+    color: var(--text-primary);
+    font-size: var(--font-size-xl);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
     line-height: var(--line-height-relaxed);
   }
 }
@@ -231,6 +297,11 @@ section:first-of-type {
 @media (max-width: 900px) {
   .eventos-inner {
     padding: 0 var(--space-4);
+  }
+
+  .eventos-kpi-strip,
+  .participation-grid {
+    grid-template-columns: 1fr;
   }
 
   .panel-head {

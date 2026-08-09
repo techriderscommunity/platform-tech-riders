@@ -88,37 +88,15 @@
   overflow-x: auto;
 }
 
-.sesiones-dashboard table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--font-size-base);
-  background: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
+.sesiones-table {
+  @extend .table !optional;
+
+  th,
+  td {
+    white-space: nowrap;
+  }
 }
-.sesiones-dashboard th, .sesiones-dashboard td {
-  padding: var(--space-2) var(--space-4);
-  text-align: left;
-  white-space: nowrap;
-  color: var(--text-primary);
-}
-.sesiones-dashboard th {
-  background: var(--bg-secondary);
-  font-weight: var(--font-weight-bold);
-  color: var(--tr-blue);
-  border-bottom: 2px solid var(--border-default);
-}
-.sesiones-dashboard td {
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-muted);
-}
-.sesiones-dashboard tr:last-child td {
-  border-bottom: none;
-}
-.sesiones-dashboard tr:nth-child(even) td {
-  background: var(--bg-secondary);
-}
+
 .no-embajador {
   color: var(--accent-error);
   font-weight: var(--font-weight-semibold);
@@ -149,7 +127,8 @@
   .sesiones-dashboard {
     max-width: 100vw;
   }
-  .sesiones-dashboard th, .sesiones-dashboard td {
+  .sesiones-table th,
+  .sesiones-table td {
     font-size: 0.9rem;
     padding: var(--space-1) var(--space-2);
   }
@@ -158,7 +137,8 @@
   .sesiones-dashboard h1 {
     font-size: 1.2rem;
   }
-  .sesiones-dashboard th, .sesiones-dashboard td {
+  .sesiones-table th,
+  .sesiones-table td {
     font-size: 0.8rem;
     padding: var(--space-1) var(--space-1);
   }

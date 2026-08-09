@@ -1,0 +1,16 @@
+<section class="ui-profile-grid" role="list" aria-label="Perfiles">
+  @for (item of items; track item.name) {
+    <article class="ui-profile-card" role="listitem">
+      <div class="ui-profile-image-wrap">
+        <img [src]="item.imageSrc" [alt]="item.imageAlt" loading="lazy" />
+        @if (item.badge) {
+          <span class="ui-profile-badge">{{ item.badge }}</span>
+        }
+      </div>
+      <div class="ui-profile-content">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.role }}</p>
+      </div>
+    </article>
+  }
+</section>

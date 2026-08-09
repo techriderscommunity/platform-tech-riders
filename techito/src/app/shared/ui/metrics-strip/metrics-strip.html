@@ -1,0 +1,11 @@
+<section class="ui-metrics-strip" role="list" aria-label="Indicadores">
+  @for (item of items; track item.label) {
+    <article class="ui-metric-item" role="listitem">
+      @if (item.icon) {
+        <span class="ui-metric-icon" aria-hidden="true">{{ item.icon }}</span>
+      }
+      <strong class="ui-metric-value">{{ item.value }}</strong>
+      <span class="ui-metric-label">{{ item.label }}</span>
+    </article>
+  }
+</section>

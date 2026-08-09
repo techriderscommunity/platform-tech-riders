@@ -1,6 +1,9 @@
 .admin-auditoria {
   display: grid;
   gap: var(--space-6);
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  max-width: var(--container-max);
+  margin: 0 auto;
 }
 
 .page-header {
@@ -26,15 +29,6 @@
   padding: var(--surface-padding);
 }
 
-.badge {
-  display: inline-block;
-  border-radius: 999px;
-  padding: 0.2rem 0.6rem;
-  background: rgba(40, 167, 69, 0.12);
-  color: #2d8a45;
-
-  &.warning {
-    background: rgba(220, 53, 69, 0.12);
-    color: #b42338;
-  }
+.auditoria-table {
+  @extend .table !optional;
 }

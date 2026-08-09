@@ -18,8 +18,8 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // Register domain services
-        services.AddScoped<IEmpleoService, EmpleoService>();
-        services.AddScoped<ITutorialesService, TutorialesService>();
+        services.AddScoped<IEmploymentService, EmploymentService>();
+        services.AddScoped<ITutorialsService, TutorialsService>();
         services.AddScoped<IIntranetService, IntranetService>();
 
         // Register Mapster configurations

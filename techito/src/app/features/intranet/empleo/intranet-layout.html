@@ -1,15 +1,19 @@
 <div class="intranet-layout">
   <aside class="intranet-sidebar">
-    <div class="sidebar-head">
-      <h2>Intranet</h2>
-      <p>{{ currentUserName() }}</p>
-      <small>Rol activo: {{ userType() }}</small>
+    <div class="sidebar-brand">
+      <span class="brand-mark">TECH RIDERS</span>
+      <span class="brand-dot">INTRANET</span>
+    </div>
+
+    <div class="role-box">
+      <small>ROL ACTIVO</small>
+      <div class="role-pill">{{ currentUserName() }}</div>
     </div>
 
     <nav class="sidebar-nav" aria-label="Menu interno intranet">
       @for (section of visibleSections(); track trackSection($index, section)) {
       <div class="sidebar-group">
-        <p class="sidebar-group-title">{{ section.icon }} {{ section.title }}</p>
+        <p class="sidebar-group-title">{{ section.title }}</p>
         @for (item of section.items; track trackItem($index, item)) {
           @if (item.route) {
           <a
@@ -18,10 +22,14 @@
             [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
             class="sidebar-link"
           >
-            {{ item.label }}
+            <span class="link-dot"></span>
+            <span>{{ item.label }}</span>
           </a>
           } @else {
-          <span class="sidebar-link disabled">{{ item.label }}</span>
+          <span class="sidebar-link disabled">
+            <span class="link-dot"></span>
+            <span>{{ item.label }}</span>
+          </span>
           }
         }
       </div>
@@ -29,7 +37,7 @@
     </nav>
 
     <button type="button" class="sidebar-cta" (click)="goToDefaultArea()">
-      Ir a mi area
+      Ir a mi módulo
     </button>
   </aside>
 

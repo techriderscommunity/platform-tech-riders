@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+using TechRiders.Api.Contracts.Requests.Engagement;
 using TechRiders.Api.Services;
 
 namespace TechRiders.Api.Controllers;
@@ -11,19 +11,12 @@ namespace TechRiders.Api.Controllers;
 public class EngagementController : ControllerBase
 {
     private readonly ILogger<EngagementController> _logger;
-    private readonly IMvpRuntimeStateStore mvpRuntimeStateStore;
+    private readonly IPublicEngagementIntakeService _publicEngagementIntakeService;
 
-    private static readonly HashSet<string> AllowedRequestTypes = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "member",
-        "ambassador",
-        "session"
-    };
-
-    public EngagementController(ILogger<EngagementController> logger, IMvpRuntimeStateStore mvpRuntimeStateStore)
+    public EngagementController(ILogger<EngagementController> logger, IPublicEngagementIntakeService publicEngagementIntakeService)
     {
         _logger = logger;
-        this.mvpRuntimeStateStore = mvpRuntimeStateStore;
+        _publicEngagementIntakeService = publicEngagementIntakeService;
     }
 
     [HttpPost("contact")]
@@ -76,12 +69,6 @@ public class EngagementController : ControllerBase
             return ValidationProblem(ModelState);
         }
 
-        if (!AllowedRequestTypes.Contains(request.RequestType))
-        {
-            ModelState.AddModelError(nameof(request.RequestType), "RequestType must be member, ambassador or session.");
-            return ValidationProblem(ModelState);
-        }
-
         _logger.LogInformation(
             "Public intake request received from {Name}<{Email}>. Type: {RequestType}; CommunityRole: {CommunityRole}; Audience: {Audience}",
             request.Name,
@@ -90,104 +77,19 @@ public class EngagementController : ControllerBase
             request.CommunityRole,
             request.Audience);
 
-        if (string.Equals(request.RequestType, "member", StringComparison.OrdinalIgnoreCase))
+        try
         {
-            mvpRuntimeStateStore.UpsertMemberProfile(request.Email, new MemberProfileState
+            var result = _publicEngagementIntakeService.ProcessJoinRequest(request);
+            return Accepted(new
             {
-                Name = request.Name,
-                Email = request.Email,
-                Bio = request.Motivation,
-                Interests = request.Audience ?? string.Empty,
-                Audience = request.Audience ?? "junior",
-                CommunityRole = request.CommunityRole,
-                Organization = request.Organization ?? string.Empty,
+                success = result.Success,
+                message = result.Message,
             });
         }
-
-        if (string.Equals(request.RequestType, "ambassador", StringComparison.OrdinalIgnoreCase))
+        catch (InvalidOperationException ex)
         {
-            mvpRuntimeStateStore.UpsertAmbassadorPortal(request.Email, new AmbassadorPortalState
-            {
-                Email = request.Email,
-                Bio = request.Motivation,
-                Specialties = string.Join(" · ", new[] { request.Audience, request.Organization }.Where(value => !string.IsNullOrWhiteSpace(value))),
-                Availability = "Pendiente de completar por el ambassador en intranet",
-            });
+            ModelState.AddModelError(nameof(request.RequestType), ex.Message);
+            return ValidationProblem(ModelState);
         }
-
-        return Accepted(new
-        {
-            success = true,
-            message = request.RequestType switch
-            {
-                "member" => "Member application received",
-                "ambassador" => "Ambassador application received",
-                "session" => "Session request received",
-                _ => "Request received"
-            }
-        });
     }
-}
-
-public sealed class ContactRequest
-{
-    [Required]
-    [StringLength(150)]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    [EmailAddress]
-    [StringLength(254)]
-    public string Email { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(2000)]
-    public string Message { get; set; } = string.Empty;
-}
-
-public sealed class SuggestionRequest
-{
-    [Required]
-    [StringLength(150)]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(2000)]
-    public string Text { get; set; } = string.Empty;
-}
-
-public sealed class JoinRequest
-{
-    [Required]
-    [StringLength(150)]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    [EmailAddress]
-    [StringLength(254)]
-    public string Email { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(20)]
-    public string RequestType { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(50)]
-    public string CommunityRole { get; set; } = string.Empty;
-
-    [StringLength(80)]
-    public string? Audience { get; set; }
-
-    [StringLength(200)]
-    public string? Organization { get; set; }
-
-    [StringLength(150)]
-    public string? SessionTopic { get; set; }
-
-    [StringLength(80)]
-    public string? SessionFormat { get; set; }
-
-    [Required]
-    [StringLength(2000)]
-    public string Motivation { get; set; } = string.Empty;
 }

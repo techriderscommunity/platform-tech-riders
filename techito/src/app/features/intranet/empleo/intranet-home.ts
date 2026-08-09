@@ -1,10 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { environment } from '@env/environment';
 import { catchError, of } from 'rxjs';
+import { filter, startWith } from 'rxjs/operators';
+import { INTRANET_NAV_SECTIONS } from './intranet-nav.config';
 
 interface DashboardNotification {
   title: string;
@@ -27,6 +30,36 @@ interface ActivitySummaryItem {
   pending: string;
 }
 
+interface RoleHeroContent {
+  title: string;
+  subtitle: string;
+  contextLabel: string;
+}
+
+interface RecentActivityItem {
+  label: string;
+  detail: string;
+  time: string;
+}
+
+interface DashboardModuleCard {
+  title: string;
+  description: string;
+  route: string;
+}
+
+const ROLE_LABELS: Record<string, string> = {
+  superadmin: 'Superadmin',
+  admin: 'Admin',
+  staff: 'Staff',
+  coordinador: 'Coordinador',
+  empresa: 'Empresa',
+  junior: 'Junior',
+  embajador: 'Embajador',
+  colaborador: 'Colaborador',
+  centro: 'Centro',
+};
+
 @Component({
   selector: 'app-intranet-home',
   standalone: true,
@@ -38,14 +71,113 @@ interface ActivitySummaryItem {
 export class IntranetHome {
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly baseUrl = environment.apiUrl;
+  private readonly navigationDone = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      startWith(null),
+    ),
+  );
   readonly selectedCategories = signal<string[]>(['FP Tour', 'Eventos']);
   readonly availableCategories = ['FP Tour', 'Eventos', 'Mentorias', 'Podcast', 'Comunidad'];
   readonly categoriesSaving = signal(false);
 
   readonly userName = computed(() => this.authService.user()?.name || 'Usuario');
   readonly userRoles = computed(() => this.authService.user()?.roles ?? []);
+  readonly userEmail = computed(() => this.authService.user()?.email || 'usuario@techriders.local');
+  readonly userInitials = computed(() => {
+    const name = this.userName().trim();
+    if (!name) return 'TR';
+    const parts = name.split(' ').filter(Boolean);
+    const first = parts[0]?.[0] || 'T';
+    const second = parts[1]?.[0] || 'R';
+    return `${first}${second}`.toUpperCase();
+  });
   readonly canManageCategories = computed(() => this.authService.hasRole(['embajador', 'colaborador']));
+  readonly activeRoleLabel = computed(() => ROLE_LABELS[this.userRoles()[0]] || 'Invitado');
+  readonly visibleSubmenuSections = computed(() =>
+    INTRANET_NAV_SECTIONS
+      .map(section => ({
+        title: section.title,
+        icon: section.icon,
+        items: section.items.filter(item => item.route && this.authService.hasRole(item.roles)),
+      }))
+      .filter(section => section.items.length > 0),
+  );
+  readonly totalVisibleModules = computed(() =>
+    this.visibleSubmenuSections().reduce((total, section) => total + section.items.length, 0),
+  );
+
+  readonly recentActivity = computed<RecentActivityItem[]>(() => {
+    const fromNotifications = this.notifications().map((item, index) => ({
+      label: item.title,
+      detail: item.detail,
+      time: index === 0 ? 'Ahora' : 'Hace unos minutos',
+    }));
+
+    const fromModules = this.activitySummary().slice(0, 2).map(item => ({
+      label: `Seguimiento de ${item.module}`,
+      detail: item.pending,
+      time: 'Hoy',
+    }));
+
+    return [...fromNotifications, ...fromModules].slice(0, 4);
+  });
+
+  readonly interestTags: string[] = ['Programación', 'IA', 'Cloud', 'Ciberseguridad', 'DevOps', 'Educación', 'Innovación'];
+
+  readonly currentRoute = computed(() => {
+    this.navigationDone();
+    return this.router.url;
+  });
+
+  readonly currentSection = computed(() => {
+    const route = this.currentRoute();
+    return this.visibleSubmenuSections().find(section =>
+      section.items.some(item => route === item.route || route.startsWith(`${item.route}/`)),
+    );
+  });
+
+  readonly dashboardModules = computed<DashboardModuleCard[]>(() =>
+    this.quickAccess().map(item => ({
+      title: item.label,
+      description: item.description,
+      route: item.route,
+    })),
+  );
+
+  readonly roleHero = computed<RoleHeroContent>(() => {
+    if (this.authService.hasRole(['superadmin', 'admin'])) {
+      return {
+        title: 'Centro de control de administración',
+        subtitle: 'Supervisa gobernanza, estados operativos y flujos críticos desde una única intranet.',
+        contextLabel: 'Vista de administración',
+      };
+    }
+
+    if (this.authService.hasRole(['staff', 'coordinador'])) {
+      return {
+        title: 'Centro de coordinación interna',
+        subtitle: 'Gestiona tareas operativas, sesiones y seguimiento del equipo desde tu vista de intranet.',
+        contextLabel: 'Vista de coordinación',
+      };
+    }
+
+    if (this.authService.hasRole('empresa')) {
+      return {
+        title: 'Panel operativo de empresa',
+        subtitle: 'Controla ofertas, candidaturas y actividad de contratación desde esta intranet única.',
+        contextLabel: 'Vista de empresa',
+      };
+    }
+
+    return {
+      title: 'Tu panel personal de intranet',
+      subtitle: 'Consulta oportunidades, cursos y actividad desde una única experiencia adaptada a tu rol.',
+      contextLabel: 'Vista de talento',
+    };
+  });
 
   readonly profileRoute = computed(() => {
     if (this.authService.hasRole('junior')) return '/intranet/junior/edit-profile';
@@ -85,34 +217,61 @@ export class IntranetHome {
   readonly quickAccess = computed<QuickAccess[]>(() => {
     if (this.authService.hasRole(['superadmin', 'staff', 'coordinador'])) {
       return [
-        { label: 'Staff Governance', description: 'Control de usuarios, roles y estado de cuentas.', route: '/intranet/staff' },
-        { label: 'Collaborators', description: 'Gestionar alta, activacion y desactivacion.', route: '/intranet/staff/collaborators' },
-        { label: 'Candidates', description: 'Revisar y actualizar estado de candidaturas.', route: '/intranet/staff/candidates' },
+        { label: 'Gobierno de staff', description: 'Control de usuarios, roles y estado de cuentas.', route: '/intranet/staff' },
+        { label: 'Módulo de colaboradores', description: 'Gestionar altas, activaciones y desactivaciones.', route: '/intranet/staff/collaborators' },
+        { label: 'Módulo de candidaturas', description: 'Revisar y actualizar estado de candidaturas.', route: '/intranet/staff/candidates' },
+      ];
+    }
+
+    if (this.authService.hasRole('admin')) {
+      return [
+        { label: 'Panel de administración', description: 'Vista central con estado de módulos internos.', route: '/intranet/admin' },
+        { label: 'Módulo de colaboradores', description: 'Gestionar altas, activaciones y desactivaciones.', route: '/intranet/admin/collaborators' },
+        { label: 'Módulo de centros y sesiones', description: 'Revisar solicitudes de charlas y sesiones FP Tour.', route: '/intranet/admin/fp-tour' },
       ];
     }
 
     if (this.authService.hasRole('empresa')) {
       return [
-        { label: 'Company Dashboard', description: 'Resumen de actividad y seguimiento.', route: '/intranet/company' },
-        { label: 'Manage Offers', description: 'Crear y editar ofertas de empleo.', route: '/intranet/company/manage-offers' },
-        { label: 'View Candidates', description: 'Revisar postulaciones recibidas.', route: '/intranet/company/view-candidates' },
+        { label: 'Panel de empresa', description: 'Resumen de actividad y seguimiento.', route: '/intranet/company' },
+        { label: 'Módulo de ofertas', description: 'Crear y editar ofertas de empleo.', route: '/intranet/company/manage-offers' },
+        { label: 'Módulo de candidatos', description: 'Revisar postulaciones recibidas.', route: '/intranet/company/view-candidates' },
       ];
     }
 
     return [
-      { label: 'Mi Dashboard', description: 'Resumen de oportunidades y actividad.', route: '/intranet/junior' },
-      { label: 'Edit Profile', description: 'Actualiza tu informacion profesional.', route: '/intranet/junior/edit-profile' },
-      { label: 'My Offers', description: 'Consulta estado de tus postulaciones.', route: '/intranet/junior/my-offers' },
+      { label: 'Panel de talento', description: 'Resumen de oportunidades y actividad.', route: '/intranet/junior' },
+      { label: 'Módulo de perfil', description: 'Actualiza tu información profesional.', route: '/intranet/junior/edit-profile' },
+      { label: 'Módulo de ofertas', description: 'Consulta estado de tus postulaciones.', route: '/intranet/junior/my-offers' },
     ];
   });
 
+  readonly talkRequestRoute = computed(() => {
+    if (this.authService.hasRole(['superadmin', 'staff', 'coordinador'])) return '/intranet/fp-tour/management';
+    if (this.authService.hasRole('admin')) return '/intranet/admin/fp-tour';
+    if (this.authService.hasRole('empresa')) return '/intranet/company/manage-offers';
+    return '/intranet/junior/my-courses';
+  });
+
+  readonly resourcesRoute = computed(() => {
+    if (this.authService.hasRole('admin')) return '/intranet/admin';
+    return this.quickAccess()[0]?.route || '/intranet';
+  });
+
+  readonly requestsRoute = computed(() => {
+    if (this.authService.hasRole(['superadmin', 'staff', 'coordinador'])) return '/intranet/staff/candidates';
+    if (this.authService.hasRole('admin')) return '/intranet/admin/fp-tour';
+    if (this.authService.hasRole('empresa')) return '/intranet/company/view-candidates';
+    return '/intranet/junior/my-offers';
+  });
+
   readonly mySpace = computed<MySpaceItem[]>(() => [
-    { label: 'Mi perfil (ver/editar)', route: this.profileRoute() },
-    { label: 'Dashboard personal', route: '/intranet' },
-    { label: 'Portal Ambassador', route: this.authService.hasRole(['embajador', 'colaborador']) ? '/intranet/ambassador/portal' : this.profileRoute() },
-    { label: 'Sesiones impartidas', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/sessions/mine' },
-    { label: 'Proximas sesiones', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/fp-tour/my-sessions' },
-    { label: 'Actividad reciente', route: this.authService.hasRole(['superadmin', 'admin']) ? '/intranet/admin' : '/intranet' },
+    { label: 'Mi perfil', route: this.profileRoute() },
+    { label: 'Inicio de intranet', route: '/intranet' },
+    { label: 'Módulo de embajadores', route: this.authService.hasRole(['embajador', 'colaborador']) ? '/intranet/ambassador/portal' : this.profileRoute() },
+    { label: 'Módulo de sesiones', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/sessions/mine' },
+    { label: 'Agenda de sesiones', route: this.authService.hasRole('junior') ? '/intranet/junior/my-courses' : '/intranet/fp-tour/my-sessions' },
+    { label: 'Actividad de módulos', route: this.authService.hasRole(['superadmin', 'admin']) ? '/intranet/admin' : '/intranet' },
   ]);
 
   readonly activitySummary = computed<ActivitySummaryItem[]>(() => {

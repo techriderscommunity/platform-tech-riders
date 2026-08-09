@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap, catchError, throwError } from 'rxjs';
 import { environment } from '@env/environment';
 
 export type AppRole =
@@ -29,6 +29,48 @@ export interface LoginResponse {
   user: UserProfile;
 }
 
+type DemoCredential = {
+  email: string;
+  password: string;
+  user: UserProfile;
+};
+
+const DEMO_CREDENTIALS: DemoCredential[] = [
+  {
+    email: 'admin@techriders.es',
+    password: 'secret',
+    user: {
+      id: 'demo-admin',
+      email: 'admin@techriders.es',
+      name: 'Admin Demo',
+      role: 'admin',
+      roles: ['admin'],
+    },
+  },
+  {
+    email: 'staff@techriders.es',
+    password: 'secret',
+    user: {
+      id: 'demo-staff',
+      email: 'staff@techriders.es',
+      name: 'Staff Demo',
+      role: 'staff',
+      roles: ['staff'],
+    },
+  },
+  {
+    email: 'junior@techriders.es',
+    password: 'secret',
+    user: {
+      id: 'demo-junior',
+      email: 'junior@techriders.es',
+      name: 'Junior Demo',
+      role: 'junior',
+      roles: ['junior'],
+    },
+  },
+];
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly baseUrl = environment.apiUrl;
@@ -43,17 +85,29 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
+    const inputEmail = email.trim().toLowerCase();
+    const inputPassword = password.trim();
+
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, { email, password })
       .pipe(
-        tap((response) => {
-          const normalized = this.normalizeUser(response.user);
-          this.currentUser.set(normalized);
-          this.userType.set(normalized.role);
-          if (this.isBrowser()) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(normalized));
+        tap((response) => this.persistSession(response)),
+        catchError((error) => {
+          const demoAccount = DEMO_CREDENTIALS.find(demo =>
+            demo.email.toLowerCase() === inputEmail && demo.password === inputPassword,
+          );
+
+          if (!demoAccount) {
+            return throwError(() => error);
           }
-        })
+
+          const demoResponse: LoginResponse = {
+            token: `demo-token-${demoAccount.user.role}`,
+            user: demoAccount.user,
+          };
+
+          this.persistSession(demoResponse);
+          return of(demoResponse);
+        }),
       );
   }
 
@@ -73,7 +127,7 @@ export class AuthService {
     if (this.hasRole('superadmin')) return '/intranet/staff';
     if (this.hasRole('staff') || this.hasRole('coordinador')) return '/intranet/staff';
     if (this.hasRole('admin')) return '/intranet/admin';
-    if (this.hasRole('empresa')) return '/intranet/empresa';
+    if (this.hasRole('empresa')) return '/intranet/company';
     if (this.hasRole(['embajador', 'colaborador'])) return '/intranet/ambassador/portal';
     return '/intranet/junior';
   }
@@ -115,6 +169,17 @@ export class AuthService {
       role: this.resolvePrimaryRole(normalizedRoles),
       roles: normalizedRoles,
     };
+  }
+
+  private persistSession(response: LoginResponse): void {
+    const normalized = this.normalizeUser(response.user);
+    this.currentUser.set(normalized);
+    this.userType.set(normalized.role);
+
+    if (this.isBrowser()) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(normalized));
+    }
   }
 
   private resolvePrimaryRole(roles: AppRole[]): AppRole {

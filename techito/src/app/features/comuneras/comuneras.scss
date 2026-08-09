@@ -1,0 +1,157 @@
+:host {
+  display: block;
+  padding: calc(var(--nav-height) + var(--space-6)) var(--page-inline-padding) var(--page-block-padding);
+  background: var(--bg-canvas);
+}
+
+.comuneras-page {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  display: grid;
+  gap: var(--space-8);
+}
+
+.comuneras-hero {
+  display: grid;
+  gap: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  background: radial-gradient(circle at 10% 10%, var(--tr-blue-alpha-15), transparent 40%), var(--bg-elevated);
+}
+
+.join-cta-hero {
+  margin-top: var(--space-2);
+}
+
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  li {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.directory-filters {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.comuneras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.comunera-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: center;
+
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 1px solid var(--border-default);
+    background: var(--bg-primary);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+  }
+
+  p {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-sm);
+  }
+}
+
+.card-description {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.card-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  li {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--bg-muted);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+  }
+}
+
+.card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  a {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.join-cta {
+  border: 1px dashed var(--tr-blue-alpha-30, rgba(0, 174, 239, 0.3));
+  border-radius: var(--radius-lg);
+  background: var(--tr-blue-alpha-10, rgba(0, 174, 239, 0.1));
+  padding: var(--space-6);
+  display: grid;
+  gap: var(--space-3);
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  .btn {
+    width: fit-content;
+  }
+}
+
+.comunera-empty-state {
+  grid-column: 1 / -1;
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  padding: var(--space-6);
+  text-align: center;
+  display: grid;
+  gap: var(--space-2);
+
+  h2,
+  p {
+    margin: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .directory-filters {
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+    align-items: end;
+  }
+}

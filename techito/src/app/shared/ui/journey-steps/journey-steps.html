@@ -1,0 +1,22 @@
+<section class="ui-journey" aria-label="Journey">
+  @if (kicker || title) {
+    <header class="ui-journey-head">
+      @if (kicker) {
+        <span class="ui-journey-kicker">{{ kicker }}</span>
+      }
+      @if (title) {
+        <h2>{{ title }}</h2>
+      }
+    </header>
+  }
+
+  <div class="ui-journey-grid" role="list">
+    @for (item of steps; track item.step) {
+      <article class="ui-journey-card" role="listitem">
+        <span class="ui-journey-step">{{ item.step }}</span>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.text }}</p>
+      </article>
+    }
+  </div>
+</section>

@@ -6,7 +6,16 @@
       <p>
         Descubre próximos encuentros, histórico de talks, galerías y calendario de actividades para conectar con la comunidad.
       </p>
+
+      <app-ui-metrics-strip [items]="eventosMetrics()"></app-ui-metrics-strip>
     </header>
+
+    <section class="eventos-participation" aria-labelledby="participation-title">
+      <div class="panel-head">
+        <h2 id="participation-title">Cómo participar en la agenda</h2>
+      </div>
+      <app-ui-progress-cards [items]="participationCards"></app-ui-progress-cards>
+    </section>
 
     <section class="eventos-panel">
       <div class="panel-head">

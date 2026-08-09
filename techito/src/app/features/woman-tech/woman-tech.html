@@ -1,0 +1,19 @@
+<section class="public-module-page">
+  <header class="public-module-hero">
+    <span class="section-label">Woman Tech</span>
+    <h1>Mujeres en tecnología</h1>
+    <p>Un espacio para visibilizar referentes, compartir experiencias y ampliar oportunidades dentro del ecosistema tech.</p>
+    <app-ui-metrics-strip [items]="metrics"></app-ui-metrics-strip>
+  </header>
+
+  <app-ui-journey-steps
+    kicker="Itinerario"
+    title="Cómo participar en Woman Tech"
+    [steps]="journey"
+  ></app-ui-journey-steps>
+
+  <div class="public-module-actions">
+    <a routerLink="/events" class="btn btn-secondary">Ver próximas sesiones</a>
+    <a routerLink="/contact" class="btn btn-primary">Quiero sumarme</a>
+  </div>
+</section>

@@ -1,0 +1,34 @@
+.public-module-page {
+  width: min(100%, var(--page-content-max));
+  margin: 0 auto;
+  padding: calc(var(--nav-height) + var(--space-7)) var(--space-4) var(--space-8);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.public-module-hero,
+.public-module-panel {
+  display: grid;
+  gap: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--bg-elevated);
+  padding: var(--space-6);
+
+  h1,
+  h2 {
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+}
+
+.public-module-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

@@ -6,7 +6,7 @@ namespace TechRiders.Application.Interfaces;
 /// <summary>
 /// Service interface for tutorial management
 /// </summary>
-public interface ITutorialesService
+public interface ITutorialsService
 {
     /// <summary>
     /// Gets all active tutorials

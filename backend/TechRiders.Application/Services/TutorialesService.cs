@@ -10,11 +10,11 @@ namespace TechRiders.Application.Services;
 /// <summary>
 /// Service for managing tutorials
 /// </summary>
-public class TutorialesService : ITutorialesService
+public class TutorialsService : ITutorialsService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    public TutorialesService(IUnitOfWork unitOfWork, IMapper mapper)
+    public TutorialsService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

@@ -4,6 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { EventosService, EventoResumen } from '../intranet/fp-tour/services/eventos.service';
 import { UiCarouselItem, UiMediaCarousel  } from '@shared/ui/media-carousel/media-carousel';
+import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
+import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
 import { PodcastService } from './services/podcast.service';
 
 interface GaleriaItem {
@@ -21,7 +23,7 @@ interface GaleriaGrupo {
   selector: 'app-eventos',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiMediaCarousel],
+  imports: [RouterLink, UiMediaCarousel, UiMetricsStrip, UiProgressCards],
   templateUrl: './eventos.html',
   styleUrl: './eventos.scss'
 })
@@ -34,7 +36,39 @@ export class Eventos implements OnInit {
   readonly loadingEventos = signal(false);
   readonly proximosEventos = computed(() => this.eventos().filter(evento => !evento.esPasado));
   readonly eventosPasados = computed(() => this.eventos().filter(evento => evento.esPasado));
+  readonly totalEventos = computed(() => this.eventos().length);
+  readonly totalProximos = computed(() => this.proximosEventos().length);
+  readonly totalPasados = computed(() => this.eventosPasados().length);
+  readonly eventosMetrics = computed(() => [
+    { value: String(this.totalEventos()), label: 'Total publicados', icon: '📊' },
+    { value: String(this.totalProximos()), label: 'Próximos', icon: '📅' },
+    { value: String(this.totalPasados()), label: 'Histórico', icon: '🗂️' },
+  ]);
   readonly loadingTalks = signal(false);
+
+  readonly participationModes = [
+    {
+      title: 'Asistir',
+      detail: 'Reserva plaza en próximos encuentros y participa en sesiones prácticas.'
+    },
+    {
+      title: 'Ponente',
+      detail: 'Comparte una charla técnica o una experiencia real en formato comunidad.'
+    },
+    {
+      title: 'Colaborar',
+      detail: 'Activa alianzas entre centros, empresas y perfiles técnicos de Tech Riders.'
+    }
+  ];
+
+  readonly participationCards = this.participationModes.map((mode, index) => ({
+    title: mode.title,
+    detail: mode.detail,
+    progress: 70 + (index * 7),
+    status: 'Participación',
+    ctaLabel: 'Más info',
+    ctaLink: '/join',
+  }));
 
   readonly talksPodcastUrl = 'https://www.youtube.com/@TechRidersMedia/podcasts';
   private readonly talksHistoricoFallback: UiCarouselItem[] = [

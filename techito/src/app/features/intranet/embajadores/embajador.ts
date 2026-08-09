@@ -220,11 +220,11 @@ export class EmbajadorComponent {
       .pipe(
         tap(() => {
           this.persistPortalLocally();
-          this.success.set('Cambios guardados en backend MVP y en caché local.');
+          this.success.set('Cambios guardados en backend y en caché local.');
         }),
         catchError(() => {
           this.persistPortalLocally();
-          this.success.set('Cambios guardados solo en caché local; el backend MVP no respondió.');
+          this.success.set('Cambios guardados solo en caché local; el backend no respondió.');
           return of(null);
         })
       )

@@ -182,43 +182,15 @@
 		margin-bottom: var(--space-4);
 	}
 
-	table {
-		width: 100%;
-		min-width: 480px;
-		border-collapse: collapse;
-		background: var(--bg-tertiary);
-		border-radius: var(--radius-md);
-		overflow: hidden;
-		box-shadow: var(--shadow-sm);
-	}
+		.staff-talks-table {
+			@extend .table !optional;
+			min-width: 480px;
 
-	th, td {
-		padding: var(--space-3) 1rem;
-		text-align: left;
-		white-space: nowrap;
-		border-bottom: 1px solid var(--border-subtle);
-	}
-
-	th {
-		background: var(--bg-muted);
-		color: var(--text-secondary);
-		font-weight: var(--font-weight-semibold);
-		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	td {
-		color: var(--text-primary);
-	}
-
-	tr:last-child td {
-		border-bottom: none;
-	}
-
-	tr:hover td {
-		background: var(--bg-muted);
-	}
+			th,
+			td {
+				white-space: nowrap;
+			}
+		}
 }
 
 @media (max-width: 900px) {

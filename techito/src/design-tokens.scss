@@ -415,7 +415,7 @@
 
 /* === SYSTEM PREFERENCE: prefers-color-scheme (WEB STANDARD) === */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme]) {
     --bg-canvas: #F0F7FD;
     --bg-primary: #FFFFFF;
     --bg-secondary: #E4F3FB;

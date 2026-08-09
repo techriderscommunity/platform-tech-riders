@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { environment } from '@env/environment';
 import { catchError, of } from 'rxjs';
+import { IntranetAdminService, IntranetAuditRecord } from './services/intranet-admin.service';
 
 interface AuditRow {
   fecha: string;
@@ -11,17 +10,6 @@ interface AuditRow {
   modulo: string;
   accion: string;
   resultado: 'ok' | 'warning';
-}
-
-interface AuditResponse {
-  id: string;
-  createdUtc: string;
-  actorUserId?: string | null;
-  actorEmail?: string | null;
-  module: string;
-  action: string;
-  result: string;
-  detail?: string | null;
 }
 
 @Component({
@@ -33,8 +21,7 @@ interface AuditResponse {
   styleUrl: './admin-auditoria.scss'
 })
 export class AdminAuditoria {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly intranetAdminService = inject(IntranetAdminService);
 
   readonly loading = signal(false);
   readonly rows = signal<AuditRow[]>([]);
@@ -45,9 +32,9 @@ export class AdminAuditoria {
 
   private load() {
     this.loading.set(true);
-    this.http.get<AuditResponse[]>(`${this.baseUrl}/admin/intranet/auditoria?take=200`)
+    this.intranetAdminService.getAuditLogs()
       .pipe(
-        catchError(() => of([] as AuditResponse[])),
+        catchError(() => of([] as IntranetAuditRecord[])),
         takeUntilDestroyed(),
       )
       .subscribe(rows => {

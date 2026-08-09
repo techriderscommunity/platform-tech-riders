@@ -5,12 +5,14 @@ import { catchError, of, switchMap, tap } from 'rxjs';
 import { TutorialesService } from './services/tutoriales.service';
 import { PagedResult, Tutorial } from './models/tutoriales.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
+import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
+import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/resource-cards';
 
 @Component({
   selector: 'app-tutoriales',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiTextField],
+  imports: [UiTextField, UiMetricsStrip, UiResourceCards],
   templateUrl: './tutoriales.html',
   styleUrl: './tutoriales.scss'
 })
@@ -47,6 +49,24 @@ export class Tutoriales {
     categoria: this.selectedCategoria() || undefined,
     busqueda: this.searchText().trim() || undefined
   }));
+
+  readonly tutorialesMetrics = computed(() => [
+    { icon: '📚', value: String(this.tutorialesPaged().totalCount), label: 'Recursos disponibles' },
+    { icon: '🏷️', value: String(this.featuredCategories.length), label: 'Categorías destacadas' },
+    { icon: '🔎', value: this.searchText().trim() ? 'Activa' : 'General', label: 'Búsqueda' },
+  ]);
+
+  readonly activeFilterLabel = computed(() => this.selectedCategoria() || 'Todos');
+
+  readonly tutorialCards = computed<UiResourceCardItem[]>(() => this.tutorialesPaged().items.map(tutorial => ({
+    mode: tutorial.categorias[0] || 'Digital',
+    title: tutorial.titulo,
+    summary: tutorial.extracto,
+    tags: tutorial.categorias,
+    meta: `${this.formatFecha(tutorial.fechaPublicacion)} · ${tutorial.autor}`,
+    ctaLabel: 'Registro y detalles',
+    ctaHref: tutorial.url
+  })));
 
   private readonly dateFormatter = new Intl.DateTimeFormat('es-ES', {
     day: '2-digit',

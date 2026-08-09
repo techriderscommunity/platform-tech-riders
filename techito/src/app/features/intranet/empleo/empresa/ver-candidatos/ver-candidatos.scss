@@ -2,10 +2,13 @@
   padding: var(--page-block-padding) var(--page-inline-padding);
   max-width: var(--page-content-max);
   margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
 }
 
 .page-header {
-  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
 
   .btn-back {
     background: none;
@@ -44,11 +47,8 @@
 }
 
 .candidato-card {
-  background: var(--bg-elevated);
-  border-radius: var(--radius-lg);
+  @extend .card !optional;
   padding: var(--surface-padding);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-default);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -160,10 +160,7 @@
 }
 
 .estado-badge {
-  padding: var(--space-0-375) var(--space-0-875);
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
-  font-weight: 600;
+  @extend .badge !optional;
 
   &.pendiente {
     background: var(--badge-info-bg);
@@ -189,22 +186,11 @@
 }
 
 .btn-primary {
+  @extend .btn !optional;
   width: 100%;
-  background: var(--tr-blue);
-  color: var(--color-white);
-  min-height: var(--touch-target-min);
-  padding: var(--btn-md-padding);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
 
   &:hover {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
   }
 }
 
@@ -228,13 +214,12 @@
 }
 
 .btn-text {
+  @extend .btn !optional;
+  @extend .btn-sm !optional;
   background: none;
   padding: var(--space-2);
   border: none;
   color: var(--text-secondary);
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
 
   &:hover {
     color: var(--accent-error);

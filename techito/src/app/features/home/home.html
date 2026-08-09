@@ -18,90 +18,31 @@
       <a routerLink="/about-us" class="btn btn-secondary">About us</a>
     </div>
 
-    <!-- Stats -->
-    <div class="hero-stats">
-      @for (stat of stats; track stat.label) {
-      <div class="hero-stat">
-        <span class="hero-stat-icon">{{ stat.icon }}</span>
-        <span class="hero-stat-value">{{ stat.value }}</span>
-        <span class="hero-stat-label">{{ stat.label }}</span>
-      </div>
-      }
-    </div>
+    <app-ui-metrics-strip class="home-metrics-strip" [items]="stats"></app-ui-metrics-strip>
 
-    <!-- Role cards -->
-    <div class="hero-roles">
-      @for (role of roles; track role.title) {
-      <div class="role-card">
-        <span class="role-card-icon">{{ role.icon }}</span>
-        <h3 class="role-card-title">{{ role.title }}</h3>
-        <p class="role-card-subtitle">{{ role.subtitle }}</p>
-        <p class="role-card-desc">{{ role.desc }}</p>
-        <a [routerLink]="role.link" class="btn btn-outline-blue btn-sm">{{ role.cta }}</a>
+    <section class="profile-panel" aria-label="Panel de perfiles">
+      <header class="profile-panel-header">
+        <h2>¿Cuál es tu perfil?</h2>
+        <p>Encuentra los recursos, eventos y oportunidades que mejor encajan contigo.</p>
+      </header>
+
+      <div class="profile-grid" role="list">
+        @for (card of profilePanelCards; track card.title) {
+        <article class="profile-tile" [attr.data-accent]="card.accent" role="listitem">
+          <div class="profile-tile-head">
+            <span class="profile-tile-icon">{{ card.icon }}</span>
+            <h3>{{ card.title }}</h3>
+          </div>
+          <p>{{ card.description }}</p>
+          <a [routerLink]="card.link" class="btn profile-tile-cta">{{ card.cta }} →</a>
+        </article>
+        }
       </div>
-      }
-    </div>
+    </section>
   </div>
 </section>
 
-<!-- ===== Nuestra Historia ===== -->
-<section class="history">
-  <div class="history-inner">
-    <div class="history-img">
-      <img src="assets/Tetxito/osito.png" alt="Techito — mascota de TechRiders" loading="lazy" />
-    </div>
-    <div class="history-text">
-      <span class="section-label">Nuestra Historia</span>
-      <p>
-        Tech Riders nace de una idea muy sencilla: acercar la realidad profesional a las aulas
-        y ayudar a que el alumnado llegue mejor preparado al mundo laboral.
-      </p>
-      <p>
-        Todo comenzó en <strong>2013</strong> en <strong>Tajamar (Madrid)</strong>, donde se creó el
-        <strong>Microsoft Student Tech Club</strong>, un espacio en el que estudiantes y profesionales
-        de la tecnología se reunían para aprender, compartir conocimiento y descubrir las últimas
-        tendencias del sector.
-      </p>
-      <p>
-        Durante años, la comunidad fue creciendo gracias a la participación de alumnado, docentes
-        y profesionales que dedicaban parte de su tiempo a compartir experiencias reales y acercar
-        al mundo académico lo que estaba ocurriendo dentro de las empresas.
-      </p>
-    </div>
-    <div class="history-text">
-      <p>
-        Sin embargo, el verano de 2021 comenzó una nueva etapa. Nació
-        <strong>Techito</strong> y con él <strong>Tech Riders</strong>, una iniciativa impulsada por antiguos alumnos,
-        profesionales y apasionados de la tecnología que querían dar un paso más allá. La visión era clara:
-        construir una comunidad abierta donde aprender tecnología fuese tan importante como crear
-        conexiones, compartir experiencias reales y ayudar a otras personas a crecer profesionalmente.
-      </p>
-      <p>
-        Aquella evolución fue el origen de <strong>Tech Riders tal y como lo conocemos hoy</strong>.
-        Una comunidad que mantiene sus raíces en Tajamar Tech, pero que amplía su alcance mucho más allá
-        de un centro educativo.
-      </p>
-      <p>
-        <strong>Tech Riders no pertenece a Tajamar</strong>, aunque está impulsado y apoyado por
-        <strong>Tajamar Tech</strong>, compartiendo una misma misión: acercar el mundo profesional
-        al alumnado y fomentar el aprendizaje continuo dentro de la comunidad tecnológica.
-      </p>
-      <p>
-        Tech Riders es una comunidad abierta, diversa e inclusiva donde estudiantes,
-        profesionales, empresas y centros de formación colaboran para compartir conocimiento,
-        oportunidades y experiencias.
-      </p>
-      <p> Porque Tech Riders no es una marca, ni una empresa, ni una organización cerrada. </p>
-      <blockquote>
-        <strong>Tech Riders somos todos.</strong>
-      </blockquote>
-      <p> Y lo mejor de nuestra historia es que todavía se sigue escribiendo. </p>
-      <p>
-        <strong>Cualquiera puede convertirse en un Tech Rider.</strong> 🏍️💙
-      </p>
-    </div>
-  </div>
-</section>
+
 
 <!-- ===== COMUNIDAD ===== -->
 <section class="community-hub">
@@ -172,3 +113,4 @@
     </div>
   </div>
 </section>
+

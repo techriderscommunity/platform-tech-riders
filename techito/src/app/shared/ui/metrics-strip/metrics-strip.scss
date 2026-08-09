@@ -1,0 +1,54 @@
+.ui-metrics-strip {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, var(--tr-blue-alpha-10) 8%);
+  border: 1px solid var(--border-default);
+}
+
+.ui-metric-item {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: center;
+  text-align: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bg-secondary) 88%, var(--tr-blue-alpha-08) 12%);
+  border: 1px solid var(--border-muted);
+}
+
+.ui-metric-icon {
+  font-size: 1.25rem;
+}
+
+.ui-metric-value {
+  font-size: clamp(1.25rem, 3vw, 1.85rem);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.ui-metric-label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+:host(.home-metrics-strip) .ui-metrics-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+  :host(.home-metrics-strip) .ui-metrics-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  :host(.home-metrics-strip) .ui-metrics-strip {
+    grid-template-columns: 1fr;
+  }
+}

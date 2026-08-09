@@ -2,10 +2,13 @@
   padding: var(--page-block-padding) var(--page-inline-padding);
   max-width: var(--page-content-max);
   margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
 }
 
 .welcome-section {
-  margin-bottom: 2.5rem;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
 
   h1 {
     font-size: 2rem;
@@ -25,7 +28,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
-  margin-bottom: var(--space-10);
 }
 
 .stat-card {
@@ -59,18 +61,16 @@
 
 /* Dashboard Sections */
 .dashboard-section {
-  background: var(--bg-elevated);
-  border-radius: var(--radius-lg);
+  @extend .card !optional;
   padding: var(--surface-padding);
-  box-shadow: var(--shadow-md);
-  margin-bottom: var(--space-8);
-  border: 1px solid var(--border-default);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   margin-bottom: var(--space-6);
 
   h2 {
@@ -137,6 +137,7 @@
 
 .oferta-meta {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-6);
   margin-bottom: var(--space-4);
   color: var(--text-secondary);
@@ -264,7 +265,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
-  margin-top: var(--space-8);
 }
 
 .accion-card {
@@ -305,10 +305,7 @@
 
 /* Badges */
 .badge {
-  padding: var(--space-0-375) var(--space-0-875);
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
-  font-weight: 600;
+  @extend .badge !optional;
   text-transform: capitalize;
 
   &.completado {
@@ -329,35 +326,18 @@
 
 /* Buttons */
 .btn-primary {
-  background: var(--tr-blue);
-  color: var(--color-white);
-  min-height: var(--touch-target-min);
-  padding: var(--btn-md-padding);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
+  @extend .btn !optional;
 
   &:hover {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
   }
 }
 
 .btn-small {
+  @extend .btn !optional;
+  @extend .btn-sm !optional;
   background: transparent;
   color: var(--tr-blue);
-  min-height: var(--touch-target-min);
-  padding: var(--btn-sm-padding);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border: 1px solid var(--tr-blue);
-  cursor: pointer;
-  transition: all 0.2s ease;
 
   &:hover {
     background: var(--tr-blue);

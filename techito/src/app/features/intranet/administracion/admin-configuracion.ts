@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { environment } from '@env/environment';
 import { catchError, of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { IntranetAdminService, IntranetSettingRecord } from './services/intranet-admin.service';
+import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 
 interface ConfigItem {
   key: string;
@@ -13,27 +13,16 @@ interface ConfigItem {
   estado: 'activo' | 'revision';
 }
 
-interface ConfigResponse {
-  id: string;
-  key: string;
-  module: string;
-  value: string;
-  status: string;
-  updatedUtc: string;
-  updatedBy?: string | null;
-}
-
 @Component({
   selector: 'app-admin-configuracion',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, UiMetricsStrip],
   templateUrl: './admin-configuracion.html',
   styleUrl: './admin-configuracion.scss'
 })
 export class AdminConfiguracion {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiUrl;
+  private readonly intranetAdminService = inject(IntranetAdminService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -42,6 +31,10 @@ export class AdminConfiguracion {
   readonly savingByKey = signal<Record<string, boolean>>({});
 
   readonly inRevisionCount = computed(() => this.items().filter(item => item.estado === 'revision').length);
+  readonly configMetrics = computed(() => [
+    { icon: '🧱', value: String(this.items().length), label: 'Bloques de configuración' },
+    { icon: '🧪', value: String(this.inRevisionCount()), label: 'En revisión' },
+  ]);
 
   constructor() {
     this.load();
@@ -51,11 +44,11 @@ export class AdminConfiguracion {
     this.loading.set(true);
     this.error.set(null);
 
-    this.http.get<ConfigResponse[]>(`${this.baseUrl}/admin/intranet/configuracion`)
+    this.intranetAdminService.getSettings()
       .pipe(
         catchError(() => {
           this.error.set('No se pudo cargar configuracion de intranet.');
-          return of([] as ConfigResponse[]);
+          return of([] as IntranetSettingRecord[]);
         }),
         takeUntilDestroyed(),
       )
@@ -87,7 +80,7 @@ export class AdminConfiguracion {
     this.feedback.set(null);
     this.setSaving(item.key, true);
 
-    this.http.put(`${this.baseUrl}/admin/intranet/configuracion`, {
+    this.intranetAdminService.updateSetting({
       key: item.key,
       module: item.modulo,
       value: item.valor,

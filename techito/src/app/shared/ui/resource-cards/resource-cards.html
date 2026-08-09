@@ -1,0 +1,33 @@
+<section class="ui-resource-grid" role="list" aria-label="Recursos">
+  @for (item of items; track item.title) {
+    <article class="ui-resource-card" role="listitem">
+      <header class="ui-resource-head">
+        @if (item.mode) {
+          <span class="ui-resource-mode">{{ item.mode }}</span>
+        }
+      </header>
+
+      <h3>{{ item.title }}</h3>
+      <p class="ui-resource-summary">{{ item.summary }}</p>
+
+      @if (item.tags && item.tags.length > 0) {
+        <div class="ui-resource-tags" aria-label="Etiquetas">
+          @for (tag of item.tags; track tag) {
+            <span>{{ tag }}</span>
+          }
+        </div>
+      }
+
+      <footer class="ui-resource-footer">
+        @if (item.meta) {
+          <small>{{ item.meta }}</small>
+        }
+        @if (item.ctaLabel && item.ctaLink) {
+          <a [routerLink]="item.ctaLink">{{ item.ctaLabel }}</a>
+        } @else if (item.ctaLabel && item.ctaHref) {
+          <a [href]="item.ctaHref" target="_blank" rel="noopener noreferrer">{{ item.ctaLabel }}</a>
+        }
+      </footer>
+    </article>
+  }
+</section>

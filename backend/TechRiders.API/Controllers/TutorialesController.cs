@@ -7,17 +7,17 @@ using TechRiders.Application.Interfaces;
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/tutoriales")]
 [Route("api/tutorials")]
 [Produces("application/json")]
-public class TutorialesController : ControllerBase
+public class TutorialsController : ControllerBase
 {
-    private readonly ITutorialesService _tutorialesService;
-    private readonly ILogger<TutorialesController> _logger;
+    private readonly ITutorialsService _tutorialsService;
+    private readonly ILogger<TutorialsController> _logger;
 
-    public TutorialesController(ITutorialesService tutorialesService, ILogger<TutorialesController> logger)
+    public TutorialsController(ITutorialsService tutorialesService, ILogger<TutorialsController> logger)
     {
-        _tutorialesService = tutorialesService ?? throw new ArgumentNullException(nameof(tutorialesService));
+        _tutorialsService = tutorialesService ?? throw new ArgumentNullException(nameof(tutorialesService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -28,7 +28,7 @@ public class TutorialesController : ControllerBase
     {
         try
         {
-            var tutorials = await _tutorialesService.GetAllTutorialsAsync(cancellationToken);
+            var tutorials = await _tutorialsService.GetAllTutorialsAsync(cancellationToken);
             return Ok(tutorials);
         }
         catch (Exception ex)
@@ -46,7 +46,7 @@ public class TutorialesController : ControllerBase
     {
         try
         {
-            var tutorial = await _tutorialesService.GetTutorialByIdAsync(id, cancellationToken);
+            var tutorial = await _tutorialsService.GetTutorialByIdAsync(id, cancellationToken);
             if (tutorial == null)
                 return NotFound(new { error = "Tutorial not found" });
 
@@ -67,7 +67,7 @@ public class TutorialesController : ControllerBase
     {
         try
         {
-            var tutorial = await _tutorialesService.GetTutorialBySlugAsync(slug, cancellationToken);
+            var tutorial = await _tutorialsService.GetTutorialBySlugAsync(slug, cancellationToken);
             if (tutorial == null)
                 return NotFound(new { error = "Tutorial not found" });
 
@@ -90,7 +90,7 @@ public class TutorialesController : ControllerBase
             if (pageNumber < 1 || pageSize < 1)
                 return BadRequest(new { error = "Page number and size must be greater than 0" });
 
-            var result = await _tutorialesService.GetPaginatedTutorialsAsync(pageNumber, pageSize, cancellationToken);
+            var result = await _tutorialsService.GetPaginatedTutorialsAsync(pageNumber, pageSize, cancellationToken);
             return Ok(new { items = result.Items, totalCount = result.TotalCount, pageNumber, pageSize });
         }
         catch (Exception ex)
@@ -112,7 +112,7 @@ public class TutorialesController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorial = await _tutorialesService.CreateTutorialAsync(request, cancellationToken);
+            var tutorial = await _tutorialsService.CreateTutorialAsync(request, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = tutorial.Id }, tutorial);
         }
         catch (InvalidOperationException ex)
@@ -143,7 +143,7 @@ public class TutorialesController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var tutorial = await _tutorialesService.UpdateTutorialAsync(request, cancellationToken);
+            var tutorial = await _tutorialsService.UpdateTutorialAsync(request, cancellationToken);
             return Ok(tutorial);
         }
         catch (KeyNotFoundException ex)
@@ -167,7 +167,7 @@ public class TutorialesController : ControllerBase
     {
         try
         {
-            await _tutorialesService.DeleteTutorialAsync(id, cancellationToken);
+            await _tutorialsService.DeleteTutorialAsync(id, cancellationToken);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
