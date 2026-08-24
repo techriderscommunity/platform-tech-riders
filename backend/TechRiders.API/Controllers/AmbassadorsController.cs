@@ -9,7 +9,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class AmbassadorsController : ControllerBase
+public class AmbassadorsController : BaseApiController
 {
     private readonly IAmbassadorService _ambassadorService;
     private readonly ILogger<AmbassadorsController> _logger;
@@ -21,7 +21,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Get all active ambassadors", Description = "Returns a list of all active ambassadors")]
+    [SwaggerOperation(Summary = "Get all active ambassador users", Description = "Returns active users that currently hold the ambassador role")]
     [SwaggerResponse(200, "List of ambassadors obtained successfully", typeof(IEnumerable<AmbassadorResponse>))]
     [ProducesResponseType(typeof(IEnumerable<AmbassadorResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<AmbassadorResponse>>> GetAllAmbassadors(CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [SwaggerOperation(Summary = "Get ambassador by ID", Description = "Returns an ambassador by its ID")]
+    [SwaggerOperation(Summary = "Get ambassador user by ID", Description = "Returns an active user with ambassador role by user ID")]
     [SwaggerResponse(200, "Ambassador found", typeof(AmbassadorResponse))]
     [SwaggerResponse(404, "Ambassador not found")]
     [ProducesResponseType(typeof(AmbassadorResponse), StatusCodes.Status200OK)]
@@ -44,7 +44,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpGet("search")]
-    [SwaggerOperation(Summary = "Search ambassadors", Description = "Search ambassadors by name, last name or email")]
+    [SwaggerOperation(Summary = "Search ambassador users", Description = "Search active users with ambassador role by nickname, name, last name or email")]
     [SwaggerResponse(200, "Search results", typeof(IEnumerable<AmbassadorResponse>))]
     [ProducesResponseType(typeof(IEnumerable<AmbassadorResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<AmbassadorResponse>>> SearchAmbassadors(
@@ -76,7 +76,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpPost]
-    [SwaggerOperation(Summary = "Create new ambassador")]
+    [SwaggerOperation(Summary = "Create ambassador user profile")]
     [SwaggerResponse(201, "Ambassador created successfully", typeof(AmbassadorResponse))]
     [SwaggerResponse(400, "Invalid request")]
     [ProducesResponseType(typeof(AmbassadorResponse), StatusCodes.Status201Created)]
@@ -98,7 +98,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [SwaggerOperation(Summary = "Update ambassador")]
+    [SwaggerOperation(Summary = "Update ambassador user profile")]
     [SwaggerResponse(200, "Ambassador updated successfully", typeof(AmbassadorResponse))]
     [SwaggerResponse(404, "Ambassador not found")]
     [SwaggerResponse(400, "Invalid request")]
@@ -123,7 +123,7 @@ public class AmbassadorsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [SwaggerOperation(Summary = "Delete ambassador (logical)")]
+    [SwaggerOperation(Summary = "Remove ambassador role from user")]
     [SwaggerResponse(204, "Ambassador deleted successfully")]
     [SwaggerResponse(404, "Ambassador not found")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

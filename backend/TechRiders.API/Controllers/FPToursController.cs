@@ -9,7 +9,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class FPToursController : ControllerBase
+public class FPToursController : BaseApiController
 {
     private readonly IFPTourService _tourService;
 

@@ -16,7 +16,7 @@ public static class SwaggerServiceExtensions
             {
                 Title = "TechRiders API",
                 Version = "v1",
-                Description = "API para gestión de eventos y sesiones"
+                Description = "API para gestión de la comunidad Tech Riders"
             });
 
             options.EnableAnnotations();

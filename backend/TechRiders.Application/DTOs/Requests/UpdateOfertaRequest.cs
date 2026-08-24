@@ -1,57 +1,31 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TechRiders.Application.DTOs.Requests;
 
-/// <summary>
-/// Request to update an existing job offer
-/// </summary>
 public class UpdateOfertaRequest
 {
-    /// <summary>
-    /// Offer ID to update
-    /// </summary>
-    public required Guid Id { get; set; }
+    [Required]
+    public Guid Id { get; set; }
 
-    /// <summary>
-    /// Updated job title
-    /// </summary>
+    [StringLength(200)]
     public string? Titulo { get; set; }
 
-    /// <summary>
-    /// Updated company name
-    /// </summary>
+    [StringLength(200)]
     public string? Empresa { get; set; }
 
-    /// <summary>
-    /// Updated description
-    /// </summary>
     public string? Descripcion { get; set; }
 
-    /// <summary>
-    /// Updated salary
-    /// </summary>
+    [Range(0, 10000000)]
     public decimal? Salario { get; set; }
 
-    /// <summary>
-    /// Updated location
-    /// </summary>
+    [StringLength(200)]
     public string? Ubicacion { get; set; }
 
-    /// <summary>
-    /// Updated modality
-    /// </summary>
+    [Range(0, 2)]
     public int? Modalidad { get; set; }
 
-    /// <summary>
-    /// Updated requirements
-    /// </summary>
     public string? Requisitos { get; set; }
 
-    /// <summary>
-    /// Updated state (0=Draft, 1=Active, 2=Closed)
-    /// </summary>
+    [Range(0, 2)]
     public int? Estado { get; set; }
-
-    /// <summary>
-    /// Row version for optimistic concurrency
-    /// </summary>
-    public required byte[] RowVersion { get; set; }
 }

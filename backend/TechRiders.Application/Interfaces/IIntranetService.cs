@@ -1,5 +1,5 @@
-using TechRiders.Application.DTOs.Responses;
 using TechRiders.Application.DTOs.Requests.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet;
 
 namespace TechRiders.Application.Interfaces;
 

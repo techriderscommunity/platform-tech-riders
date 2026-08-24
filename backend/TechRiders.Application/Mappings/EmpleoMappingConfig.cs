@@ -1,7 +1,7 @@
 
 using Mapster;
 using TechRiders.Application.DTOs.Responses;
-using TechRiders.Domain.Entities.Empleo;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Application.Mappings;
 

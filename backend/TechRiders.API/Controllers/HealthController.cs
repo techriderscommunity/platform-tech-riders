@@ -6,7 +6,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class HealthController : ControllerBase
+public class HealthController : BaseApiController
 {
     private readonly ILogger<HealthController> _logger;
 

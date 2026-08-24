@@ -1,16 +1,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TechRiders.Application.DTOs.Requests;
-using TechRiders.Application.DTOs.Responses;
+using TechRiders.Application.DTOs.Requests.Knowledge;
+using TechRiders.Application.DTOs.Responses.Knowledge;
 using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
-[Route("api/tutoriales")]
 [Route("api/tutorials")]
 [Produces("application/json")]
-public class TutorialsController : ControllerBase
+public class TutorialsController : BaseApiController
 {
     private readonly ITutorialsService _tutorialsService;
     private readonly ILogger<TutorialsController> _logger;
@@ -34,7 +33,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving tutorials");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -55,7 +54,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving tutorial {TutorialId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -76,7 +75,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving tutorial by slug {Slug}", slug);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -96,7 +95,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving paginated tutorials");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -123,7 +122,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating tutorial");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -154,7 +153,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating tutorial {TutorialId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -178,7 +177,7 @@ public class TutorialsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting tutorial {TutorialId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 }

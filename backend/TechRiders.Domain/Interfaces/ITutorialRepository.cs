@@ -1,4 +1,4 @@
-using TechRiders.Domain.Entities.Tutoriales;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Domain.Interfaces;
 

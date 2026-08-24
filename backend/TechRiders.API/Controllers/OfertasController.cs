@@ -7,15 +7,14 @@ using TechRiders.Application.Interfaces;
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
-[Route("api/ofertas")]
 [Route("api/offers")]
 [Produces("application/json")]
-public class JobOffersController : ControllerBase
+public class OffersController : BaseApiController
 {
     private readonly IEmploymentService _empleoService;
-    private readonly ILogger<JobOffersController> _logger;
+    private readonly ILogger<OffersController> _logger;
 
-    public JobOffersController(IEmploymentService empleoService, ILogger<JobOffersController> logger)
+    public OffersController(IEmploymentService empleoService, ILogger<OffersController> logger)
     {
         _empleoService = empleoService ?? throw new ArgumentNullException(nameof(empleoService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -34,7 +33,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving job offers");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -55,7 +54,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving job offer {OfertaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -77,7 +76,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating job offer");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -108,7 +107,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating job offer {OfertaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -132,7 +131,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error publishing job offer {OfertaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -156,7 +155,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error closing job offer {OfertaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -180,7 +179,7 @@ public class JobOffersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting job offer {OfertaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 }

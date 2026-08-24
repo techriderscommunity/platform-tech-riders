@@ -42,7 +42,7 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
         return await _dbSet
             .Include(t => t.Center)
             .Include(t => t.Ambassador)
-            .Where(t => t.IsActive && t.AmbassadorId == ambassadorId)
+            .Where(t => t.IsActive && t.AmbassadorUserId == ambassadorId)
             .OrderByDescending(t => t.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -52,7 +52,7 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
         return await _dbSet
             .Include(t => t.Center)
             .Include(t => t.Ambassador)
-            .Where(t => t.IsActive && !t.HasScheduledDate)
+            .Where(t => t.IsActive && !t.PlannedDate.HasValue)
             .OrderBy(t => t.CreatedAt)
             .ToListAsync(cancellationToken);
     }

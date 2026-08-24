@@ -19,17 +19,32 @@ public class CenterRepository : Repository<Center>, ICenterRepository
 
     public async Task<IEnumerable<Center>> SearchCentersAsync(string searchTerm, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return await GetActiveCentersAsync(cancellationToken);
+        }
+
+        var normalizedSearch = searchTerm.Trim();
+
         return await _dbSet
             .Where(c => c.IsActive &&
-                        (c.Name.Contains(searchTerm) ||
-                         c.Email.Contains(searchTerm)))
+                        ((c.Name != null && c.Name.Contains(normalizedSearch)) ||
+                         (c.Email != null && c.Email.Contains(normalizedSearch))))
+            .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Center>> GetCentersByLocalityAsync(string locality, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(locality))
+        {
+            return await GetActiveCentersAsync(cancellationToken);
+        }
+
+        var normalizedLocality = locality.Trim();
+
         return await _dbSet
-            .Where(c => c.IsActive && c.Locality != null && c.Locality.Contains(locality))
+            .Where(c => c.IsActive && c.Locality != null && c.Locality.Contains(normalizedLocality))
             .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
     }

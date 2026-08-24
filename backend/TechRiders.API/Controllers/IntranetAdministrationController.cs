@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Application.DTOs.Requests.Intranet;
-using TechRiders.Application.DTOs.Responses;
+using TechRiders.Application.DTOs.Responses.Intranet;
 using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
@@ -9,7 +9,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/intranet")]
 [Produces("application/json")]
-public sealed class IntranetAdministrationController : ControllerBase
+public sealed class IntranetAdministrationController : BaseApiController
 {
     private readonly IIntranetService _intranetService;
     private readonly ILogger<IntranetAdministrationController> _logger;

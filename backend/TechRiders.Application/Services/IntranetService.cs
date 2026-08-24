@@ -1,14 +1,14 @@
-using TechRiders.Application.DTOs.Responses;
+using MapsterMapper;
 using TechRiders.Application.DTOs.Requests.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Interfaces;
-using Mapster;
-using MapsterMapper;
 
 namespace TechRiders.Application.Services;
 
 /// <summary>
-/// Service for intranet operations (audit logs, settings, user categories)
+/// Coordinates intranet concerns such as audit history, system settings, and user
+/// category checks while delegating persistence to the unit-of-work abstraction.
 /// </summary>
 public class IntranetService : IIntranetService
 {
@@ -20,8 +20,6 @@ public class IntranetService : IIntranetService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
-
-    // Audit log operations
 
     public async Task<IEnumerable<IntranetAuditLogResponse>> GetAllAuditLogsAsync(CancellationToken cancellationToken = default)
     {
@@ -53,8 +51,6 @@ public class IntranetService : IIntranetService
         return _mapper.Map<IEnumerable<IntranetAuditLogResponse>>(logs);
     }
 
-    // Setting operations
-
     public async Task<IEnumerable<IntranetSettingResponse>> GetAllSettingsAsync(CancellationToken cancellationToken = default)
     {
         var settings = await _unitOfWork.IntranetSettings.GetAllAsync(cancellationToken);
@@ -81,20 +77,18 @@ public class IntranetService : IIntranetService
 
     public async Task<IntranetSettingResponse?> UpdateSettingAsync(UpdateIntranetSettingRequest request, string? updatedBy, CancellationToken cancellationToken = default)
     {
-        var setting = await _unitOfWork.IntranetSettings.GetByKeyAsync(request.Key, cancellationToken);
-        if (setting is null)
+        var existingSetting = await _unitOfWork.IntranetSettings.GetByKeyAsync(request.Key, cancellationToken);
+        if (existingSetting is null)
         {
             return null;
         }
 
-        setting.Update(request.Module, request.Value, request.Status, updatedBy);
-        await _unitOfWork.IntranetSettings.UpdateAsync(setting, cancellationToken);
+        existingSetting.Update(request.Module, request.Value, request.Status, updatedBy);
+        await _unitOfWork.IntranetSettings.UpdateAsync(existingSetting, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<IntranetSettingResponse>(setting);
+        return _mapper.Map<IntranetSettingResponse>(existingSetting);
     }
-
-    // User category operations
 
     public async Task<IEnumerable<IntranetUserCategoryResponse>> GetUserCategoriesAsync(Guid userId, CancellationToken cancellationToken = default)
     {

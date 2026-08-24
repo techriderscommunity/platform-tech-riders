@@ -1,4 +1,4 @@
-using TechRiders.Domain.Entities.Empleo;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Domain.Interfaces;
 

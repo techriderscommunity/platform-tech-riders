@@ -9,7 +9,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class CentersController : ControllerBase
+public class CentersController : BaseApiController
 {
     private readonly ICenterService _centerService;
 

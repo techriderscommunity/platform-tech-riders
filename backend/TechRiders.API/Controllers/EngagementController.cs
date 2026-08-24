@@ -1,22 +1,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Engagement;
-using TechRiders.Api.Services;
 
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
 [Route("api")]
 [Produces("application/json")]
-public class EngagementController : ControllerBase
+public class EngagementController : BaseApiController
 {
     private readonly ILogger<EngagementController> _logger;
-    private readonly IPublicEngagementIntakeService _publicEngagementIntakeService;
 
-    public EngagementController(ILogger<EngagementController> logger, IPublicEngagementIntakeService publicEngagementIntakeService)
+    public EngagementController(ILogger<EngagementController> logger)
     {
         _logger = logger;
-        _publicEngagementIntakeService = publicEngagementIntakeService;
     }
 
     [HttpPost("contact")]
@@ -77,19 +74,10 @@ public class EngagementController : ControllerBase
             request.CommunityRole,
             request.Audience);
 
-        try
+        return Accepted(new
         {
-            var result = _publicEngagementIntakeService.ProcessJoinRequest(request);
-            return Accepted(new
-            {
-                success = result.Success,
-                message = result.Message,
-            });
-        }
-        catch (InvalidOperationException ex)
-        {
-            ModelState.AddModelError(nameof(request.RequestType), ex.Message);
-            return ValidationProblem(ModelState);
-        }
+            success = true,
+            message = "Join request received and queued for review.",
+        });
     }
 }

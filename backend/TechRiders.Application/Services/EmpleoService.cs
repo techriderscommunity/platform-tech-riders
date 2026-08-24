@@ -1,42 +1,41 @@
+using MapsterMapper;
 using TechRiders.Application.DTOs.Requests;
 using TechRiders.Application.DTOs.Responses;
 using TechRiders.Application.Interfaces;
-using TechRiders.Domain.Entities.Empleo;
+using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
-using Mapster;
-using MapsterMapper;
+
 namespace TechRiders.Application.Services;
 
 /// <summary>
-/// Service for managing job offers and applications
+/// Provides the application workflow for job offers and candidacies.
 /// </summary>
 public class EmploymentService : IEmploymentService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+
     public EmploymentService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    // Oferta operations
-
     public async Task<IEnumerable<OfertaResponse>> GetAllOfertasAsync(CancellationToken cancellationToken = default)
     {
-        var ofertas = await _unitOfWork.Ofertas.GetAllAsync(cancellationToken);
-        return _mapper.Map<IEnumerable<OfertaResponse>>(ofertas);
+        var offers = await _unitOfWork.Ofertas.GetAllAsync(cancellationToken);
+        return _mapper.Map<IEnumerable<OfertaResponse>>(offers);
     }
 
     public async Task<OfertaResponse?> GetOfertaByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken);
-        return _mapper.Map<OfertaResponse?>(oferta);
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken);
+        return _mapper.Map<OfertaResponse?>(offer);
     }
 
     public async Task<OfertaResponse> CreateOfertaAsync(CreateOfertaRequest request, CancellationToken cancellationToken = default)
     {
-        var oferta = Oferta.Create(
+        var offer = Oferta.Create(
             titulo: request.Titulo,
             empresa: request.Empresa,
             descripcion: request.Descripcion,
@@ -46,157 +45,152 @@ public class EmploymentService : IEmploymentService
             requisitos: request.Requisitos
         );
 
-        await _unitOfWork.Ofertas.AddAsync(oferta, cancellationToken);
+        await _unitOfWork.Ofertas.AddAsync(offer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<OfertaResponse>(oferta);
+        return _mapper.Map<OfertaResponse>(offer);
     }
 
     public async Task<OfertaResponse> UpdateOfertaAsync(UpdateOfertaRequest request, CancellationToken cancellationToken = default)
     {
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(request.Id, cancellationToken)
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(request.Id, cancellationToken)
             ?? throw new KeyNotFoundException($"Oferta {request.Id} not found");
 
-        // Update only provided fields
-        if (!string.IsNullOrEmpty(request.Titulo)) oferta.Titulo = request.Titulo;
-        if (!string.IsNullOrEmpty(request.Empresa)) oferta.Empresa = request.Empresa;
-        if (!string.IsNullOrEmpty(request.Descripcion)) oferta.Descripcion = request.Descripcion;
-        if (request.Salario.HasValue) oferta.Salario = request.Salario.Value.ToString("F2");
-        if (!string.IsNullOrEmpty(request.Ubicacion)) oferta.Ubicacion = request.Ubicacion;
-        if (request.Modalidad.HasValue) oferta.Modalidad = (Modalidad)request.Modalidad.Value;
-        if (!string.IsNullOrEmpty(request.Requisitos)) oferta.Requisitos = request.Requisitos;
-        if (request.Estado.HasValue) oferta.Estado = (OfertaEstado)request.Estado.Value;
+        if (!string.IsNullOrEmpty(request.Titulo)) offer.Titulo = request.Titulo;
+        if (!string.IsNullOrEmpty(request.Empresa)) offer.Empresa = request.Empresa;
+        if (!string.IsNullOrEmpty(request.Descripcion)) offer.Descripcion = request.Descripcion;
+        if (request.Salario.HasValue) offer.Salario = request.Salario.Value;
+        if (!string.IsNullOrEmpty(request.Ubicacion)) offer.Ubicacion = request.Ubicacion;
+        if (request.Modalidad.HasValue) offer.Modalidad = (Modalidad)request.Modalidad.Value;
+        if (!string.IsNullOrEmpty(request.Requisitos)) offer.Requisitos = request.Requisitos;
+        if (request.Estado.HasValue) offer.Estado = (OfertaEstado)request.Estado.Value;
 
-        await _unitOfWork.Ofertas.UpdateAsync(oferta, cancellationToken);
+        await _unitOfWork.Ofertas.UpdateAsync(offer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<OfertaResponse>(oferta);
+        return _mapper.Map<OfertaResponse>(offer);
     }
 
     public async Task<OfertaResponse> PublishOfertaAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Oferta {id} not found");
 
-        oferta.Publicar();
+        offer.Publicar();
 
-        await _unitOfWork.Ofertas.UpdateAsync(oferta, cancellationToken);
+        await _unitOfWork.Ofertas.UpdateAsync(offer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<OfertaResponse>(oferta);
+        return _mapper.Map<OfertaResponse>(offer);
     }
 
     public async Task<OfertaResponse> CloseOfertaAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Oferta {id} not found");
 
-        oferta.Cerrar();
+        offer.Cerrar();
 
-        await _unitOfWork.Ofertas.UpdateAsync(oferta, cancellationToken);
+        await _unitOfWork.Ofertas.UpdateAsync(offer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<OfertaResponse>(oferta);
+        return _mapper.Map<OfertaResponse>(offer);
     }
 
     public async Task DeleteOfertaAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Oferta {id} not found");
 
-        await _unitOfWork.Ofertas.DeleteAsync(oferta, cancellationToken);
+        await _unitOfWork.Ofertas.DeleteAsync(offer, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    // Candidatura operations
-
     public async Task<IEnumerable<CandidaturaResponse>> GetCandidaturasByOfertaAsync(Guid ofertaId, CancellationToken cancellationToken = default)
     {
-        var candidaturas = await _unitOfWork.Candidaturas.GetByOfertaIdAsync(ofertaId, cancellationToken);
-        return _mapper.Map<IEnumerable<CandidaturaResponse>>(candidaturas);
+        var applications = await _unitOfWork.Candidaturas.GetByOfertaIdAsync(ofertaId, cancellationToken);
+        return _mapper.Map<IEnumerable<CandidaturaResponse>>(applications);
     }
 
     public async Task<IEnumerable<CandidaturaResponse>> GetCandidaturasByJuniorAsync(string juniorId, CancellationToken cancellationToken = default)
     {
-        var candidaturas = await _unitOfWork.Candidaturas.GetByJuniorIdAsync(juniorId, cancellationToken);
-        return _mapper.Map<IEnumerable<CandidaturaResponse>>(candidaturas);
+        var applications = await _unitOfWork.Candidaturas.GetByJuniorIdAsync(juniorId, cancellationToken);
+        return _mapper.Map<IEnumerable<CandidaturaResponse>>(applications);
     }
 
     public async Task<CandidaturaResponse?> GetCandidaturaByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var candidatura = await _unitOfWork.Candidaturas.GetByIdAsync(id, cancellationToken);
-        return _mapper.Map<CandidaturaResponse?>(candidatura);
+        var application = await _unitOfWork.Candidaturas.GetByIdAsync(id, cancellationToken);
+        return _mapper.Map<CandidaturaResponse?>(application);
     }
 
     public async Task<CandidaturaResponse> CreateCandidaturaAsync(CreateCandidaturaRequest request, CancellationToken cancellationToken = default)
     {
-        // Verify offer exists
-        var oferta = await _unitOfWork.Ofertas.GetByIdAsync(request.OfertaId, cancellationToken)
+        var offer = await _unitOfWork.Ofertas.GetByIdAsync(request.OfertaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Oferta {request.OfertaId} not found");
 
-        // Check for duplicate application
-        var exists = await _unitOfWork.Candidaturas.ExisteCandidaturaAsync(request.OfertaId, request.JuniorId, cancellationToken);
-        if (exists)
+        var alreadyExists = await _unitOfWork.Candidaturas.ExisteCandidaturaAsync(request.OfertaId, request.JuniorId, cancellationToken);
+        if (alreadyExists)
             throw new InvalidOperationException($"Application already exists for junior {request.JuniorId} on offer {request.OfertaId}");
 
-        var candidatura = Candidatura.Create(
+        var application = Candidatura.Create(
             ofertaId: request.OfertaId,
             juniorId: request.JuniorId,
             nombreJunior: request.NombreJunior,
             emailJunior: request.EmailJunior
         );
 
-        await _unitOfWork.Candidaturas.AddAsync(candidatura, cancellationToken);
+        await _unitOfWork.Candidaturas.AddAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<CandidaturaResponse>(candidatura);
+        return _mapper.Map<CandidaturaResponse>(application);
     }
 
     public async Task<CandidaturaResponse> AdvanceToInterviewAsync(Guid candidaturaId, CancellationToken cancellationToken = default)
     {
-        var candidatura = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
+        var application = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Candidatura {candidaturaId} not found");
 
-        candidatura.AvanzarAEntrevista();
+        application.AvanzarAEntrevista();
 
-        await _unitOfWork.Candidaturas.UpdateAsync(candidatura, cancellationToken);
+        await _unitOfWork.Candidaturas.UpdateAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<CandidaturaResponse>(candidatura);
+        return _mapper.Map<CandidaturaResponse>(application);
     }
 
     public async Task<CandidaturaResponse> RejectCandidaturaAsync(Guid candidaturaId, CancellationToken cancellationToken = default)
     {
-        var candidatura = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
+        var application = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Candidatura {candidaturaId} not found");
 
-        candidatura.Rechazar();
+        application.Rechazar();
 
-        await _unitOfWork.Candidaturas.UpdateAsync(candidatura, cancellationToken);
+        await _unitOfWork.Candidaturas.UpdateAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<CandidaturaResponse>(candidatura);
+        return _mapper.Map<CandidaturaResponse>(application);
     }
 
     public async Task<CandidaturaResponse> HireCandidaturaAsync(Guid candidaturaId, CancellationToken cancellationToken = default)
     {
-        var candidatura = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
+        var application = await _unitOfWork.Candidaturas.GetByIdAsync(candidaturaId, cancellationToken)
             ?? throw new KeyNotFoundException($"Candidatura {candidaturaId} not found");
 
-        candidatura.Contratar();
+        application.Contratar();
 
-        await _unitOfWork.Candidaturas.UpdateAsync(candidatura, cancellationToken);
+        await _unitOfWork.Candidaturas.UpdateAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<CandidaturaResponse>(candidatura);
+        return _mapper.Map<CandidaturaResponse>(application);
     }
 
     public async Task DeleteCandidaturaAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var candidatura = await _unitOfWork.Candidaturas.GetByIdAsync(id, cancellationToken)
+        var application = await _unitOfWork.Candidaturas.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Candidatura {id} not found");
 
-        await _unitOfWork.Candidaturas.DeleteAsync(candidatura, cancellationToken);
+        await _unitOfWork.Candidaturas.DeleteAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

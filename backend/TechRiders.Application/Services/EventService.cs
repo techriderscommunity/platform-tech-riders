@@ -1,16 +1,15 @@
+using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using TechRiders.Application.DTOs.Requests.Event;
 using TechRiders.Application.DTOs.Responses.Event;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
-using Mapster;
-using MapsterMapper;
+
 namespace TechRiders.Application.Services;
 
 /// <summary>
-/// Servicio de aplicación para gestión de eventos
-/// Implementa la lógica de negocio y orquesta operaciones del dominio
+/// Orchestrates event management while keeping persistence and DTO mapping outside the workflow.
 /// </summary>
 public class EventService : IEventService
 {
@@ -30,7 +29,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<EventResponse>> GetAllEventsAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo todos los eventos activos");
+        _logger.LogInformation("Getting all active events");
 
         var events = await _unitOfWork.Events.GetActiveEventsAsync(cancellationToken);
         return _mapper.Map<IEnumerable<EventResponse>>(events);
@@ -38,13 +37,13 @@ public class EventService : IEventService
 
     public async Task<EventResponse?> GetEventByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo evento con ID: {EventId}", id);
+        _logger.LogInformation("Getting event with ID: {EventId}", id);
 
         var evento = await _unitOfWork.Events.GetEventWithSessionsAsync(id, cancellationToken);
 
         if (evento == null || !evento.IsActive)
         {
-            _logger.LogWarning("Evento con ID {EventId} no encontrado o inactivo", id);
+            _logger.LogWarning("Event with ID {EventId} was not found or is inactive", id);
             return null;
         }
 
@@ -53,7 +52,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<EventResponse>> GetUpcomingEventsAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo eventos próximos");
+        _logger.LogInformation("Getting upcoming events");
 
         var events = await _unitOfWork.Events.GetUpcomingEventsAsync(cancellationToken);
         return _mapper.Map<IEnumerable<EventResponse>>(events);
@@ -63,7 +62,7 @@ public class EventService : IEventService
         string searchTerm,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Buscando eventos con término: {SearchTerm}", searchTerm);
+        _logger.LogInformation("Searching events with term: {SearchTerm}", searchTerm);
 
         var events = await _unitOfWork.Events.SearchEventsAsync(searchTerm, cancellationToken);
         return _mapper.Map<IEnumerable<EventResponse>>(events);
@@ -74,7 +73,7 @@ public class EventService : IEventService
         DateTime endDate,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo eventos entre {StartDate} y {EndDate}", startDate, endDate);
+        _logger.LogInformation("Getting events between {StartDate} and {EndDate}", startDate, endDate);
 
         var events = await _unitOfWork.Events.GetEventsByDateRangeAsync(startDate, endDate, cancellationToken);
         return _mapper.Map<IEnumerable<EventResponse>>(events);
@@ -84,13 +83,12 @@ public class EventService : IEventService
         CreateEventRequest request,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Creando nuevo evento: {EventName}", request.Name);
+        _logger.LogInformation("Creating new event: {EventName}", request.Name);
 
-        // Validación de negocio
         if (request.EndDate <= request.StartDate)
         {
-            _logger.LogWarning("Intento de crear evento con fechas inválidas");
-            throw new InvalidOperationException("La fecha de finalización debe ser posterior a la fecha de inicio");
+            _logger.LogWarning("Attempt to create event with invalid dates");
+            throw new InvalidOperationException("The end date must be later than the start date");
         }
 
         var evento = _mapper.Map<Event>(request);
@@ -98,7 +96,7 @@ public class EventService : IEventService
         await _unitOfWork.Events.AddAsync(evento, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Evento creado exitosamente con ID: {EventId}", evento.Id);
+        _logger.LogInformation("Event created successfully with ID: {EventId}", evento.Id);
 
         return _mapper.Map<EventResponse>(evento);
     }
@@ -108,24 +106,23 @@ public class EventService : IEventService
         UpdateEventRequest request,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Actualizando evento con ID: {EventId}", id);
+        _logger.LogInformation("Updating event with ID: {EventId}", id);
 
         var evento = await _unitOfWork.Events.GetByIdAsync(id, cancellationToken);
 
         if (evento == null || !evento.IsActive)
         {
-            _logger.LogWarning("Evento con ID {EventId} no encontrado o inactivo", id);
+            _logger.LogWarning("Event with ID {EventId} was not found or is inactive", id);
             return null;
         }
 
-        // Validación de negocio para fechas
         var newStartDate = request.StartDate ?? evento.StartDate;
         var newEndDate = request.EndDate ?? evento.EndDate;
 
         if (newEndDate <= newStartDate)
         {
-            _logger.LogWarning("Intento de actualizar evento con fechas inválidas");
-            throw new InvalidOperationException("La fecha de finalización debe ser posterior a la fecha de inicio");
+            _logger.LogWarning("Attempt to update event with invalid dates");
+            throw new InvalidOperationException("The end date must be later than the start date");
         }
 
         _mapper.Map(request, evento);
@@ -133,30 +130,29 @@ public class EventService : IEventService
         await _unitOfWork.Events.UpdateAsync(evento, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Evento actualizado exitosamente: {EventId}", id);
+        _logger.LogInformation("Event updated successfully: {EventId}", id);
 
         return _mapper.Map<EventResponse>(evento);
     }
 
     public async Task<bool> DeleteEventAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Eliminando evento con ID: {EventId}", id);
+        _logger.LogInformation("Deleting event with ID: {EventId}", id);
 
         var evento = await _unitOfWork.Events.GetByIdAsync(id, cancellationToken);
 
         if (evento == null || !evento.IsActive)
         {
-            _logger.LogWarning("Evento con ID {EventId} no encontrado o ya inactivo", id);
+            _logger.LogWarning("Event with ID {EventId} was not found or is already inactive", id);
             return false;
         }
 
-        // Eliminación lógica
         evento.IsActive = false;
 
         await _unitOfWork.Events.UpdateAsync(evento, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Evento eliminado (lógicamente) exitosamente: {EventId}", id);
+        _logger.LogInformation("Event logically deleted successfully: {EventId}", id);
 
         return true;
     }
