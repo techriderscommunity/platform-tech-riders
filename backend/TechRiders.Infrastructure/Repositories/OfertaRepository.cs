@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TechRiders.Domain.Entities.Empleo;
+using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
 using TechRiders.Infrastructure.Data;
 

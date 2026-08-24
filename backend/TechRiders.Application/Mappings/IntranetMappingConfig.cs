@@ -1,6 +1,6 @@
 using Mapster;
-using TechRiders.Application.DTOs.Responses;
-using TechRiders.Domain.Entities.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Application.Mappings;
 

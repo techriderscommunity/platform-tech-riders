@@ -1,4 +1,4 @@
-using TechRiders.Application.DTOs.Responses.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet.AdminDashboard;
 
 namespace TechRiders.Application.Interfaces;
 

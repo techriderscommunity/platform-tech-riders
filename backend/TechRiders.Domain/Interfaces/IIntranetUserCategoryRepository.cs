@@ -1,4 +1,4 @@
-using TechRiders.Domain.Entities.Intranet;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Domain.Interfaces;
 

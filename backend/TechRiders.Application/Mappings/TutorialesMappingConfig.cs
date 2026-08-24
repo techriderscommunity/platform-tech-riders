@@ -1,6 +1,6 @@
 using Mapster;
-using TechRiders.Application.DTOs.Responses;
-using TechRiders.Domain.Entities.Tutoriales;
+using TechRiders.Application.DTOs.Responses.Knowledge;
+using TechRiders.Domain.Entities;
 
 namespace TechRiders.Application.Mappings;
 

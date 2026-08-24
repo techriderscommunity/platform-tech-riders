@@ -1,67 +1,40 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TechRiders.Domain.Entities;
 
-/// <summary>
-/// Representa un evento de TechRiders
-/// </summary>
-public class Event : BaseEntity
+public sealed class Event : BaseEntity
 {
-    /// <summary>
-    /// Nombre del evento
-    /// </summary>
-    [Required(ErrorMessage = "El nombre del evento es obligatorio")]
-    [StringLength(200, MinimumLength = 3, ErrorMessage = "El nombre debe tener entre 3 y 200 caracteres")]
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Descripción detallada del evento
-    /// </summary>
-    [StringLength(2000, ErrorMessage = "La descripción no puede exceder 2000 caracteres")]
+    public required string Name { get; set; }
     public string? Description { get; set; }
+    public DateTimeOffset StartDateTime { get; set; }
+    public DateTimeOffset? EndDateTime { get; set; }
 
-    /// <summary>
-    /// Fecha de inicio del evento
-    /// </summary>
-    [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
-    public DateTime StartDate { get; set; }
+    // Compatibilidad con contratos legacy de la capa de aplicación
+    public DateTime StartDate
+    {
+        get => StartDateTime.UtcDateTime;
+        set => StartDateTime = new DateTimeOffset(value, TimeSpan.Zero);
+    }
 
-    /// <summary>
-    /// Fecha de finalización del evento
-    /// </summary>
-    [Required(ErrorMessage = "La fecha de finalización es obligatoria")]
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate
+    {
+        get => EndDateTime?.UtcDateTime;
+        set => EndDateTime = value is null ? null : new DateTimeOffset(value.Value, TimeSpan.Zero);
+    }
 
-    /// <summary>
-    /// Ubicación del evento
-    /// </summary>
-    [StringLength(300, ErrorMessage = "La ubicación no puede exceder 300 caracteres")]
+    public string? Url { get; set; }
     public string? Location { get; set; }
-
-    /// <summary>
-    /// Capacidad máxima de asistentes
-    /// </summary>
-    [Range(1, 10000, ErrorMessage = "La capacidad debe estar entre 1 y 10000")]
     public int? MaxCapacity { get; set; }
 
-    /// <summary>
-    /// Colección de sesiones asociadas al evento
-    /// </summary>
-    public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
+    public Guid EventTypeId { get; set; }
+    public EventType EventType { get; set; } = default!;
 
-    /// <summary>
-    /// Valida que la fecha de finalización sea posterior a la fecha de inicio
-    /// </summary>
-    public bool ValidateDates()
-    {
-        return EndDate > StartDate;
-    }
+    public Guid? StatusId { get; set; }
+    public Status? Status { get; set; }
 
-    /// <summary>
-    /// Calcula la duración del evento en días
-    /// </summary>
-    public int GetDurationInDays()
-    {
-        return (EndDate.Date - StartDate.Date).Days + 1;
-    }
+    public Guid? CenterId { get; set; }
+    public Center? Center { get; set; }
+
+    public ICollection<Session> Sessions { get; set; } = new List<Session>();
+    public ICollection<EventCategory> Categories { get; set; } = new List<EventCategory>();
+    public ICollection<EventRegistration> Registrations { get; set; } = new List<EventRegistration>();
+    public ICollection<CommunityCollaboration> CommunityCollaborations { get; set; } = new List<CommunityCollaboration>();
 }

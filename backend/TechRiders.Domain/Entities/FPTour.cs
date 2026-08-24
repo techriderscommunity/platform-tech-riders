@@ -1,77 +1,31 @@
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TechRiders.Domain.Entities;
 
-/// <summary>
-/// Representa un tour de Formación Profesional
-/// Relaciona un centro educativo con un ambassador
-/// </summary>
-public class FPTour : BaseEntity
+public sealed class FPTour : BaseEntity
 {
-    /// <summary>
-    /// ID del centro educativo
-    /// </summary>
-    [Required(ErrorMessage = "El centro es obligatorio")]
     public Guid CenterId { get; set; }
+    public Center Center { get; set; } = default!;
 
-    /// <summary>
-    /// ID del ambassador asignado
-    /// </summary>
-    [Required(ErrorMessage = "El ambassador es obligatorio")]
-    public Guid AmbassadorId { get; set; }
+    public Guid? AmbassadorUserId { get; set; }
+    public User? Ambassador { get; set; }
 
-    /// <summary>
-    /// Indica si se ha contactado con el centro
-    /// </summary>
-    public bool HasContactCenter { get; set; }
+    // Compatibilidad con nombres legacy usados por repositorios y servicios.
+    // No se mapea a BD porque EF Core considera que el nombre de la FK ya existe y genera
+    // la propiedad shadow 'AmbassadorId1' cuando se expone como alias del mismo campo.
+    [NotMapped]
+    public Guid? AmbassadorId
+    {
+        get => AmbassadorUserId;
+        set => AmbassadorUserId = value;
+    }
 
-    /// <summary>
-    /// Indica si se ha contactado con el ambassador
-    /// </summary>
-    public bool HasContactAmbassador { get; set; }
+    public DateTimeOffset? PlannedDate { get; set; }
+    public bool HasScheduledDate { get => PlannedDate.HasValue; set { if (!value) PlannedDate = null; } }
+    public string? Notes { get; set; }
 
-    /// <summary>
-    /// Indica si se ha agendado una fecha
-    /// </summary>
-    public bool HasScheduledDate { get; set; }
+    public Guid? StatusId { get; set; }
+    public Status? Status { get; set; }
 
-    /// <summary>
-    /// Indica si se ha recibido feedback del centro
-    /// </summary>
-    public bool HasFeedbackCenter { get; set; }
-
-    /// <summary>
-    /// Indica si se ha recibido feedback del ambassador
-    /// </summary>
-    public bool HasFeedbackAmbassador { get; set; }
-
-    /// <summary>
-    /// Indica si el centro ha enviado fotos
-    /// </summary>
-    public bool HasPhotosCenter { get; set; }
-
-    /// <summary>
-    /// Indica si el ambassador ha enviado fotos
-    /// </summary>
-    public bool HasPhotosAmbassador { get; set; }
-
-    /// <summary>
-    /// Indica si se ha entregado algo al centro
-    /// </summary>
-    public bool HasDeliveredCenter { get; set; }
-
-    /// <summary>
-    /// Indica si se ha entregado algo al ambassador
-    /// </summary>
-    public bool HasDeliveredAmbassador { get; set; }
-
-    /// <summary>
-    /// Centro asociado (navegación)
-    /// </summary>
-    public virtual Center Center { get; set; } = null!;
-
-    /// <summary>
-    /// Ambassador asignado (navegación)
-    /// </summary>
-    public virtual Ambassador Ambassador { get; set; } = null!;
+    public ICollection<FPTourTask> Tasks { get; set; } = new List<FPTourTask>();
 }

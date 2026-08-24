@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-08-09T16:31:31.466873+00:00",
+  "timestamp": "2026-08-24T13:45:13.536929+00:00",
   "source": "C:\\repo\\platform-tech-riders\\observability\\logs\\routing-decisions.jsonl",
   "feedback_source": "C:\\repo\\platform-tech-riders\\observability\\logs\\learning-feedback.jsonl",
-  "total_events": 32,
+  "total_events": 56,
   "pending_events": 0,
-  "confirmed_events": 32,
+  "confirmed_events": 56,
   "kpis": {
-    "fallback_rate": 0.375,
-    "grounded_rate": 0.7188,
+    "fallback_rate": 0.4286,
+    "grounded_rate": 0.6786,
     "success_rate": 1.0,
-    "confidence_avg": 0.94
+    "confidence_avg": 0.944
   },
   "thresholds": {
     "fallback_rate_max": 0.2,
@@ -24,82 +24,82 @@
   "patterns": [
     {
       "pattern": "azure-rag+knowledge-grounded",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 0.0,
       "grounded_rate": 0.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "Azure RAG Builder": 3
+        "Azure RAG Builder": 6
       },
       "agents": {
-        "rag-azure": 3
+        "rag-azure": 6
       }
     },
     {
       "pattern": "backend+bug-fix",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 0.0,
       "grounded_rate": 1.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "codegraph": 3
+        "codegraph": 6
       },
       "agents": {
-        "agents/project-architecture-planner.agent.md": 3
+        "agents/project-architecture-planner.agent.md": 6
       }
     },
     {
       "pattern": "dba+analysis",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 1.0,
       "grounded_rate": 1.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "Graphify": 3
+        "Graphify": 6
       },
       "agents": {
-        "dba": 3
+        "dba": 6
       }
     },
     {
       "pattern": "dba+sql",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 1.0,
       "grounded_rate": 1.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "Graphify": 3
+        "Graphify": 6
       },
       "agents": {
-        "dba": 3
+        "dba": 6
       }
     },
     {
       "pattern": "frontend+feature",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 1.0,
       "grounded_rate": 0.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "CodeGraph": 3
+        "CodeGraph": 6
       },
       "agents": {
-        "frontend-agent": 3
+        "frontend-agent": 6
       }
     },
     {
@@ -120,50 +120,50 @@
     },
     {
       "pattern": "legacy+migration",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 0.0,
       "grounded_rate": 0.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "CodeGraph": 3
+        "CodeGraph": 6
       },
       "agents": {
-        "backend": 3
+        "backend": 6
       }
     },
     {
       "pattern": "rag+info",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 0.0,
       "grounded_rate": 1.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "Graphify": 3
+        "Graphify": 6
       },
       "agents": {
-        "rag-local": 3
+        "rag-local": 6
       }
     },
     {
       "pattern": "ux-ui+review",
-      "total": 3,
+      "total": 6,
       "fallback_rate": 1.0,
       "grounded_rate": 1.0,
       "pending_count": 0,
-      "confirmed_count": 3,
+      "confirmed_count": 6,
       "success_rate": 1.0,
       "confidence_avg": 0.95,
       "engines": {
-        "Graphify": 3
+        "Graphify": 6
       },
       "agents": {
-        "ux-ui": 3
+        "ux-ui": 6
       }
     }
   ]

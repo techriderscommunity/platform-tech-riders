@@ -13,8 +13,8 @@ param tags = {
 // CAF naming conventions + service constraints (global uniqueness where required).
 param logAnalyticsWorkspaceName = 'log-techriders-dev'
 param applicationInsightsName = 'appi-techriders-dev'
-param appServicePlanName = 'asp-techriders-dev'
-param webAppName = 'app-techriders-dev'
+param appServicePlanName = 'ASP-RGPlataformaTechRiders-9a12'
+param webAppName = 'apitetxito'
 param sqlServerName = 'sql-techriders-dev'
 param sqlDatabaseName = 'sqldb-techriders-dev'
 param keyVaultName = 'kv-techriders-dev'

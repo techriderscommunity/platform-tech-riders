@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TechRiders.Domain.Entities.Empleo;
+using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
 using TechRiders.Infrastructure.Data;
 
@@ -57,7 +57,7 @@ public sealed class CandidaturaRepository : Repository<Candidatura>, ICandidatur
     public async Task<IEnumerable<Candidatura>> GetContratadasAsync(Guid ofertaId, CancellationToken cancellationToken = default)
     {
         var candidaturas = await FindAsync(
-            predicate: c => c.IsActive && c.OfertaId == ofertaId && c.Estado == CandidaturaEstado.Contratado,
+            predicate: c => c.IsActive && c.OfertaId == ofertaId && c.Estado == CandidaturaEstado.Contratada,
             cancellationToken: cancellationToken
         );
         return candidaturas.OrderByDescending(c => c.FechaSolicitud);

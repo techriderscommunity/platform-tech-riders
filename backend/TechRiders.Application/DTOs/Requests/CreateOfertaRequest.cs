@@ -1,42 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TechRiders.Application.DTOs.Requests;
 
-/// <summary>
-/// Request to create a new job offer
-/// </summary>
 public class CreateOfertaRequest
 {
-    /// <summary>
-    /// Job title
-    /// </summary>
-    public required string Titulo { get; set; }
+    [Required]
+    [StringLength(200)]
+    public string Titulo { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Company name
-    /// </summary>
-    public required string Empresa { get; set; }
+    [Required]
+    [StringLength(200)]
+    public string Empresa { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Job description/details
-    /// </summary>
-    public required string Descripcion { get; set; }
+    [Required]
+    public string Descripcion { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Salary range or amount
-    /// </summary>
+    [Range(0, 10000000)]
     public decimal Salario { get; set; }
 
-    /// <summary>
-    /// Job location
-    /// </summary>
-    public required string Ubicacion { get; set; }
+    [StringLength(200)]
+    public string Ubicacion { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Work modality (Remote, Hybrid, On-site)
-    /// </summary>
-    public required int Modalidad { get; set; }
+    [Range(0, 2)]
+    public int Modalidad { get; set; }
 
-    /// <summary>
-    /// Job requirements
-    /// </summary>
-    public required string Requisitos { get; set; }
+    public string Requisitos { get; set; } = string.Empty;
 }

@@ -61,13 +61,6 @@ public class CreateCenterRequest
     public string? Specialty { get; set; }
 
     /// <summary>
-    /// Número aproximado de estudiantes
-    /// </summary>
-    /// <example>450</example>
-    [Range(0, 100000, ErrorMessage = "El número de estudiantes debe estar entre 0 y 100000")]
-    public int? NumberStudents { get; set; }
-
-    /// <summary>
     /// Ubicación física del centro
     /// </summary>
     /// <example>Calle Principal 123, 28001 Madrid</example>

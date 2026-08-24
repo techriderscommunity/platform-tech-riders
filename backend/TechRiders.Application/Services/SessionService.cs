@@ -1,17 +1,15 @@
+using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
-using Mapster;
-using MapsterMapper;
 
 namespace TechRiders.Application.Services;
 
 /// <summary>
-/// Servicio de aplicación para gestión de sesiones
-/// Implementa la lógica de negocio y orquesta operaciones del dominio
+/// Orchestrates session lifecycle and validates time and room constraints for the event domain.
 /// </summary>
 public class SessionService : ISessionService
 {
@@ -31,7 +29,7 @@ public class SessionService : ISessionService
 
     public async Task<IEnumerable<SessionResponse>> GetAllSessionsAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo todas las sesiones activas");
+        _logger.LogInformation("Getting all active sessions");
 
         var sessions = await _unitOfWork.Sessions.GetActiveSessionsAsync(cancellationToken);
         return _mapper.Map<IEnumerable<SessionResponse>>(sessions);
@@ -39,13 +37,13 @@ public class SessionService : ISessionService
 
     public async Task<SessionResponse?> GetSessionByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo sesión con ID: {SessionId}", id);
+        _logger.LogInformation("Getting session with ID: {SessionId}", id);
 
         var session = await _unitOfWork.Sessions.GetSessionWithEventAsync(id, cancellationToken);
 
         if (session == null || !session.IsActive)
         {
-            _logger.LogWarning("Sesión con ID {SessionId} no encontrada o inactiva", id);
+            _logger.LogWarning("Session with ID {SessionId} was not found or is inactive", id);
             return null;
         }
 
@@ -53,71 +51,68 @@ public class SessionService : ISessionService
     }
 
     public async Task<IEnumerable<SessionResponse>> GetSessionsByEventIdAsync(
-        Guid eventId, 
+        Guid eventId,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo sesiones del evento: {EventId}", eventId);
+        _logger.LogInformation("Getting sessions for event: {EventId}", eventId);
 
         var sessions = await _unitOfWork.Sessions.GetSessionsByEventIdAsync(eventId, cancellationToken);
         return _mapper.Map<IEnumerable<SessionResponse>>(sessions);
     }
 
     public async Task<IEnumerable<SessionResponse>> GetSessionsBySpeakerAsync(
-        string speaker, 
+        string speaker,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo sesiones del ponente: {Speaker}", speaker);
+        _logger.LogInformation("Getting sessions for speaker: {Speaker}", speaker);
 
         var sessions = await _unitOfWork.Sessions.GetSessionsBySpeakerAsync(speaker, cancellationToken);
         return _mapper.Map<IEnumerable<SessionResponse>>(sessions);
     }
 
     public async Task<IEnumerable<SessionResponse>> GetSessionsByLevelAsync(
-        string level, 
+        string level,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Obteniendo sesiones de nivel: {Level}", level);
+        _logger.LogInformation("Getting sessions for level: {Level}", level);
 
         var sessions = await _unitOfWork.Sessions.GetSessionsByLevelAsync(level, cancellationToken);
         return _mapper.Map<IEnumerable<SessionResponse>>(sessions);
     }
 
     public async Task<SessionResponse> CreateSessionAsync(
-        CreateSessionRequest request, 
+        CreateSessionRequest request,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Creando nueva sesión: {SessionTitle}", request.Title);
+        _logger.LogInformation("Creating new session: {SessionTitle}", request.Title);
 
-        // Validación de negocio: tiempos
         if (request.EndTime <= request.StartTime)
         {
-            _logger.LogWarning("Intento de crear sesión con horarios inválidos");
-            throw new InvalidOperationException("La hora de finalización debe ser posterior a la hora de inicio");
+            _logger.LogWarning("Attempt to create session with invalid time range");
+            throw new InvalidOperationException("The end time must be later than the start time");
         }
 
-        // Validación de negocio: evento existe
         var evento = await _unitOfWork.Events.GetByIdAsync(request.EventId, cancellationToken);
         if (evento == null || !evento.IsActive)
         {
-            _logger.LogWarning("Intento de crear sesión para evento inexistente o inactivo: {EventId}", request.EventId);
-            throw new InvalidOperationException($"El evento con ID {request.EventId} no existe o está inactivo");
+            _logger.LogWarning("Attempt to create session for inactive or missing event: {EventId}", request.EventId);
+            throw new InvalidOperationException($"The event with ID {request.EventId} does not exist or is inactive");
         }
 
-        // Validación de negocio: conflicto de horarios en la sala
         if (!string.IsNullOrEmpty(request.Room))
         {
             var hasConflict = await _unitOfWork.Sessions.HasTimeConflictAsync(
-                request.EventId, 
-                request.Room, 
-                request.StartTime, 
+                request.EventId,
+                request.Room,
+                request.StartTime,
                 request.EndTime,
                 null,
                 cancellationToken);
 
             if (hasConflict)
             {
-                _logger.LogWarning("Conflicto de horario detectado en sala {Room}", request.Room);
-                throw new InvalidOperationException($"Ya existe una sesión en la sala '{request.Room}' en ese horario");
+                _logger.LogWarning("Time conflict detected in room {Room}", request.Room);
+                throw new InvalidOperationException($"A session already exists in room '{request.Room}' at that time");
             }
         }
 
@@ -126,37 +121,35 @@ public class SessionService : ISessionService
         await _unitOfWork.Sessions.AddAsync(session, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Sesión creada exitosamente con ID: {SessionId}", session.Id);
+        _logger.LogInformation("Session created successfully with ID: {SessionId}", session.Id);
 
         return _mapper.Map<SessionResponse>(session);
     }
 
     public async Task<SessionResponse?> UpdateSessionAsync(
-        Guid id, 
-        UpdateSessionRequest request, 
+        Guid id,
+        UpdateSessionRequest request,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Actualizando sesión con ID: {SessionId}", id);
+        _logger.LogInformation("Updating session with ID: {SessionId}", id);
 
         var session = await _unitOfWork.Sessions.GetByIdAsync(id, cancellationToken);
 
         if (session == null || !session.IsActive)
         {
-            _logger.LogWarning("Sesión con ID {SessionId} no encontrada o inactiva", id);
+            _logger.LogWarning("Session with ID {SessionId} was not found or is inactive", id);
             return null;
         }
 
-        // Validación de negocio para tiempos
         var newStartTime = request.StartTime ?? session.StartTime;
         var newEndTime = request.EndTime ?? session.EndTime;
 
         if (newEndTime <= newStartTime)
         {
-            _logger.LogWarning("Intento de actualizar sesión con horarios inválidos");
-            throw new InvalidOperationException("La hora de finalización debe ser posterior a la hora de inicio");
+            _logger.LogWarning("Attempt to update session with invalid time range");
+            throw new InvalidOperationException("The end time must be later than the start time");
         }
 
-        // Validación de conflicto de horarios si cambia la sala o los horarios
         var newRoom = request.Room ?? session.Room;
         if (!string.IsNullOrEmpty(newRoom))
         {
@@ -170,8 +163,8 @@ public class SessionService : ISessionService
 
             if (hasConflict)
             {
-                _logger.LogWarning("Conflicto de horario detectado en sala {Room}", newRoom);
-                throw new InvalidOperationException($"Ya existe una sesión en la sala '{newRoom}' en ese horario");
+                _logger.LogWarning("Time conflict detected in room {Room}", newRoom);
+                throw new InvalidOperationException($"A session already exists in room '{newRoom}' at that time");
             }
         }
 
@@ -180,30 +173,29 @@ public class SessionService : ISessionService
         await _unitOfWork.Sessions.UpdateAsync(session, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Sesión actualizada exitosamente: {SessionId}", id);
+        _logger.LogInformation("Session updated successfully: {SessionId}", id);
 
         return _mapper.Map<SessionResponse>(session);
-    }       
+    }
 
     public async Task<bool> DeleteSessionAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Eliminando sesión con ID: {SessionId}", id);
+        _logger.LogInformation("Deleting session with ID: {SessionId}", id);
 
         var session = await _unitOfWork.Sessions.GetByIdAsync(id, cancellationToken);
 
         if (session == null || !session.IsActive)
         {
-            _logger.LogWarning("Sesión con ID {SessionId} no encontrada o ya inactiva", id);
+            _logger.LogWarning("Session with ID {SessionId} was not found or is already inactive", id);
             return false;
         }
 
-        // Eliminación lógica
         session.IsActive = false;
 
         await _unitOfWork.Sessions.UpdateAsync(session, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Sesión eliminada (lógicamente) exitosamente: {SessionId}", id);
+        _logger.LogInformation("Session logically deleted successfully: {SessionId}", id);
 
         return true;
     }

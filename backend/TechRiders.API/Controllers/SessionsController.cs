@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TechRiders.Api.Contracts.Requests.Sessions;
-using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
 using TechRiders.Application.Interfaces;
@@ -20,16 +19,13 @@ public class SessionsController : BaseApiController
 {
     private readonly ISessionService _sessionService;
     private readonly ILogger<SessionsController> _logger;
-    private readonly IIntranetRuntimeOperationsService _runtimeOperationsService;
 
     public SessionsController(
         ISessionService sessionService,
-        ILogger<SessionsController> logger,
-        IIntranetRuntimeOperationsService runtimeOperationsService)
+        ILogger<SessionsController> logger)
     {
         _sessionService = sessionService;
         _logger = logger;
-        _runtimeOperationsService = runtimeOperationsService;
     }
 
     /// <summary>
@@ -56,50 +52,6 @@ public class SessionsController : BaseApiController
         {
             _logger.LogError(ex, "Error al obtener todas las sesiones");
             return StatusCode(500, "Error al obtener las sesiones");
-        }
-    }
-
-    [HttpGet("workflow")]
-    [SwaggerOperation(
-        Summary = "Obtener estado operativo de sesiones",
-        Description = "Retorna el estado operativo (pendiente, confirmada, cancelada) y la asignación de ambassador para cada sesión con workflow gestionado desde backend.",
-        OperationId = "GetSessionsWorkflow"
-    )]
-    [SwaggerResponse(200, "Workflow de sesiones obtenido exitosamente")]
-    [ProducesResponseType(typeof(IDictionary<string, SessionActionState>), StatusCodes.Status200OK)]
-    public IActionResult GetWorkflow()
-    {
-        var actions = _runtimeOperationsService.GetSessionActions();
-        return Ok(actions);
-    }
-
-    [HttpPut("{id:guid}/workflow")]
-    [SwaggerOperation(
-        Summary = "Actualizar workflow de sesión",
-        Description = "Actualiza el estado operativo y/o ambassador asignado para una sesión en el workflow compartido de backend.",
-        OperationId = "UpdateSessionWorkflow"
-    )]
-    [SwaggerResponse(200, "Workflow actualizado exitosamente")]
-    [SwaggerResponse(400, "Solicitud inválida")]
-    [ProducesResponseType(typeof(SessionActionState), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult UpdateWorkflow(
-        [FromRoute] Guid id,
-        [FromBody] UpdateSessionWorkflowRequest request)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        try
-        {
-            var updatedWorkflow = _runtimeOperationsService.UpdateSessionWorkflow(id, request);
-            return Ok(updatedWorkflow);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
         }
     }
 

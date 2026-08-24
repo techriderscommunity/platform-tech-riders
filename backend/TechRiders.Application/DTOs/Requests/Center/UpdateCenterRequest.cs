@@ -52,12 +52,6 @@ public class UpdateCenterRequest
     public string? Specialty { get; set; }
 
     /// <summary>
-    /// Número aproximado de estudiantes
-    /// </summary>
-    [Range(0, 100000, ErrorMessage = "El número de estudiantes debe estar entre 0 y 100000")]
-    public int? NumberStudents { get; set; }
-
-    /// <summary>
     /// Ubicación física del centro
     /// </summary>
     [StringLength(500, ErrorMessage = "La ubicación no puede exceder 500 caracteres")]

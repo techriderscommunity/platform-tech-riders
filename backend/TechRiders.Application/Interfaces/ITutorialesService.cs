@@ -1,5 +1,5 @@
-using TechRiders.Application.DTOs.Requests;
-using TechRiders.Application.DTOs.Responses;
+using TechRiders.Application.DTOs.Requests.Knowledge;
+using TechRiders.Application.DTOs.Responses.Knowledge;
 
 namespace TechRiders.Application.Interfaces;
 

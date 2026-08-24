@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TechRiders.Domain.Entities;
-using TechRiders.Domain.Entities.Empleo;
-using TechRiders.Domain.Entities.Tutoriales;
-using TechRiders.Domain.Entities.Intranet;
-using TechRiders.Infrastructure.Data.Configurations;
+using TechRiders.Infrastructure.Persistence.Configurations;
 
 namespace TechRiders.Infrastructure.Data;
 
@@ -29,14 +26,31 @@ public class TechRidersDbContext : DbContext
     public DbSet<Session> Sessions => Set<Session>();
 
     /// <summary>
-    /// DbSet de Ambassadors
+    /// DbSet canonico de usuarios.
+    /// Los ambassadors son usuarios con rol ambassador, no una entidad separada.
     /// </summary>
-    public DbSet<Ambassador> Ambassadors => Set<Ambassador>();
+    public DbSet<User> Users => Set<User>();
+
+    /// <summary>
+    /// Alias legacy para consultas de ambassadors.
+    /// Se mantiene solo para compatibilidad con consultas de rol; la tabla real sigue siendo Users.
+    /// </summary>
+    public DbSet<User> Ambassadors => Set<User>();
 
     /// <summary>
     /// DbSet de Centros
     /// </summary>
     public DbSet<Center> Centers => Set<Center>();
+
+    /// <summary>
+    /// DbSet de estudios de centros
+    /// </summary>
+    public DbSet<CenterStudy> CenterStudies => Set<CenterStudy>();
+
+    /// <summary>
+    /// DbSet de contactos de centros
+    /// </summary>
+    public DbSet<CenterContact> CenterContacts => Set<CenterContact>();
 
     /// <summary>
     /// DbSet de Tours FP
@@ -85,6 +99,8 @@ public class TechRidersDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TechRidersDbContext).Assembly);
+
         // Configuración de Evento
         modelBuilder.Entity<Event>(entity =>
         {
@@ -99,13 +115,12 @@ public class TechRidersDbContext : DbContext
             entity.Property(e => e.Description )
                 .HasMaxLength(2000);
 
-            entity.Property(e => e.StartDate)
+            entity.Property(e => e.StartDateTime)
                 .IsRequired()
-                .HasColumnType("datetime2");
+                .HasColumnType("datetimeoffset");
 
-            entity.Property(e => e.EndDate)
-                .IsRequired()
-                .HasColumnType("datetime2");
+            entity.Property(e => e.EndDateTime)
+                .HasColumnType("datetimeoffset");
 
             entity.Property(e => e.Location)
                 .HasMaxLength(300);
@@ -123,9 +138,9 @@ public class TechRidersDbContext : DbContext
                 .HasDefaultValue(true);
 
             // Índices para mejorar el rendimiento
-            entity.HasIndex(e => e.StartDate);
+            entity.HasIndex(e => e.StartDateTime);
             entity.HasIndex(e => e.IsActive);
-            entity.HasIndex(e => new { e.StartDate, e.EndDate });
+            entity.HasIndex(e => new { e.StartDateTime, e.EndDateTime });
 
             // Relación uno a muchos con Sesiones
             entity.HasMany(e => e.Sessions)
@@ -148,13 +163,12 @@ public class TechRidersDbContext : DbContext
             entity.Property(s => s.Description)
                 .HasMaxLength(2000);
 
-            entity.Property(s => s.StartTime)
+            entity.Property(s => s.StartDateTime)
                 .IsRequired()
-                .HasColumnType("time");
+                .HasColumnType("datetimeoffset");
 
-            entity.Property(s => s.EndTime)
-                .IsRequired()
-                .HasColumnType("time");
+            entity.Property(s => s.EndDateTime)
+                .HasColumnType("datetimeoffset");
 
             entity.Property(s => s.Speaker)
                 .HasMaxLength(150);
@@ -181,7 +195,7 @@ public class TechRidersDbContext : DbContext
             entity.HasIndex(s => s.EventId);
             entity.HasIndex(s => s.IsActive);
             entity.HasIndex(s => s.Speaker);
-            entity.HasIndex(s => new { s.EventId, s.StartTime });
+            entity.HasIndex(s => new { s.EventId, s.StartDateTime });
         });
 
         // Configuración de MT_Category
@@ -245,42 +259,26 @@ public class TechRidersDbContext : DbContext
             );
         });
 
-        // Configuración de Ambassador
-        modelBuilder.Entity<Ambassador>(entity =>
+        // Configuración de Ambassador dentro del modelo actual: los ambassadors
+        // se almacenan como usuarios con rol ambassador y no como entidad independiente.
+        modelBuilder.Entity<User>(entity =>
         {
-            entity.ToTable("Ambassadors");
-            entity.HasKey(a => a.Id);
+            entity.ToTable("Users");
+            entity.HasKey(u => u.Id);
 
-            entity.Property(a => a.Nickname).HasMaxLength(100);
-            entity.Property(a => a.Name).IsRequired().HasMaxLength(100);
-            entity.Property(a => a.LastName).IsRequired().HasMaxLength(100);
-            entity.Property(a => a.Email).IsRequired().HasMaxLength(200);
-            entity.Property(a => a.Phone).HasMaxLength(20);
-            entity.Property(a => a.Locality).HasMaxLength(200);
-            entity.Property(a => a.OtherCategory).HasMaxLength(200);
-            entity.Property(a => a.About).HasMaxLength(2000);
-            entity.Property(a => a.Skill).HasMaxLength(1000);
-            entity.Property(a => a.LinkedIn).HasMaxLength(300);
-            entity.Property(a => a.Instagram).HasMaxLength(300);
-            entity.Property(a => a.Github).HasMaxLength(300);
+            entity.Property(u => u.Nickname).HasMaxLength(100);
+            entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
+            entity.Property(u => u.Phone).HasMaxLength(20);
+            entity.Property(u => u.Locality).HasMaxLength(200);
+            entity.Property(u => u.About).HasMaxLength(2000);
+            entity.Property(u => u.LinkedIn).HasMaxLength(300);
+            entity.Property(u => u.Instagram).HasMaxLength(300);
+            entity.Property(u => u.Github).HasMaxLength(300);
 
-            entity.Property(a => a.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            entity.Property(a => a.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true);
-
-            entity.HasOne(a => a.Category)
-                .WithMany(c => c.Ambassadors)
-                .HasForeignKey(a => a.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            entity.HasIndex(a => a.Email);
-            entity.HasIndex(a => a.CategoryId);
-            entity.HasIndex(a => a.IsActive);
-            entity.HasIndex(a => a.IsWorking);
+            entity.HasIndex(u => u.Email);
+            entity.HasIndex(u => u.IsWorking);
         });
 
         // Configuración de Center
@@ -294,12 +292,26 @@ public class TechRidersDbContext : DbContext
             entity.Property(c => c.Email).IsRequired().HasMaxLength(200);
             entity.Property(c => c.Phone).HasMaxLength(20);
             entity.Property(c => c.Locality).HasMaxLength(200);
-            entity.Property(c => c.Studies).HasMaxLength(1000);
             entity.Property(c => c.Specialty).HasMaxLength(500);
             entity.Property(c => c.Location).HasMaxLength(500);
             entity.Property(c => c.Parking).HasMaxLength(500);
             entity.Property(c => c.LinkedIn).HasMaxLength(300);
             entity.Property(c => c.Instagram).HasMaxLength(300);
+
+            entity.HasMany(c => c.Studies)
+                .WithOne(s => s.Center)
+                .HasForeignKey(s => s.CenterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(c => c.Contacts)
+                .WithOne(contact => contact.Center)
+                .HasForeignKey(contact => contact.CenterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(c => c.FPTours)
+                .WithOne(t => t.Center)
+                .HasForeignKey(t => t.CenterId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.Property(c => c.CreatedAt)
                 .IsRequired()
@@ -321,7 +333,7 @@ public class TechRidersDbContext : DbContext
             entity.HasKey(t => t.Id);
 
             entity.Property(t => t.CenterId).IsRequired();
-            entity.Property(t => t.AmbassadorId).IsRequired();
+            entity.Property(t => t.AmbassadorUserId).IsRequired();
 
             entity.Property(t => t.CreatedAt)
                 .IsRequired()
@@ -338,22 +350,23 @@ public class TechRidersDbContext : DbContext
 
             entity.HasOne(t => t.Ambassador)
                 .WithMany(a => a.FPTours)
-                .HasForeignKey(t => t.AmbassadorId)
+                .HasForeignKey(t => t.AmbassadorUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(t => t.CenterId);
-            entity.HasIndex(t => t.AmbassadorId);
+            entity.HasIndex(t => t.AmbassadorUserId);
             entity.HasIndex(t => t.HasScheduledDate);
             entity.HasIndex(t => t.IsActive);
         });
 
-        // Aplicar configuraciones de entidades migrables usando IEntityTypeConfiguration
-        modelBuilder.ApplyConfiguration(new OfertaConfiguration());
-        modelBuilder.ApplyConfiguration(new CandidaturaConfiguration());
-        modelBuilder.ApplyConfiguration(new TutorialConfiguration());
-        modelBuilder.ApplyConfiguration(new IntranetAuditLogConfiguration());
-        modelBuilder.ApplyConfiguration(new IntranetSettingConfiguration());
-        modelBuilder.ApplyConfiguration(new IntranetUserCategoryConfiguration());
+        modelBuilder.Entity<Oferta>(entity =>
+        {
+            entity.Property(o => o.Salario)
+                .HasPrecision(18, 2);
+        });
+
+        // Configuraciones de entidades migrables gestionadas directamente en este DbContext.
+        // No se aplican clases legacy inexistentes en el modelo actual.
 
         // Aplicar convenciones globales
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -1,90 +1,48 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TechRiders.Api.Extensions;
 using TechRiders.Api.Services;
+using TechRiders.Infrastructure.Data;
 using TechRiders.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-const string DynamicAuthScheme = "DynamicJwt";
 const string AzureAdScheme = "AzureAd";
-const string LocalJwtScheme = "LocalJwt";
+const string LocalJwtScheme = JwtBearerDefaults.AuthenticationScheme;
 
 // =====================================================================
 // CONFIGURACIÓN DE SERVICIOS - Dependency Injection
 // =====================================================================
 
-// 1. Configuración de autenticación JWT con Microsoft Identity y JWT local para desarrollo.
-var localAuthOptions = builder.Configuration
-    .GetSection(LocalAuthOptions.SectionName)
-    .Get<LocalAuthOptions>() ?? new LocalAuthOptions();
-
-var localJwtKey = builder.Configuration["JWT_KEY"]
-    ?? builder.Configuration[$"{LocalAuthOptions.SectionName}:JwtKey"];
-
-var isLocalJwtEnabled = builder.Environment.IsDevelopment()
-    && localAuthOptions.Enabled
-    && !string.IsNullOrWhiteSpace(localJwtKey);
-
-builder.Services.Configure<LocalAuthOptions>(builder.Configuration.GetSection(LocalAuthOptions.SectionName));
+var localJwtSigningKey = builder.Configuration["LocalAuth:SigningKey"] ?? "techriders-local-auth-signing-key-2025";
 
 var authenticationBuilder = builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
-    options.DefaultAuthenticateScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
-    options.DefaultChallengeScheme = isLocalJwtEnabled ? DynamicAuthScheme : AzureAdScheme;
-})
-    ;
-
-if (isLocalJwtEnabled)
-{
-    authenticationBuilder
-        .AddPolicyScheme(DynamicAuthScheme, "Azure AD or local JWT", options =>
-        {
-            options.ForwardDefaultSelector = context =>
-            {
-                var authorization = context.Request.Headers.Authorization.ToString();
-                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                {
-                    var token = authorization["Bearer ".Length..].Trim();
-                    if (!string.IsNullOrWhiteSpace(token))
-                    {
-                        var jwtHandler = new JwtSecurityTokenHandler();
-                        if (jwtHandler.CanReadToken(token))
-                        {
-                            var parsedToken = jwtHandler.ReadJwtToken(token);
-                            if (string.Equals(parsedToken.Issuer, LocalAuthOptions.DefaultIssuer, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return LocalJwtScheme;
-                            }
-                        }
-                    }
-                }
-
-                return AzureAdScheme;
-            };
-        })
-        .AddJwtBearer(LocalJwtScheme, options =>
-        {
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = LocalAuthOptions.DefaultIssuer,
-                ValidateAudience = true,
-                ValidAudience = LocalAuthOptions.DefaultAudience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtKey!)),
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromMinutes(2),
-            };
-        });
-}
+    options.DefaultScheme = LocalJwtScheme;
+    options.DefaultAuthenticateScheme = LocalJwtScheme;
+    options.DefaultChallengeScheme = LocalJwtScheme;
+});
 
 authenticationBuilder
+    .AddJwtBearer(LocalJwtScheme, options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["LocalAuth:Issuer"] ?? "TechRidersLocalAuth",
+            ValidAudience = builder.Configuration["LocalAuth:Audience"] ?? "TechRidersApi",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtSigningKey)),
+            ClockSkew = TimeSpan.FromMinutes(1)
+        };
+    })
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"), jwtBearerScheme: AzureAdScheme)
         .EnableTokenAcquisitionToCallDownstreamApi()
             .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
@@ -95,13 +53,6 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // 3. Configuración de servicios de aplicación (servicios de negocio, Mapster)
 builder.Services.AddApplicationServices();
-
-// 3.1 Estado MVP en memoria para flujos locales mientras no exista persistencia definitiva.
-builder.Services.AddSingleton<IMvpRuntimeRepository, InMemoryMvpRuntimeRepository>();
-builder.Services.AddScoped<IIntranetRuntimeOperationsService, IntranetRuntimeOperationsService>();
-builder.Services.AddScoped<IPublicEngagementIntakeService, PublicEngagementIntakeService>();
-builder.Services.AddSingleton<IPublicContentService, PublicContentService>();
-builder.Services.AddScoped<ILocalAuthenticationService, LocalAuthenticationService>();
 
 // 4. Configuración de Controllers con validación de modelo automática
 builder.Services.AddControllers(options =>
@@ -211,9 +162,43 @@ app.MapHealthChecks("/health");
 // INICIALIZACIÓN Y EJECUCIÓN
 // =====================================================================
 
+// Inicialización de la base de datos al arrancar la API.
+// Este proyecto usa un flujo code-first con Entity Framework Core: el modelo C# define el esquema
+// y todas las bases relacionales se gestionan con migraciones.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TechRidersDbContext>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+
+    if (dbContext.Database.IsRelational())
+    {
+        var canConnect = dbContext.Database.CanConnect();
+        if (!canConnect)
+        {
+            dbContext.Database.Migrate();
+            app.Logger.LogInformation("La base de datos relacional no existía y se aplicaron las migraciones pendientes.");
+        }
+        else
+        {
+            dbContext.Database.Migrate();
+            app.Logger.LogInformation("Base de datos relacional detectada, conectada y validada con migraciones code-first.");
+        }
+    }
+    else
+    {
+        dbContext.Database.EnsureCreated();
+        app.Logger.LogInformation("Base de datos en memoria creada con EnsureCreated().");
+    }
+
+    await LocalAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
+}
+
 // Logging de inicio
 app.Logger.LogInformation("TechRiders API iniciando...");
 app.Logger.LogInformation("Entorno: {Environment}", app.Environment.EnvironmentName);
 app.Logger.LogInformation("Swagger UI disponible en: /swagger");
 
 app.Run();
+
+public partial class Program { }

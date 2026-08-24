@@ -1,17 +1,20 @@
+using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using TechRiders.Application.DTOs.Requests.FPTour;
 using TechRiders.Application.DTOs.Responses.FPTour;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
-using Mapster;
-using MapsterMapper;
+
 namespace TechRiders.Application.Services;
 
+/// <summary>
+/// Coordinates field-program tour workflows while persistence remains behind the unit-of-work abstraction.
+/// </summary>
 public class FPTourService : IFPTourService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;   
+    private readonly IMapper _mapper;
     private readonly ILogger<FPTourService> _logger;
 
     public FPTourService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<FPTourService> logger)
@@ -54,9 +57,8 @@ public class FPTourService : IFPTourService
 
     public async Task<FPTourResponse> CreateFPTourAsync(CreateFPTourRequest request, CancellationToken cancellationToken = default)
     {
-        // Validar que center y ambassador existan
         var centerExists = await _unitOfWork.Centers.ExistsAsync(c => c.Id == request.CenterId && c.IsActive, cancellationToken);
-        var ambassadorExists = await _unitOfWork.Ambassadors.ExistsAsync(a => a.Id == request.AmbassadorId && a.IsActive, cancellationToken);
+        var ambassadorExists = await _unitOfWork.Ambassadors.IsAmbassadorAsync(request.AmbassadorId, cancellationToken);
 
         if (!centerExists) throw new InvalidOperationException($"Center with ID {request.CenterId} does not exist");
         if (!ambassadorExists) throw new InvalidOperationException($"Ambassador with ID {request.AmbassadorId} does not exist");
@@ -81,7 +83,7 @@ public class FPTourService : IFPTourService
 
         if (request.AmbassadorId.HasValue)
         {
-            var ambassadorExists = await _unitOfWork.Ambassadors.ExistsAsync(a => a.Id == request.AmbassadorId.Value && a.IsActive, cancellationToken);
+            var ambassadorExists = await _unitOfWork.Ambassadors.IsAmbassadorAsync(request.AmbassadorId.Value, cancellationToken);
             if (!ambassadorExists) throw new InvalidOperationException($"Ambassador with ID {request.AmbassadorId.Value} does not exist");
         }
 

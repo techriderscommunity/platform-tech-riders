@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-09T00:34:45.856854+00:00",
+  "timestamp": "2026-08-24T13:45:17.442621+00:00",
   "source": "observability/logs/iteration-metrics.jsonl",
   "filters": {
     "source": "copilot-session",
@@ -7,11 +7,11 @@
     "to": ""
   },
   "totals": {
-    "events": 15,
-    "input_tokens": 1928889,
-    "output_tokens": 101419,
-    "total_tokens": 2030308,
-    "copilot_credits": 880.857018
+    "events": 38,
+    "input_tokens": 3941831,
+    "output_tokens": 512248,
+    "total_tokens": 4454079,
+    "copilot_credits": 1110.364116
   },
   "breakdown": {
     "model": {
@@ -21,6 +21,13 @@
         "output_tokens": 101419,
         "total_tokens": 2030308,
         "copilot_credits": 880.857018
+      },
+      "copilot/mai-code-1.1-flash": {
+        "count": 23,
+        "input_tokens": 2012942,
+        "output_tokens": 410829,
+        "total_tokens": 2423771,
+        "copilot_credits": 229.507098
       }
     },
     "day": {
@@ -44,6 +51,27 @@
         "output_tokens": 37290,
         "total_tokens": 682523,
         "copilot_credits": 288.036631
+      },
+      "2026-08-20": {
+        "count": 3,
+        "input_tokens": 260858,
+        "output_tokens": 156678,
+        "total_tokens": 417536,
+        "copilot_credits": 78.66670699999999
+      },
+      "2026-08-21": {
+        "count": 15,
+        "input_tokens": 1344827,
+        "output_tokens": 205456,
+        "total_tokens": 1550283,
+        "copilot_credits": 123.27739899999999
+      },
+      "2026-08-24": {
+        "count": 5,
+        "input_tokens": 407257,
+        "output_tokens": 48695,
+        "total_tokens": 455952,
+        "copilot_credits": 27.562992
       }
     }
   },
@@ -55,10 +83,10 @@
     "official_plans_url": "https://github.com/features/copilot/plans?ref_cta=View+pricing+and+plans&ref_loc=hero&ref_page=%2Ffeatures_copilot_copilot_business&plans=business"
   },
   "budget": {
-    "used_copilot_credits": 880.857018,
-    "budget_utilization_rate": 46.360896,
-    "overage_credits": 861.857018,
-    "equivalent_seats_used": 46.360896,
-    "percent_of_one_seat": 4636.09
+    "used_copilot_credits": 1110.364116,
+    "budget_utilization_rate": 58.440217,
+    "overage_credits": 1091.364116,
+    "equivalent_seats_used": 58.440217,
+    "percent_of_one_seat": 5844.02
   }
 }

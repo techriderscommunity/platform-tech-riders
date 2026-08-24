@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TechRiders.Application.DTOs.Responses.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet.AdminDashboard;
 using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
@@ -9,7 +9,7 @@ namespace TechRiders.Api.Controllers;
 [ApiController]
 [Route("api/admin/dashboard")]
 [Produces("application/json")]
-public sealed class AdminDashboardController : ControllerBase
+public sealed class AdminDashboardController : BaseApiController
 {
     private readonly IAdminDashboardService _adminDashboardService;
     private readonly ILogger<AdminDashboardController> _logger;

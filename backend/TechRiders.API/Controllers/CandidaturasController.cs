@@ -7,10 +7,9 @@ using TechRiders.Application.Interfaces;
 namespace TechRiders.Api.Controllers;
 
 [ApiController]
-[Route("api/candidaturas")]
 [Route("api/applications")]
 [Produces("application/json")]
-public class ApplicationsController : ControllerBase
+public class ApplicationsController : BaseApiController
 {
     private readonly IEmploymentService _empleoService;
     private readonly ILogger<ApplicationsController> _logger;
@@ -21,22 +20,21 @@ public class ApplicationsController : ControllerBase
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    [HttpGet("oferta/{ofertaId}")]
-    [HttpGet("offer/{ofertaId}")]
+    [HttpGet("offer/{offerId}")]
     [Authorize(Roles = "Admin,Manager")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CandidaturaResponse>))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetByOferta(Guid ofertaId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByOffer(Guid offerId, CancellationToken cancellationToken)
     {
         try
         {
-            var candidaturas = await _empleoService.GetCandidaturasByOfertaAsync(ofertaId, cancellationToken);
+            var candidaturas = await _empleoService.GetCandidaturasByOfertaAsync(offerId, cancellationToken);
             return Ok(candidaturas);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving applications for offer {OfertaId}", ofertaId);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            _logger.LogError(ex, "Error retrieving applications for offer {OfferId}", offerId);
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -54,7 +52,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving applications for junior {JuniorId}", juniorId);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -76,7 +74,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving application {CandidaturaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -108,7 +106,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating application");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -133,7 +131,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error advancing application {CandidaturaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -157,7 +155,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error rejecting application {CandidaturaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -181,7 +179,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error hiring candidate {CandidaturaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -205,7 +203,7 @@ public class ApplicationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting application {CandidaturaId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+            return CreateErrorResponse("Internal server error", StatusCodes.Status500InternalServerError);
         }
     }
 }

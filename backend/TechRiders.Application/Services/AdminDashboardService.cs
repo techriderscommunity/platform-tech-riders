@@ -1,4 +1,4 @@
-using TechRiders.Application.DTOs.Responses.Intranet;
+using TechRiders.Application.DTOs.Responses.Intranet.AdminDashboard;
 using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Interfaces;
 
@@ -36,7 +36,7 @@ public sealed class AdminDashboardService : IAdminDashboardService
                 .Count(),
             Events = await _unitOfWork.Events.CountAsync(cancellationToken: cancellationToken),
             Sessions = await _unitOfWork.Sessions.CountAsync(cancellationToken: cancellationToken),
-            Ambassadors = await _unitOfWork.Ambassadors.CountAsync(cancellationToken: cancellationToken),
+            Ambassadors = await _unitOfWork.Ambassadors.CountActiveAmbassadorsAsync(cancellationToken),
             JobOffers = await _unitOfWork.Ofertas.CountAsync(cancellationToken: cancellationToken),
             Applications = await _unitOfWork.Candidaturas.CountAsync(cancellationToken: cancellationToken),
         };

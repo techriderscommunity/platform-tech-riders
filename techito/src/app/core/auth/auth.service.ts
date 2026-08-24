@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap, catchError, throwError } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { environment } from '@env/environment';
 
 export type AppRole =
@@ -29,48 +29,6 @@ export interface LoginResponse {
   user: UserProfile;
 }
 
-type DemoCredential = {
-  email: string;
-  password: string;
-  user: UserProfile;
-};
-
-const DEMO_CREDENTIALS: DemoCredential[] = [
-  {
-    email: 'admin@techriders.es',
-    password: 'secret',
-    user: {
-      id: 'demo-admin',
-      email: 'admin@techriders.es',
-      name: 'Admin Demo',
-      role: 'admin',
-      roles: ['admin'],
-    },
-  },
-  {
-    email: 'staff@techriders.es',
-    password: 'secret',
-    user: {
-      id: 'demo-staff',
-      email: 'staff@techriders.es',
-      name: 'Staff Demo',
-      role: 'staff',
-      roles: ['staff'],
-    },
-  },
-  {
-    email: 'junior@techriders.es',
-    password: 'secret',
-    user: {
-      id: 'demo-junior',
-      email: 'junior@techriders.es',
-      name: 'Junior Demo',
-      role: 'junior',
-      roles: ['junior'],
-    },
-  },
-];
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly baseUrl = environment.apiUrl;
@@ -85,29 +43,10 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    const inputEmail = email.trim().toLowerCase();
-    const inputPassword = password.trim();
-
-    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, { email, password })
+    return this.http.post<unknown>(`${this.baseUrl}/auth/login`, { email, password })
       .pipe(
+        map((response) => this.normalizeLoginResponse(response)),
         tap((response) => this.persistSession(response)),
-        catchError((error) => {
-          const demoAccount = DEMO_CREDENTIALS.find(demo =>
-            demo.email.toLowerCase() === inputEmail && demo.password === inputPassword,
-          );
-
-          if (!demoAccount) {
-            return throwError(() => error);
-          }
-
-          const demoResponse: LoginResponse = {
-            token: `demo-token-${demoAccount.user.role}`,
-            user: demoAccount.user,
-          };
-
-          this.persistSession(demoResponse);
-          return of(demoResponse);
-        }),
       );
   }
 
@@ -169,6 +108,30 @@ export class AuthService {
       role: this.resolvePrimaryRole(normalizedRoles),
       roles: normalizedRoles,
     };
+  }
+
+  private normalizeLoginResponse(response: unknown): LoginResponse {
+    const payload = (response ?? {}) as Partial<LoginResponse> & {
+      Token?: string;
+      User?: Partial<UserProfile> & {
+        Id?: string;
+        Email?: string;
+        Name?: string;
+        Role?: string;
+        Roles?: Array<string | AppRole>;
+      };
+    };
+
+    const token = (payload.token ?? payload.Token ?? '').toString();
+    const user = {
+      id: payload.user?.id ?? payload.User?.Id ?? '',
+      email: payload.user?.email ?? payload.User?.Email ?? '',
+      name: payload.user?.name ?? payload.User?.Name ?? '',
+      role: (payload.user?.role ?? payload.User?.Role ?? 'junior') as AppRole,
+      roles: (payload.user?.roles ?? payload.User?.Roles ?? []) as AppRole[],
+    };
+
+    return { token, user: this.normalizeUser(user) };
   }
 
   private persistSession(response: LoginResponse): void {
