@@ -2,5 +2,5 @@
   <Project Path="TechRiders.Application/TechRiders.Application.csproj" />
   <Project Path="TechRiders.Domain/TechRiders.Domain.csproj" />
   <Project Path="TechRiders.Infrastructure/TechRiders.Infrastructure.csproj" />
-  <Project Path="TechRiders.Api/TechRiders.Api.csproj" />
+  <Project Path="TechRiders.API/TechRiders.Api.csproj" />
 </Solution>
