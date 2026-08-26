@@ -15,6 +15,18 @@ import re
 import sys
 from pathlib import Path
 
+
+def configure_console() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+def console_text(value: str) -> str:
+    return value.replace("→", "->")
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -88,7 +100,7 @@ def check_no_secrets_in_artefacts() -> list[str]:
             for m in SECRET_PATTERN.finditer(text):
                 line_no = text[: m.start()].count("\n") + 1
                 rel = path.relative_to(REPO_ROOT)
-                errors.append(f"POTENTIAL SECRET at {rel}:{line_no} → {m.group()[:60]!r}")
+                errors.append(console_text(f"POTENTIAL SECRET at {rel}:{line_no} → {m.group()[:60]!r}"))
     return errors
 
 

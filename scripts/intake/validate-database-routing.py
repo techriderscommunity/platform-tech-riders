@@ -18,6 +18,18 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 RESOLVE_SCRIPT = REPO_ROOT / "scripts" / "intake" / "resolve-routing.py"
 
 
+def configure_console() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+def console_text(value: str) -> str:
+    return value.replace("→", "->")
+
+
 def run_routing(**kwargs: str) -> dict:
     cmd = [sys.executable, str(RESOLVE_SCRIPT)]
     for k, v in kwargs.items():
@@ -50,6 +62,7 @@ def run_routing(**kwargs: str) -> dict:
 
 
 def main() -> int:
+    configure_console()
     errors: list[str] = []
     print("=== validate-database-routing ===")
 
@@ -65,11 +78,11 @@ def main() -> int:
         if agent != "dba":
             errors.append(f"[FAIL] intent=sql expected agent=dba, got agent={agent!r}")
         else:
-            print(f"[OK] intent=sql → agent={agent}")
+            print(console_text(f"[OK] intent=sql → agent={agent}"))
     except Exception as exc:
         errors.append(f"[FAIL] routing error for intent=sql: {exc}")
 
-    # --- Assertion 2: no resolvable source → grounded=false ---
+    # --- Assertion 2: no resolvable source -> grounded=false ---
     try:
         event = run_routing(
             input="test grounding",
@@ -81,7 +94,7 @@ def main() -> int:
         if grounded is not False:
             errors.append(f"[FAIL] no-source event expected grounded=false, got grounded={grounded!r}")
         else:
-            print("[OK] no-source event → grounded=false")
+            print(console_text("[OK] no-source event → grounded=false"))
     except Exception as exc:
         errors.append(f"[FAIL] routing error for grounded check: {exc}")
 

@@ -18,6 +18,18 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 RESOLVE_SCRIPT = REPO_ROOT / "scripts" / "intake" / "resolve-routing.py"
 
 
+def configure_console() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+def console_text(value: str) -> str:
+    return value.replace("→", "->")
+
+
 def run_routing(**kwargs: str) -> dict:
     cmd = [sys.executable, str(RESOLVE_SCRIPT)]
     for k, v in kwargs.items():
@@ -41,10 +53,11 @@ def run_routing(**kwargs: str) -> dict:
 
 
 def main() -> int:
+    configure_console()
     errors: list[str] = []
     print("=== validate-rag-routing ===")
 
-    # --- Assertion 1: rag domain + technical-docs → rag-local ---
+    # --- Assertion 1: rag domain + technical-docs -> rag-local ---
     try:
         event = run_routing(
             input="explica guia tecnica local",
@@ -56,7 +69,7 @@ def main() -> int:
         if agent != "rag-local":
             errors.append(f"[FAIL] expected agent=rag-local, got agent={agent!r}")
         else:
-            print(f"[OK] domain=rag + technical-docs → agent={agent}")
+            print(console_text(f"[OK] domain=rag + technical-docs → agent={agent}"))
 
         # --- Assertion 2: grounded=true with explicit sources ---
         grounded = event.get("grounded")
