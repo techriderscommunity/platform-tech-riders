@@ -17,6 +17,7 @@ import {
 } from './models/intranet-home.models';
 import { INTRANET_NAV_SECTIONS } from './intranet-nav.config';
 import { IntranetHomeService } from './services/intranet-home.service';
+import { UiTextField } from '@shared/ui/text-field/text-field';
 
 const ROLE_LABELS: Record<string, string> = {
   superadmin: 'Superadmin',
@@ -34,7 +35,7 @@ const ROLE_LABELS: Record<string, string> = {
   selector: 'app-intranet-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, UiTextField],
   templateUrl: './intranet-home.html',
   styleUrl: './intranet-home.scss'
 })
@@ -50,6 +51,7 @@ export class IntranetHome {
     ),
   );
   readonly selectedCategories = signal<string[]>([]);
+  readonly searchTerm = signal('');
   availableCategories: string[] = [];
   readonly categoriesSaving = signal(false);
 

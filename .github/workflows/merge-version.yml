@@ -1,0 +1,67 @@
+name: Merge Version Bump
+
+on:
+  workflow_run:
+    workflows: [Quality Gates]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-version-main
+  cancel-in-progress: false
+
+jobs:
+  bump-version:
+    name: Bump patch version after a valid main merge
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Git identity
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump repository version
+        id: version
+        shell: pwsh
+        run: |
+          $versionFile = "version.json"
+          $versionState = Get-Content $versionFile -Raw | ConvertFrom-Json
+          $current = [version]$versionState.version
+          $next = [version]::new($current.Major, $current.Minor, $current.Build + 1)
+
+          $versionState.version = $next.ToString()
+          $versionState | ConvertTo-Json -Depth 4 | Set-Content $versionFile -Encoding utf8
+
+          Push-Location techito
+          npm version $next.ToString() --no-git-tag-version --allow-same-version
+          Pop-Location
+
+          "version=$next" >> $env:GITHUB_OUTPUT
+
+      - name: Commit and tag version
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          git add version.json techito/package.json techito/package-lock.json
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "No version changes to commit."
+            exit 0
+          }
+
+          git commit -m "chore(release): bump version to v$version [skip ci]"
+          git tag "v$version"
+          git push origin main
+          git push origin "v$version"

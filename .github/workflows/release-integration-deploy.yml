@@ -1,0 +1,166 @@
+name: Release Integration and Azure Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version to validate and deploy, for example v0.0.1.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: release-deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  AZURE_RESOURCE_GROUP: RG-PlataformaTechRiders
+  AZURE_WEBAPP_NAME: apitetxito
+  AZURE_STATIC_WEB_APP_NAME: techito
+
+jobs:
+  validate-release:
+    name: Validate release against main
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout release ref
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify release commit belongs to main
+        shell: pwsh
+        run: |
+          git fetch origin main --tags
+          $containsMain = git branch --remotes --contains HEAD | Select-String 'origin/main'
+          if (-not $containsMain) {
+            Write-Error "Release ref is not integrated into origin/main."
+            exit 1
+          }
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: techito/package-lock.json
+
+      - name: Validate backend
+        shell: pwsh
+        run: |
+          dotnet restore .\backend\TechRiders.slnx
+          dotnet build .\backend\TechRiders.slnx --configuration Release --no-restore
+          dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --no-build --logger "console;verbosity=minimal"
+
+      - name: Validate frontend
+        shell: pwsh
+        working-directory: techito
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run build
+          npm run test:unit:ci
+          npm run enforce:shared-ui
+
+      - name: Validate Azure infrastructure definition
+        shell: pwsh
+        run: |
+          az bicep build --file .\infra\main.bicep --outfile .\infra\main.json
+          az bicep build-params --file .\infra\main.dev.bicepparam
+
+  deploy-backend:
+    name: Deploy backend App Service
+    runs-on: windows-latest
+    needs: validate-release
+
+    steps:
+      - name: Checkout release ref
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Validate Azure OIDC secrets
+        shell: pwsh
+        run: |
+          if (-not "${{ secrets.AZURE_CLIENT_ID }}") { throw "Missing secret AZURE_CLIENT_ID" }
+          if (-not "${{ secrets.AZURE_TENANT_ID }}") { throw "Missing secret AZURE_TENANT_ID" }
+          if (-not "${{ secrets.AZURE_SUBSCRIPTION_ID }}") { throw "Missing secret AZURE_SUBSCRIPTION_ID" }
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-if Azure infrastructure
+        shell: pwsh
+        run: |
+          az deployment group what-if `
+            --resource-group $env:AZURE_RESOURCE_GROUP `
+            --template-file .\infra\main.bicep `
+            --parameters .\infra\main.dev.bicepparam `
+            --result-format ResourceIdOnly
+
+      - name: Publish backend
+        shell: pwsh
+        run: dotnet publish .\backend\TechRiders.API\TechRiders.Api.csproj --configuration Release --output .\artifacts\backend
+
+      - name: Package backend
+        shell: pwsh
+        run: Compress-Archive -Path .\artifacts\backend\* -DestinationPath .\artifacts\backend.zip -Force
+
+      - name: Deploy backend
+        shell: pwsh
+        run: |
+          az webapp deploy `
+            --resource-group $env:AZURE_RESOURCE_GROUP `
+            --name $env:AZURE_WEBAPP_NAME `
+            --src-path .\artifacts\backend.zip `
+            --type zip
+
+  deploy-frontend:
+    name: Deploy frontend Static Web App
+    runs-on: ubuntu-latest
+    needs: validate-release
+
+    steps:
+      - name: Checkout release ref
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Validate Azure SWA deployment secret
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_SMOKE_045FE8F03 }}" ]; then
+            echo "::error::Missing GitHub secret AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_SMOKE_045FE8F03."
+            exit 1
+          fi
+
+      - name: Build and deploy frontend
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_SMOKE_045FE8F03 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: ./techito
+          api_location: ''
+          output_location: dist/techito/browser
+          app_build_command: npm ci && npm run build

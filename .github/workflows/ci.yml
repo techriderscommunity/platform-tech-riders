@@ -27,9 +27,16 @@ jobs:
         shell: pwsh
         run: py -3 -m pip install -r .\requirements.txt
 
+      - name: Install Graphify CLI
+        shell: pwsh
+        run: |
+          py -3 -m pip install --user uv
+          uv tool install graphify
+          graphify install --project
+
       - name: Generate Graphify context index
         shell: pwsh
-        run: py -3 -m graphify extract scripts --no-cluster --out context
+        run: graphify extract . --no-cluster --out context
 
       - name: Compile Python scripts
         shell: pwsh

@@ -1,17 +1,15 @@
 name: Azure Static Web Apps CI/CD
 
 on:
-  push:
-    branches: [main, release]
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches: [main, release]
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
-    name: Build and deploy frontend
+    name: Build and deploy frontend preview
     permissions:
       contents: read
       id-token: write
@@ -67,3 +65,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GRAY_SMOKE_045FE8F03 }}
           action: 'close'
+          app_location: './techito'
