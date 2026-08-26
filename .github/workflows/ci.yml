@@ -1,20 +1,19 @@
-name: CI General — Spec Validation
+name: CI General
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   validate:
-    name: Validate Specs & Code (Windows)
+    name: Validate repo scripts and routing
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,38 +24,28 @@ jobs:
           python-version: '3.11'
 
       - name: Compile Python scripts
-        run: python -m compileall -q .\scripts
         shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
+        run: python -m compileall -q .\scripts
 
       - name: Validate routing evals
-        run: py -3 .\scripts\intake\run-routing-evals.py
         shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
+        run: py -3 .\scripts\intake\run-routing-evals.py
 
       - name: Validate security
-        run: py -3 .\scripts\intake\validate-security.py
         shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
+        run: py -3 .\scripts\intake\validate-security.py
 
       - name: Validate database routing
-        run: py -3 .\scripts\intake\validate-database-routing.py
         shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
+        run: py -3 .\scripts\intake\validate-database-routing.py
 
       - name: Validate RAG routing
-        run: py -3 .\scripts\intake\validate-rag-routing.py
         shell: pwsh
-        env:
-          PYTHONIOENCODING: utf-8
+        run: py -3 .\scripts\intake\validate-rag-routing.py
 
       - name: Validate context
-        run: pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup\validate-context.ps1 -CIMode
         shell: pwsh
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup\validate-context.ps1 -CIMode
 
       - name: Upload eval report
         if: always()
@@ -64,5 +53,5 @@ jobs:
         with:
           name: routing-eval-report
           path: observability/evals/routing-eval-report.json
+          if-no-files-found: ignore
           retention-days: 30
-

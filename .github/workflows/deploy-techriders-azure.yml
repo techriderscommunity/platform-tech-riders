@@ -1,27 +1,22 @@
-name: Deploy TechRiders to Azure App Service
+name: Backend CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  build-and-deploy:
-    name: Build and deploy TechRiders API
+  build-test:
+    name: Restore, build and test .NET backend
     runs-on: ubuntu-latest
 
-    env:
-      AZURE_WEBAPP_NAME: apitetxito
-      AZURE_WEBAPP_RESOURCE_GROUP: RG-PlataformaTechRiders
-      AZURE_SQL_SERVER: techriders
-      AZURE_SQL_DATABASE: TechRidersDB
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up .NET
@@ -35,38 +30,5 @@ jobs:
       - name: Build solution
         run: dotnet build backend/TechRiders.slnx --configuration Release --no-restore
 
-      - name: Publish API
-        run: dotnet publish backend/TechRiders.Api/TechRiders.Api.csproj --configuration Release --output ./publish --no-build
-
-      - name: Verify required Azure secrets
-        shell: bash
-        run: |
-          if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ] || [ -z "${{ secrets.AZURE_SQL_CONNECTION_STRING }}" ]; then
-            echo "Missing required Azure GitHub secrets. Configure AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID and AZURE_SQL_CONNECTION_STRING."
-            exit 1
-          fi
-
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Configure App Service settings
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az webapp config appsettings set \
-              --resource-group "$AZURE_WEBAPP_RESOURCE_GROUP" \
-              --name "$AZURE_WEBAPP_NAME" \
-              --settings \
-              ASPNETCORE_ENVIRONMENT=Production \
-              ConnectionStrings__DefaultConnection="${{ secrets.AZURE_SQL_CONNECTION_STRING }}" \
-              AzureAd__TenantId="${{ secrets.AZURE_TENANT_ID }}"
-
-      - name: Deploy API to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ./publish
+      - name: Run tests
+        run: dotnet test backend/TechRiders.slnx --configuration Release --no-build --logger "console;verbosity=minimal"
