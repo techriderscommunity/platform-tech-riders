@@ -23,6 +23,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Python dependencies
+        shell: pwsh
+        run: py -3 -m pip install -r .\requirements.txt
+
+      - name: Generate Graphify context index
+        shell: pwsh
+        run: py -3 -m graphify extract scripts --no-cluster --out context
+
       - name: Compile Python scripts
         shell: pwsh
         run: python -m compileall -q .\scripts

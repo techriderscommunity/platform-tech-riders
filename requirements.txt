@@ -1,4 +1,4 @@
-graphifyy[mcp]
+graphify[mcp]
 langsmith
 mcp
 skillopt

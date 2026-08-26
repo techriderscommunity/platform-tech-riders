@@ -187,11 +187,11 @@ catch {
 
 if (Test-Path 'requirements.txt') {
   $requirementsRaw = Get-Content -Raw -Path 'requirements.txt'
-  if ($requirementsRaw -match 'graphifyy\[mcp\]') {
+  if ($requirementsRaw -match 'graphify\[mcp\]') {
     $setupValidationReport.python_requirements_ok = $true
   }
   else {
-    $errors += 'requirements.txt must include graphifyy[mcp] for the Graphify MCP runtime.'
+    $errors += 'requirements.txt must include graphify[mcp] for the Graphify MCP runtime.'
   }
 }
 
