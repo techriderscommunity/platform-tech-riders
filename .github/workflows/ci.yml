@@ -3,11 +3,52 @@ name: CI General
 on:
   push:
     branches: [main, develop, release]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/agents/**'
+      - '.github/instructions/**'
+      - '.github/prompts/**'
+      - 'boosts/**'
+      - 'context/**'
+      - 'memory/**'
+      - 'observability/**'
+      - 'optimization/**'
+      - 'orchestrator/**'
+      - 'policies/**'
+      - 'repo-intake/**'
+      - 'repo-registry/**'
+      - 'requirements.txt'
+      - 'scripts/**'
+      - 'specs/**'
   pull_request:
     branches: [main, develop, release]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/agents/**'
+      - '.github/instructions/**'
+      - '.github/prompts/**'
+      - 'boosts/**'
+      - 'context/**'
+      - 'memory/**'
+      - 'observability/**'
+      - 'optimization/**'
+      - 'orchestrator/**'
+      - 'policies/**'
+      - 'repo-intake/**'
+      - 'repo-registry/**'
+      - 'requirements.txt'
+      - 'scripts/**'
+      - 'specs/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * 1'
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-general-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
