@@ -3,11 +3,52 @@ name: CI General
 on:
   push:
     branches: [main, develop, release]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/agents/**'
+      - '.github/instructions/**'
+      - '.github/prompts/**'
+      - 'boosts/**'
+      - 'context/**'
+      - 'memory/**'
+      - 'observability/**'
+      - 'optimization/**'
+      - 'orchestrator/**'
+      - 'policies/**'
+      - 'repo-intake/**'
+      - 'repo-registry/**'
+      - 'requirements.txt'
+      - 'scripts/**'
+      - 'specs/**'
   pull_request:
     branches: [main, develop, release]
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/agents/**'
+      - '.github/instructions/**'
+      - '.github/prompts/**'
+      - 'boosts/**'
+      - 'context/**'
+      - 'memory/**'
+      - 'observability/**'
+      - 'optimization/**'
+      - 'orchestrator/**'
+      - 'policies/**'
+      - 'repo-intake/**'
+      - 'repo-registry/**'
+      - 'requirements.txt'
+      - 'scripts/**'
+      - 'specs/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * 1'
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-general-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
@@ -22,6 +63,21 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Install Python dependencies
+        shell: pwsh
+        run: py -3 -m pip install -r .\requirements.txt
+
+      - name: Install Graphify CLI
+        shell: pwsh
+        run: |
+          py -3 -m pip install --user uv
+          uv tool install graphify
+          graphify install --project
+
+      - name: Generate Graphify context index
+        shell: pwsh
+        run: graphify extract . --no-cluster --out context
 
       - name: Compile Python scripts
         shell: pwsh

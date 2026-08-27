@@ -1,0 +1,75 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [main, develop, release]
+  pull_request:
+    branches: [main, develop, release]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend build and tests
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore backend
+        shell: pwsh
+        run: dotnet restore .\backend\TechRiders.slnx
+
+      - name: Build backend
+        shell: pwsh
+        run: dotnet build .\backend\TechRiders.slnx --configuration Release --no-restore
+
+      - name: Test backend
+        shell: pwsh
+        run: dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --no-build --logger "console;verbosity=minimal"
+
+  frontend:
+    name: Frontend build, tests and UI rules
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: techito
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.15.0'
+          cache: npm
+          cache-dependency-path: techito/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Audit frontend dependencies
+        run: npm audit --audit-level=high
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Test frontend
+        run: npm run test:unit:ci
+
+      - name: Enforce shared UI rules
+        run: npm run enforce:shared-ui

@@ -6,12 +6,15 @@ import { finalize } from 'rxjs/operators';
 import { ConfigItem, IntranetSettingRecord } from './models/intranet-admin.models';
 import { IntranetAdminService } from './services/intranet-admin.service';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
+import { UiButton } from '@shared/ui/button/button';
+import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
+import { UiTextField } from '@shared/ui/text-field/text-field';
 
 @Component({
   selector: 'app-admin-configuracion',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiMetricsStrip],
+  imports: [RouterLink, UiButton, UiMetricsStrip, UiSelect, UiTextField],
   templateUrl: './admin-configuracion.html',
   styleUrl: './admin-configuracion.scss'
 })
@@ -23,6 +26,10 @@ export class AdminConfiguracion {
   readonly feedback = signal<string | null>(null);
   readonly items = signal<ConfigItem[]>([]);
   readonly savingByKey = signal<Record<string, boolean>>({});
+  readonly statusOptions: UiSelectOption[] = [
+    { label: 'activo', value: 'activo' },
+    { label: 'revision', value: 'revision' },
+  ];
 
   readonly inRevisionCount = computed(() => this.items().filter(item => item.estado === 'revision').length);
   readonly configMetrics = computed(() => [

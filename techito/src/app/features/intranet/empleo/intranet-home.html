@@ -1,10 +1,17 @@
 <div class="intranet-home">
   <header class="home-topbar" aria-label="Barra de utilidades intranet">
-    <label class="search-wrap" for="intranet-search-input">
+    <div class="search-wrap">
       <span aria-hidden="true">⌕</span>
-      <input id="intranet-search-input" type="search" placeholder="Buscar en TechRiders..." />
+      <app-ui-text-field
+        label="Buscar"
+        type="search"
+        name="intranet-search"
+        placeholder="Buscar en TechRiders..."
+        [value]="searchTerm()"
+        (valueChange)="searchTerm.set($event)"
+      ></app-ui-text-field>
       <kbd>Ctrl K</kbd>
-    </label>
+    </div>
 
     <div class="topbar-actions" aria-hidden="true">
       <button type="button">🔔</button>

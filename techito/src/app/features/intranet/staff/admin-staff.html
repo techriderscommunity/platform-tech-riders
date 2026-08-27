@@ -91,22 +91,25 @@
             <td><strong>{{miembro.nombre}}</strong></td>
             <td>{{miembro.email}}</td>
             <td>
-              <select [value]="miembro.rolPrincipal" (change)="onPrimaryRoleChange(miembro.id, $event)">
-                @for (role of roleCatalog(); track role) {
-                <option [value]="role">{{role}}</option>
-                }
-              </select>
+              <app-ui-select
+                label="Rol principal"
+                [options]="roleOptions()"
+                [value]="miembro.rolPrincipal"
+                (valueChange)="onPrimaryRoleValueChange(miembro.id, $event)"
+              ></app-ui-select>
             </td>
             <td>
               <div class="role-list">
                 @for (role of roleCatalog(); track role) {
-                <label class="role-item">
-                  <input
-                    type="checkbox"
-                    [checked]="isRoleAssigned(miembro, role)"
-                    (change)="toggleRole(miembro.id, role, $any($event.target).checked)" />
+                <app-ui-button
+                  class="role-item role-toggle"
+                  [class.is-assigned]="isRoleAssigned(miembro, role)"
+                  [variant]="isRoleAssigned(miembro, role) ? 'primary' : 'secondary'"
+                  [disabled]="savingUserId() === miembro.id"
+                  (click)="toggleRole(miembro.id, role, !isRoleAssigned(miembro, role))"
+                >
                   <span class="role-badge" [class]="role">{{role}}</span>
-                </label>
+                </app-ui-button>
                 }
               </div>
             </td>

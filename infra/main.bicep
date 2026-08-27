@@ -1,146 +1,80 @@
-@description('Deployment location for all resources.')
-param location string = resourceGroup().location
-
-@description('Short workload identifier used in resource names.')
-@minLength(2)
-@maxLength(12)
-param workload string
-
-@description('Environment identifier (dev, qa, stage, prod).')
-@allowed([
-  'dev'
-  'qa'
-  'stage'
-  'prod'
-])
-param environment string = 'dev'
-
-@description('Tag values applied to all resources.')
-param tags object = {}
-
-@description('Log Analytics workspace name (CAF abbreviation: log).')
-param logAnalyticsWorkspaceName string
-
-@description('Application Insights name (CAF abbreviation: appi).')
-param applicationInsightsName string
-
-@description('App Service plan name (CAF abbreviation: asp).')
+@description('Backend App Service plan name in the target resource group.')
+@minLength(1)
+@maxLength(60)
 param appServicePlanName string
 
-@description('Web App name (CAF abbreviation: app). Must be globally unique.')
+@description('Backend Web App name in the target resource group.')
+@minLength(2)
+@maxLength(60)
 param webAppName string
 
-@description('Azure SQL Server name (CAF abbreviation: sql). Must be globally unique.')
+@description('Azure SQL Server name in the target resource group.')
+@minLength(1)
+@maxLength(63)
 param sqlServerName string
 
-@description('Primary application database name (CAF abbreviation: sqldb).')
+@description('Primary Azure SQL database name.')
+@minLength(1)
+@maxLength(128)
 param sqlDatabaseName string
 
-@description('SQL administrator login.')
+@description('Log Analytics workspace name linked to Application Insights.')
 @minLength(4)
-@maxLength(32)
-param sqlAdministratorLogin string
+@maxLength(63)
+param logAnalyticsWorkspaceName string
 
-@secure()
-@description('SQL administrator password.')
-@minLength(12)
-param sqlAdministratorPassword string
+@description('Application Insights component name linked to the backend Web App.')
+@minLength(1)
+@maxLength(260)
+param applicationInsightsName string
 
-@description('Key Vault name (CAF abbreviation: kv). Must be globally unique.')
-param keyVaultName string
+@description('Storage account name present in the platform resource group.')
+@minLength(3)
+@maxLength(24)
+param storageAccountName string
 
-@description('App Service plan SKU name for dev workloads.')
-param appServicePlanSkuName string = 'B1'
+@description('Static Web App name used by the Angular frontend deployment.')
+@minLength(1)
+param staticWebAppName string
 
-@description('Name for the SQL connection string secret in Key Vault.')
-param sqlConnectionStringSecretName string = 'SqlConnectionString'
-
-@description('Name for the SQL admin password secret in Key Vault.')
-param sqlAdminPasswordSecretName string = 'SqlAdminPassword'
-
-var normalizedTags = union(tags, {
-  Environment: environment
-  Workload: workload
-})
-
-module logAnalyticsWorkspace 'br/public:avm/res/operational-insights/workspace:0.16.1' = {
-  name: 'logAnalyticsWorkspaceDeployment'
-  params: {
-    name: logAnalyticsWorkspaceName
-    location: location
-    tags: normalizedTags
-    publicNetworkAccessForIngestion: 'Enabled'
-    publicNetworkAccessForQuery: 'Enabled'
-  }
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-04-01' existing = {
+  name: appServicePlanName
 }
 
-module applicationInsights 'br/public:avm/res/insights/component:0.8.0' = {
-  name: 'applicationInsightsDeployment'
-  params: {
-    name: applicationInsightsName
-    location: location
-    workspaceResourceId: logAnalyticsWorkspace.outputs.resourceId
-    tags: normalizedTags
-  }
+resource webApp 'Microsoft.Web/sites@2024-04-01' existing = {
+  name: webAppName
 }
 
-module keyVault 'br/public:avm/res/key-vault/vault:0.14.0' = {
-  name: 'keyVaultDeployment'
-  params: {
-    name: keyVaultName
-    location: location
-    tags: normalizedTags
-  }
+resource sqlServer 'Microsoft.Sql/servers@2024-05-01-preview' existing = {
+  name: sqlServerName
 }
 
-module appServicePlan 'br/public:avm/res/web/serverfarm:0.7.0' = {
-  name: 'appServicePlanDeployment'
-  params: {
-    name: appServicePlanName
-    location: location
-    skuName: appServicePlanSkuName
-    tags: normalizedTags
-  }
+resource sqlDatabase 'Microsoft.Sql/servers/databases@2024-05-01-preview' existing = {
+  name: sqlDatabaseName
+  parent: sqlServer
 }
 
-module sqlServer 'br/public:avm/res/sql/server:0.22.0' = {
-  name: 'sqlServerDeployment'
-  params: {
-    name: sqlServerName
-    location: location
-    administratorLogin: sqlAdministratorLogin
-    administratorLoginPassword: sqlAdministratorPassword
-    databases: [
-      {
-        availabilityZone: -1
-        name: sqlDatabaseName
-      }
-    ]
-    minimalTlsVersion: '1.2'
-    publicNetworkAccess: 'Enabled'
-    secretsExportConfiguration: {
-      keyVaultResourceId: keyVault.outputs.resourceId
-      sqlAdminPasswordSecretName: sqlAdminPasswordSecretName
-      sqlAzureConnectionStringSecretName: sqlConnectionStringSecretName
-    }
-    tags: normalizedTags
-  }
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' existing = {
+  name: logAnalyticsWorkspaceName
 }
 
-module webApp 'br/public:avm/res/web/site:0.24.0' = {
-  name: 'webAppDeployment'
-  params: {
-    name: webAppName
-    location: location
-    serverFarmResourceId: appServicePlan.outputs.resourceId
-    httpsOnly: true
-    kind: 'app'
-    tags: normalizedTags
-  }
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: applicationInsightsName
 }
 
-output appServiceUrl string = 'https://${webAppName}.azurewebsites.net'
-output applicationInsightsConnectionString string = applicationInsights.outputs.connectionString
-output logAnalyticsWorkspaceResourceId string = logAnalyticsWorkspace.outputs.resourceId
-output sqlServerFullyQualifiedDomainName string = sqlServer.outputs.fullyQualifiedDomainName
-output keyVaultResourceId string = keyVault.outputs.resourceId
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' existing = {
+  name: storageAccountName
+}
+
+resource staticWebApp 'Microsoft.Web/staticSites@2024-04-01' existing = {
+  name: staticWebAppName
+}
+
+output appServicePlanResourceId string = appServicePlan.id
+output appServiceUrl string = 'https://${webApp.properties.defaultHostName}'
+output sqlServerFullyQualifiedDomainName string = sqlServer.properties.fullyQualifiedDomainName
+output sqlDatabaseResourceId string = sqlDatabase.id
+output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
+output logAnalyticsWorkspaceResourceId string = logAnalyticsWorkspace.id
+output storageAccountResourceId string = storageAccount.id
+output staticWebAppDefaultHostname string = staticWebApp.properties.defaultHostname

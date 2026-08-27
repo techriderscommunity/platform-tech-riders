@@ -39,37 +39,35 @@
         <tr>
           <td>{{ item.key }}</td>
           <td>
-            <input
-              class="table-input"
+            <app-ui-text-field
+              label="Modulo"
               type="text"
               [value]="item.modulo"
-              (input)="updateModulo(item.key, $any($event.target).value)"
-            />
+              (valueChange)="updateModulo(item.key, $event)"
+            ></app-ui-text-field>
           </td>
           <td>
-            <input
-              class="table-input"
+            <app-ui-text-field
+              label="Valor"
               type="text"
               [value]="item.valor"
-              (input)="updateValor(item.key, $any($event.target).value)"
-            />
+              (valueChange)="updateValor(item.key, $event)"
+            ></app-ui-text-field>
           </td>
           <td>
             <span class="badge" [class.revision]="item.estado === 'revision'">{{ item.estado }}</span>
           </td>
           <td>
             <div class="config-actions">
-              <select
-                class="table-select"
+              <app-ui-select
+                label="Estado"
+                [options]="statusOptions"
                 [value]="item.estado"
-                (change)="updateEstado(item.key, $any($event.target).value)"
-              >
-                <option value="activo">activo</option>
-                <option value="revision">revision</option>
-              </select>
-              <button type="button" class="save-btn" [disabled]="isSaving(item.key)" (click)="saveRow(item)">
+                (valueChange)="updateEstado(item.key, $event)"
+              ></app-ui-select>
+              <app-ui-button type="button" variant="secondary" [disabled]="isSaving(item.key)" (click)="saveRow(item)">
                 {{ isSaving(item.key) ? 'Guardando...' : 'Guardar' }}
-              </button>
+              </app-ui-button>
             </div>
           </td>
         </tr>
