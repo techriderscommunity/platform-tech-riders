@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { UiButton  } from '@shared/ui/button/button';
+import { UiButton } from '@shared/ui/button/button';
+import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { StaffItem } from './models/staff-governance.models';
@@ -11,7 +12,7 @@ import { StaffGovernanceService } from './services/staff-governance.service';
   selector: 'app-admin-staff',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiButton],
+  imports: [RouterLink, UiButton, UiSelect],
   templateUrl: './admin-staff.html',
   styleUrl: './admin-staff.scss'
 })
@@ -28,6 +29,9 @@ export class AdminStaff {
 
   readonly activeCount = computed(() => this.staff().filter(s => s.estado === 'activo').length);
   readonly superAdminCount = computed(() => this.staff().filter(s => s.roles.includes('superadmin') && s.estado === 'activo').length);
+  readonly roleOptions = computed<UiSelectOption[]>(() =>
+    this.roleCatalog().map(role => ({ label: role, value: role })),
+  );
 
   constructor() {
     this.loadGovernanceData();
@@ -56,6 +60,10 @@ export class AdminStaff {
 
   onPrimaryRoleChange(id: string, event: Event) {
     const selected = (event.target as HTMLSelectElement).value;
+    this.onPrimaryRoleValueChange(id, selected);
+  }
+
+  onPrimaryRoleValueChange(id: string, selected: string) {
     const member = this.staff().find(item => item.id === id);
     if (!member || !selected) return;
 

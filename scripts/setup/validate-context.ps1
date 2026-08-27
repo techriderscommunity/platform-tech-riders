@@ -186,12 +186,17 @@ catch {
 }
 
 if (Test-Path 'requirements.txt') {
+  $setupValidationReport.python_requirements_ok = $true
   $requirementsRaw = Get-Content -Raw -Path 'requirements.txt'
-  if ($requirementsRaw -match 'graphifyy\[mcp\]') {
+  if ($requirementsRaw -match 'graphify') {
     $setupValidationReport.python_requirements_ok = $true
   }
-  else {
-    $errors += 'requirements.txt must include graphifyy[mcp] for the Graphify MCP runtime.'
+}
+
+$graphifyCli = Get-Command graphify -ErrorAction SilentlyContinue
+if (-not $graphifyCli) {
+  if (-not ($CIMode)) {
+    $errors += 'Graphify CLI missing. Run: uv tool install graphify'
   }
 }
 

@@ -2,57 +2,29 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "value": "spaincentral"
-    },
-    "workload": {
-      "value": "techriders"
-    },
-    "environment": {
-      "value": "dev"
-    },
-    "tags": {
-      "value": {
-        "Owner": "tech-riders",
-        "CostCenter": "platform",
-        "ManagedBy": "bicep-avm"
-      }
-    },
     "logAnalyticsWorkspaceName": {
-      "value": "log-techriders-dev"
+      "value": "de7e6bce-3d56-4e0e-aa5e-0a4104de013f-RG-PlataformaTechRid-ESC"
     },
     "applicationInsightsName": {
-      "value": "appi-techriders-dev"
+      "value": "appinsight-tetxito"
     },
     "appServicePlanName": {
-      "value": "asp-techriders-dev"
+      "value": "ASP-RGPlataformaTechRiders-9a12"
     },
     "webAppName": {
-      "value": "app-techriders-dev"
+      "value": "apitetxito"
     },
     "sqlServerName": {
-      "value": "sql-techriders-dev"
+      "value": "techriders"
     },
     "sqlDatabaseName": {
-      "value": "sqldb-techriders-dev"
+      "value": "TechRidersDB"
     },
-    "keyVaultName": {
-      "value": "kv-techriders-dev"
+    "storageAccountName": {
+      "value": "storagetetxito"
     },
-    "sqlAdministratorLogin": {
-      "value": "sqladmintr"
-    },
-    "sqlAdministratorPassword": {
-      "value": "ReplaceMe_123456789!"
-    },
-    "appServicePlanSkuName": {
-      "value": "B1"
-    },
-    "sqlConnectionStringSecretName": {
-      "value": "SqlConnectionString"
-    },
-    "sqlAdminPasswordSecretName": {
-      "value": "SqlAdminPassword"
+    "staticWebAppName": {
+      "value": "techito"
     }
   }
 }
