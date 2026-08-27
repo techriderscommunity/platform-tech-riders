@@ -59,7 +59,7 @@ jobs:
         run: |
           dotnet restore .\backend\TechRiders.slnx
           dotnet build .\backend\TechRiders.slnx --configuration Release --no-restore
-          dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --no-build --logger "console;verbosity=minimal"
+          dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
 
       - name: Validate frontend
         shell: pwsh

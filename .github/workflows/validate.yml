@@ -38,7 +38,7 @@ jobs:
 
       - name: Test
         shell: pwsh
-        run: dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --no-build --logger "console;verbosity=minimal"
+        run: dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
 
   frontend:
     name: Frontend
