@@ -1,8 +1,8 @@
-name: Merge Version Bump
+name: Version
 
 on:
   workflow_run:
-    workflows: [Quality Gates]
+    workflows: [Validate]
     types: [completed]
     branches: [main]
 
@@ -10,13 +10,16 @@ permissions:
   contents: write
 
 concurrency:
-  group: merge-version-main
+  group: version-main
   cancel-in-progress: false
 
 jobs:
-  bump-version:
-    name: Bump patch version after a valid main merge
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+  bump:
+    name: Bump version
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.actor.login != 'github-actions[bot]'
     runs-on: windows-latest
 
     steps:
@@ -26,17 +29,26 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.15.0'
+
       - name: Set up Git identity
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump repository version
+      - name: Bump patch version
         id: version
         shell: pwsh
         run: |
           $versionFile = "version.json"
+          if (-not (Test-Path $versionFile)) {
+            @{ version = "0.0.0" } | ConvertTo-Json | Set-Content $versionFile -Encoding utf8
+          }
+
           $versionState = Get-Content $versionFile -Raw | ConvertFrom-Json
           $current = [version]$versionState.version
           $next = [version]::new($current.Major, $current.Minor, $current.Build + 1)
@@ -50,7 +62,7 @@ jobs:
 
           "version=$next" >> $env:GITHUB_OUTPUT
 
-      - name: Commit and tag version
+      - name: Commit and tag
         shell: pwsh
         run: |
           $version = "${{ steps.version.outputs.version }}"
@@ -61,7 +73,7 @@ jobs:
             exit 0
           }
 
-          git commit -m "chore(release): bump version to v$version [skip ci]"
+          git commit -m "chore(release): v$version [skip ci]"
           git tag "v$version"
           git push origin main
           git push origin "v$version"
