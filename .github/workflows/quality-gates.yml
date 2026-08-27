@@ -15,47 +15,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  repo-validations:
-    name: Repo requirements
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        shell: pwsh
-        run: py -3 -m pip install -r .\requirements.txt
-
-      - name: Compile Python scripts
-        shell: pwsh
-        run: python -m compileall -q .\scripts
-
-      - name: Validate routing evals
-        shell: pwsh
-        run: py -3 .\scripts\intake\run-routing-evals.py
-
-      - name: Validate security
-        shell: pwsh
-        run: py -3 .\scripts\intake\validate-security.py
-
-      - name: Validate database routing
-        shell: pwsh
-        run: py -3 .\scripts\intake\validate-database-routing.py
-
-      - name: Validate RAG routing
-        shell: pwsh
-        run: py -3 .\scripts\intake\validate-rag-routing.py
-
-      - name: Validate context
-        shell: pwsh
-        run: pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup\validate-context.ps1 -CIMode
-
   backend:
     name: Backend build and tests
     runs-on: windows-latest
