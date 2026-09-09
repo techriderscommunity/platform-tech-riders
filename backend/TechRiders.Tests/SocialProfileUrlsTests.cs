@@ -1,4 +1,5 @@
 using TechRiders.Application.Social;
+using Xunit;
 
 namespace TechRiders.Tests;
 
