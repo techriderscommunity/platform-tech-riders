@@ -174,13 +174,13 @@
   color: var(--text-secondary);
 }
 
-.agenda-shell {
+.event-agenda-shell {
   display: grid;
   grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
   gap: var(--space-5);
 }
 
-.agenda-filtros {
+.event-filters {
   align-self: start;
   position: sticky;
   top: calc(var(--nav-height) + var(--space-3));
@@ -202,11 +202,11 @@
 
   small {
     color: var(--text-muted);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-medium);
   }
 }
 
-.filtro-bloque {
+.filter-group {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
@@ -219,12 +219,12 @@
   }
 }
 
-.agenda-resultados {
+.event-results {
   display: grid;
   gap: var(--space-4);
 }
 
-.agenda-toolbar {
+.event-toolbar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -236,11 +236,11 @@
   }
 }
 
-.agenda-search {
+.event-search {
   width: 100%;
 }
 
-.filtro-chip {
+.filter-chip {
   border: 1px solid var(--border-default);
   background: var(--bg-secondary);
   color: var(--text-secondary);
@@ -250,14 +250,14 @@
   cursor: pointer;
 }
 
-.filtro-chip.active,
-.filtro-chip:hover {
+.filter-chip.active,
+.filter-chip:hover {
   background: var(--tr-blue);
   color: var(--text-primary);
   border-color: var(--tr-blue);
 }
 
-.filtro-activo {
+.active-filter {
   border-radius: var(--radius-full);
   border: 1px solid var(--tr-blue-alpha-25);
   background: var(--tr-blue-alpha-10);
@@ -266,7 +266,7 @@
   font-size: var(--font-size-sm);
 }
 
-.limpiar {
+.clear-filters {
   margin-left: auto;
   border: none;
   background: none;
@@ -275,25 +275,25 @@
   text-decoration: underline;
 }
 
-.agenda-meta,
-.agenda-feedback {
+.event-meta,
+.event-feedback {
   margin: 0;
   color: var(--text-secondary);
 }
 
-.agenda-actions {
+.event-actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-5);
 }
 
-.galerias-list {
+.gallery-list {
   display: grid;
   gap: var(--space-5);
 }
 
-.galeria-group {
+.gallery-group {
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   background: var(--bg-secondary);
@@ -310,7 +310,7 @@
   }
 }
 
-.galeria-grid {
+.gallery-grid {
   display: grid;
   gap: var(--space-3);
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -381,7 +381,7 @@
     padding: 0 var(--space-4);
   }
 
-  .agenda-shell {
+  .event-agenda-shell {
     grid-template-columns: 1fr;
   }
 
@@ -389,11 +389,11 @@
     grid-template-columns: 1fr;
   }
 
-  .agenda-filtros {
+  .event-filters {
     position: static;
   }
 
-  .limpiar {
+  .clear-filters {
     margin-left: 0;
   }
 

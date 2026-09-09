@@ -23,6 +23,8 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.GPFId).HasMaxLength(80);
         builder.Property(x => x.LinkedIn).HasMaxLength(512);
         builder.Property(x => x.Instagram).HasMaxLength(512);
+        builder.Property(x => x.X).HasMaxLength(512);
+        builder.Property(x => x.YouTube).HasMaxLength(512);
         builder.Property(x => x.Github).HasMaxLength(512);
         builder.Property(x => x.About).HasMaxLength(2000);
     }

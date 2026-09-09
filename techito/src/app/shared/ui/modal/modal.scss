@@ -7,7 +7,7 @@
 .ui-modal-shell {
   position: fixed;
   inset: 0;
-  padding: calc(var(--nav-height) + var(--space-6)) var(--page-inline-padding) var(--space-8);
+  padding: calc(var(--nav-height) + var(--space-2)) var(--page-inline-padding) var(--space-3);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -27,15 +27,29 @@
 
 .ui-modal {
   position: relative;
-  width: min(100%, 680px);
+  width: min(100%, 860px);
+  max-width: min(100%, 860px);
+  height: min(86vh, 760px);
+  max-height: min(86vh, 760px);
   padding: var(--surface-padding);
   background: var(--modal-surface);
   border: 1px solid var(--modal-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--modal-shadow);
   backdrop-filter: blur(8px);
-  max-height: calc(100vh - var(--nav-height) - var(--space-8));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.ui-modal-content {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: var(--space-1);
+  scrollbar-gutter: stable;
 }
 
 .ui-modal-header {

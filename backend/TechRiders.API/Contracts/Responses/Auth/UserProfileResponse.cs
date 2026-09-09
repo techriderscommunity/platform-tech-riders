@@ -11,4 +11,14 @@ public sealed class UserProfileResponse
     public string Role { get; set; } = string.Empty;
 
     public IReadOnlyCollection<string> Roles { get; set; } = [];
+
+    public string? LinkedIn { get; set; }
+
+    public string? Instagram { get; set; }
+
+    public string? X { get; set; }
+
+    public string? YouTube { get; set; }
+
+    public string? Github { get; set; }
 }

@@ -57,7 +57,12 @@ public sealed class AuthController : BaseApiController
                     Email = profile.Email,
                     Name = profile.Name,
                     Role = profile.Role,
-                    Roles = profile.Roles
+                    Roles = profile.Roles,
+                    LinkedIn = profile.LinkedIn,
+                    Instagram = profile.Instagram,
+                    X = profile.X,
+                    YouTube = profile.YouTube,
+                    Github = profile.Github
                 }
             });
         }
@@ -100,7 +105,12 @@ public sealed class AuthController : BaseApiController
                 Email = profile.Email,
                 Name = profile.Name,
                 Role = profile.Role,
-                Roles = profile.Roles
+                Roles = profile.Roles,
+                LinkedIn = profile.LinkedIn,
+                Instagram = profile.Instagram,
+                X = profile.X,
+                YouTube = profile.YouTube,
+                Github = profile.Github
             }
         });
     }

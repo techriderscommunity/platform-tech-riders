@@ -6,7 +6,6 @@ import { EventoResumen } from '@core/events/public-events.models';
 import { PublicEventsService } from '@core/events/public-events.service';
 import { PublicContentService } from '@core/content/public-content.service';
 import { GalleryGroupItem } from '@core/content/public-content.models';
-import { UiCarouselItem, UiMediaCarousel  } from '@shared/ui/media-carousel/media-carousel';
 import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/resource-cards';
 import { UiTextField } from '@shared/ui/text-field/text-field';
 import {
@@ -16,13 +15,12 @@ import {
   PublicEvent,
 } from './models/public-event.model';
 import { PublicEventsAgendaService } from './services/public-events.service';
-import { PodcastService } from './services/podcast.service';
 
 @Component({
   selector: 'app-events',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiMediaCarousel, UiResourceCards, UiTextField],
+  imports: [RouterLink, UiResourceCards, UiTextField],
   templateUrl: './events.html',
   styleUrl: './events.scss'
 })
@@ -30,12 +28,10 @@ export class Events implements OnInit {
   private readonly publicEventsService = inject(PublicEventsService);
   private readonly publicEventsAgendaService = inject(PublicEventsAgendaService);
   private readonly publicContentService = inject(PublicContentService);
-  private readonly podcastService = inject(PodcastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly events = signal<EventoResumen[]>([]);
   readonly eventsPasados = computed(() => this.events().filter(evento => evento.esPasado));
-  readonly loadingTalks = signal(false);
 
   readonly featuredEvents = [
     {
@@ -103,10 +99,6 @@ export class Events implements OnInit {
     year: 'numeric',
   });
 
-  readonly talksPodcastUrl = 'https://www.youtube.com/@TechRidersMedia/podcasts';
-  private talksHistoricoFallback: UiCarouselItem[] = [];
-  readonly talksHistorico = signal<UiCarouselItem[]>([]);
-
   galerias: GalleryGroupItem[] = [];
 
   ngOnInit(): void {
@@ -115,13 +107,6 @@ export class Events implements OnInit {
       .pipe(
         tap((content) => {
           this.galerias = content.events.galleryGroups;
-          this.talksHistoricoFallback = content.events.talksFallback.map((item) => ({
-            kind: 'video',
-            title: item.title,
-            src: item.src,
-          }));
-          this.talksHistorico.set(this.talksHistoricoFallback);
-          this.loadTalksHistorico();
         }),
         catchError(() => EMPTY),
         takeUntilDestroyed(this.destroyRef)
@@ -173,33 +158,6 @@ export class Events implements OnInit {
     this.selectedModality.set('');
     this.selectedTopic.set('');
     this.searchText.set('');
-  }
-
-  private loadTalksHistorico(): void {
-    this.loadingTalks.set(true);
-    this.podcastService
-      .getLatestVideos(8)
-      .pipe(
-        tap((items) => {
-          if (items.length === 0) {
-            this.talksHistorico.set(this.talksHistoricoFallback);
-          } else if (items.length < 5) {
-            const existingSrc = new Set(items.map((item) => item.src));
-            const missingFromFallback = this.talksHistoricoFallback.filter((item) => !existingSrc.has(item.src));
-            this.talksHistorico.set([...items, ...missingFromFallback].slice(0, 8));
-          } else {
-            this.talksHistorico.set(items);
-          }
-          this.loadingTalks.set(false);
-        }),
-        catchError(() => {
-          this.talksHistorico.set(this.talksHistoricoFallback);
-          this.loadingTalks.set(false);
-          return EMPTY;
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
   }
 
   private formatEventDate(dateText: string): string {

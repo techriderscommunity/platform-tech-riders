@@ -77,6 +77,8 @@ public class TechRidersDbContext : DbContext
     /// </summary>
     public DbSet<IntranetUserCategory> IntranetUserCategories => Set<IntranetUserCategory>();
 
+    public DbSet<CommunityPartnerApplication> CommunityPartnerApplications => Set<CommunityPartnerApplication>();
+
     /// <summary>
     /// Configuración del modelo usando Fluent API y Entity Type Configurations
     /// </summary>
@@ -260,10 +262,41 @@ public class TechRidersDbContext : DbContext
             entity.Property(u => u.About).HasMaxLength(2000);
             entity.Property(u => u.LinkedIn).HasMaxLength(300);
             entity.Property(u => u.Instagram).HasMaxLength(300);
+            entity.Property(u => u.X).HasMaxLength(300);
+            entity.Property(u => u.YouTube).HasMaxLength(300);
             entity.Property(u => u.Github).HasMaxLength(300);
 
             entity.HasIndex(u => u.Email);
             entity.HasIndex(u => u.IsWorking);
+        });
+
+        modelBuilder.Entity<CommunityPartnerApplication>(entity =>
+        {
+            entity.ToTable("CommunityPartnerApplications");
+            entity.HasKey(application => application.Id);
+
+            entity.Property(application => application.Name).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.Website).IsRequired().HasMaxLength(300);
+            entity.Property(application => application.LogoUrl).HasMaxLength(300);
+            entity.Property(application => application.ContactEmail).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.ContactName).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.WhoYouAre).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.WhatYouDo).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.Mission).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.Topics).IsRequired().HasMaxLength(1000);
+            entity.Property(application => application.Scope).IsRequired().HasMaxLength(30);
+            entity.Property(application => application.LinkedIn).HasMaxLength(300);
+            entity.Property(application => application.Instagram).HasMaxLength(300);
+            entity.Property(application => application.X).HasMaxLength(300);
+            entity.Property(application => application.YouTube).HasMaxLength(300);
+            entity.Property(application => application.Github).HasMaxLength(300);
+            entity.Property(application => application.Status).IsRequired().HasMaxLength(30).HasDefaultValue("pending");
+            entity.Property(application => application.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasIndex(application => application.Name);
+            entity.HasIndex(application => application.Website);
+            entity.HasIndex(application => application.ContactEmail);
+            entity.HasIndex(application => application.Status);
         });
 
         // Configuración de Center
@@ -282,6 +315,9 @@ public class TechRidersDbContext : DbContext
             entity.Property(c => c.Parking).HasMaxLength(500);
             entity.Property(c => c.LinkedIn).HasMaxLength(300);
             entity.Property(c => c.Instagram).HasMaxLength(300);
+            entity.Property(c => c.X).HasMaxLength(300);
+            entity.Property(c => c.YouTube).HasMaxLength(300);
+            entity.Property(c => c.Github).HasMaxLength(300);
 
             entity.HasMany(c => c.Studies)
                 .WithOne(s => s.Center)

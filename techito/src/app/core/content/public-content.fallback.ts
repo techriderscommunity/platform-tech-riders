@@ -64,13 +64,6 @@ export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
         ],
       },
     ],
-    talksFallback: [
-      { title: 'Comunidad, aprendizaje y cerrar ciclos: Tech Riders Talks | Salero de Ming', src: 'https://www.youtube-nocookie.com/embed/YekC-fVM3Ig' },
-      { title: 'Liderazgo técnico, comunidad y crecimiento profesional | Sergio Hernández', src: 'https://www.youtube-nocookie.com/embed/NHkw3rh1BO8' },
-      { title: 'IA, liderazgo y comunidad: experiencia sin filtros | Javier Pallo', src: 'https://www.youtube-nocookie.com/embed/qJUUlvvH3_g' },
-      { title: 'Ciberseguridad real: pentesting, red team y LockShields | Marco Carrasco', src: 'https://www.youtube-nocookie.com/embed/IOi91LjE0m4' },
-      { title: 'De junior a senior: claves reales para crecer en tecnología | María & Elías', src: 'https://www.youtube-nocookie.com/embed/o6bGKi8y2eY' },
-    ],
   },
   centers: {
     metrics: [

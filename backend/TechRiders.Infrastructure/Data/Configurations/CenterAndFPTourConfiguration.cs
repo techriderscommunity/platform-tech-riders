@@ -18,6 +18,9 @@ public sealed class CenterConfiguration : IEntityTypeConfiguration<Center>
         builder.Property(x => x.ParkingInfo).HasMaxLength(1000);
         builder.Property(x => x.LinkedIn).HasMaxLength(512);
         builder.Property(x => x.Instagram).HasMaxLength(512);
+        builder.Property(x => x.X).HasMaxLength(512);
+        builder.Property(x => x.YouTube).HasMaxLength(512);
+        builder.Property(x => x.Github).HasMaxLength(512);
         builder.Property(x => x.Description).HasMaxLength(2000);
     }
 }

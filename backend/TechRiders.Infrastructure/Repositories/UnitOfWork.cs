@@ -23,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
     private IIntranetAuditLogRepository? _intranetAuditLogs;
     private IIntranetSettingRepository? _intranetSettings;
     private IIntranetUserCategoryRepository? _intranetUserCategories;
+    private ICommunityPartnerApplicationRepository? _communityPartnerApplications;
 
 
     public UnitOfWork(TechRidersDbContext context)
@@ -47,6 +48,9 @@ public class UnitOfWork : IUnitOfWork
     public IIntranetSettingRepository IntranetSettings => _intranetSettings ??= new IntranetSettingRepository(_context);
 
     public IIntranetUserCategoryRepository IntranetUserCategories => _intranetUserCategories ??= new IntranetUserCategoryRepository(_context);
+
+    public ICommunityPartnerApplicationRepository CommunityPartnerApplications =>
+        _communityPartnerApplications ??= new CommunityPartnerApplicationRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

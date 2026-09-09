@@ -106,7 +106,6 @@ export interface PublicContentPayload {
   events: {
     participationModes: ParticipationModeItem[];
     galleryGroups: GalleryGroupItem[];
-    talksFallback: VideoCarouselItem[];
   };
   centers: {
     metrics: MetricItem[];

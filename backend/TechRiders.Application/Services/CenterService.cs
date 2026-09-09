@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using TechRiders.Application.DTOs.Requests.Center;
 using TechRiders.Application.DTOs.Responses.Center;
 using TechRiders.Application.Interfaces;
+using TechRiders.Application.Social;
 using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
 using Mapster;
@@ -50,6 +51,11 @@ public class CenterService : ICenterService
     public async Task<CenterResponse> CreateCenterAsync(CreateCenterRequest request, CancellationToken cancellationToken = default)
     {
         var center = _mapper.Map<Center>(request);
+        center.LinkedIn = SocialProfileIdentifier.Normalize(request.LinkedIn);
+        center.Instagram = SocialProfileIdentifier.Normalize(request.Instagram);
+        center.X = SocialProfileIdentifier.Normalize(request.X);
+        center.YouTube = SocialProfileIdentifier.Normalize(request.YouTube);
+        center.Github = SocialProfileIdentifier.Normalize(request.Github);
         await _unitOfWork.Centers.AddAsync(center, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return _mapper.Map<CenterResponse>(center);
@@ -61,6 +67,11 @@ public class CenterService : ICenterService
         if (center == null || !center.IsActive) return null;
 
         _mapper.Map(request, center);
+        if (request.LinkedIn is not null) center.LinkedIn = SocialProfileIdentifier.Normalize(request.LinkedIn);
+        if (request.Instagram is not null) center.Instagram = SocialProfileIdentifier.Normalize(request.Instagram);
+        if (request.X is not null) center.X = SocialProfileIdentifier.Normalize(request.X);
+        if (request.YouTube is not null) center.YouTube = SocialProfileIdentifier.Normalize(request.YouTube);
+        if (request.Github is not null) center.Github = SocialProfileIdentifier.Normalize(request.Github);
         center.UpdatedAt = DateTime.UtcNow;
         await _unitOfWork.Centers.UpdateAsync(center, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -27,69 +27,69 @@
 
 
 <section id="calendario-publico">
-  <div class="agenda-shell">
-    <aside class="agenda-filtros" aria-label="Filtros de agenda">
+  <div class="event-agenda-shell">
+    <aside class="event-filters" aria-label="Filtros de agenda">
       <h3>Filtros <small>({{ filteredEvents().length }} resultados)</small></h3>
 
       <app-ui-text-field
         label="Buscar"
         type="search"
         name="search-agenda"
-        class="agenda-search"
+        class="event-search"
         placeholder="Buscar eventos..."
         [value]="searchText()"
         (valueChange)="updateSearch($event)"
       ></app-ui-text-field>
 
-      <div class="filtro-bloque">
+      <div class="filter-group">
         <p>Tipo</p>
-        <button type="button" class="filtro-chip" [class.active]="selectedType() === ''" (click)="setType('')">Todos</button>
+        <button type="button" class="filter-chip" [class.active]="selectedType() === ''" (click)="setType('')">Todos</button>
         @for (type of agendaTypes; track type) {
-          <button type="button" class="filtro-chip" [class.active]="selectedType() === type" (click)="setType(type)">
+          <button type="button" class="filter-chip" [class.active]="selectedType() === type" (click)="setType(type)">
             {{ type }}
           </button>
         }
       </div>
 
-      <div class="filtro-bloque">
+      <div class="filter-group">
         <p>Modalidad</p>
-        <button type="button" class="filtro-chip" [class.active]="selectedModality() === ''" (click)="setModality('')">Todas</button>
+        <button type="button" class="filter-chip" [class.active]="selectedModality() === ''" (click)="setModality('')">Todas</button>
         @for (modality of agendaModalities; track modality) {
-          <button type="button" class="filtro-chip" [class.active]="selectedModality() === modality" (click)="setModality(modality)">
+          <button type="button" class="filter-chip" [class.active]="selectedModality() === modality" (click)="setModality(modality)">
             {{ modality }}
           </button>
         }
       </div>
 
-      <div class="filtro-bloque">
+      <div class="filter-group">
         <p>Temática</p>
-        <button type="button" class="filtro-chip" [class.active]="selectedTopic() === ''" (click)="setTopic('')">Todas</button>
+        <button type="button" class="filter-chip" [class.active]="selectedTopic() === ''" (click)="setTopic('')">Todas</button>
         @for (topic of agendaTopics; track topic) {
-          <button type="button" class="filtro-chip" [class.active]="selectedTopic() === topic" (click)="setTopic(topic)">
+          <button type="button" class="filter-chip" [class.active]="selectedTopic() === topic" (click)="setTopic(topic)">
             {{ topic }}
           </button>
         }
       </div>
     </aside>
 
-    <div class="agenda-resultados">
-      <div class="agenda-toolbar">
+    <div class="event-results">
+      <div class="event-toolbar">
         <p>Filtrado por</p>
-        <span class="filtro-activo">{{ activeFilterLabel() }}</span>
-        <button type="button" class="limpiar" (click)="clearFilters()">Borrar todo</button>
+        <span class="active-filter">{{ activeFilterLabel() }}</span>
+        <button type="button" class="clear-filters" (click)="clearFilters()">Borrar todo</button>
       </div>
 
-      <p class="agenda-meta">{{ filteredEvents().length }} eventos encontrados</p>
+      <p class="event-meta">{{ filteredEvents().length }} eventos encontrados</p>
 
       @if (filteredEvents().length === 0) {
-        <p class="agenda-feedback">No hay eventos para los filtros actuales.</p>
+        <p class="event-feedback">No hay eventos para los filtros actuales.</p>
       } @else {
         <app-ui-resource-cards [items]="eventCards()"></app-ui-resource-cards>
       }
     </div>
   </div>
 
-  <div class="agenda-actions">
+  <div class="event-actions">
     <a href="https://luma.com/cal-24k3WtXkbkzA2tg" target="_blank" rel="noopener" class="btn btn-secondary">Abrir agenda completa en Luma</a>
     <a routerLink="/events" class="btn btn-secondary">Ver eventos destacados</a>
     <a routerLink="/join" class="btn btn-primary">Solicitar sesión</a>
@@ -98,32 +98,15 @@
 
     <section class="events-panel">
       <div class="panel-head">
-        <h2>Histórico de talks, webinars y meetups</h2>
-        <a class="panel-link" [href]="talksPodcastUrl" target="_blank" rel="noopener noreferrer">Canal completo</a>
-      </div>
-      @if (loadingTalks()) {
-      <p class="panel-feedback">Cargando últimos vídeos del podcast...</p>
-      }
-      <app-ui-media-carousel
-        [items]="talksHistorico()"
-        ariaLabel="Histórico de talks"
-        [showCaptions]="true"
-        [autoplay]="true"
-        cardMinWidth="270px"
-      ></app-ui-media-carousel>
-    </section>
-
-    <section class="events-panel">
-      <div class="panel-head">
         <h2>Galerías de eventos</h2>
       </div>
 
-      <div class="galerias-list">
+      <div class="gallery-list">
         @for (galeria of galerias; track galeria.title) {
-        <article class="galeria-group">
+        <article class="gallery-group">
           <h3>{{ galeria.title }}</h3>
           <p>{{ galeria.subtitle }}</p>
-          <div class="galeria-grid">
+          <div class="gallery-grid">
             @for (item of galeria.items; track item.src + item.alt) {
             <figure>
               <img [src]="item.src" [alt]="item.alt" loading="lazy" />

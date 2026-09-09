@@ -61,14 +61,29 @@ public class CenterResponse
     public string? Parking { get; set; }
 
     /// <summary>
-    /// URL de perfil de LinkedIn
+    /// URL completa de perfil de LinkedIn
     /// </summary>
     public string? LinkedIn { get; set; }
 
     /// <summary>
-    /// Usuario o URL de Instagram
+    /// URL completa de perfil de Instagram
     /// </summary>
     public string? Instagram { get; set; }
+
+    /// <summary>
+    /// URL completa de perfil de X
+    /// </summary>
+    public string? X { get; set; }
+
+    /// <summary>
+    /// URL completa de canal o perfil de YouTube
+    /// </summary>
+    public string? YouTube { get; set; }
+
+    /// <summary>
+    /// URL completa de perfil de GitHub
+    /// </summary>
+    public string? Github { get; set; }
 
     /// <summary>
     /// Fecha de creación del registro

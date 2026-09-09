@@ -8,7 +8,7 @@
         nuestra pasión por ayudar a crecer a otras personas.
       </p>
       <span>¿Tienes una comunidad?</span>
-      <a class="btn btn-secondary" routerLink="/community-partners/apply" (click)="onApplyClick()">Quiero ser Comuñera</a>
+      <app-ui-button type="button" variant="secondary" routerLink="/community-partners/apply">Quiero ser Comuñera</app-ui-button>
 
     <ul class="topic-chips" aria-label="Temáticas del ecosistema">
       @for (topic of topicSummary(); track topic) {
@@ -68,11 +68,8 @@
         @if (partner.youtube) {
         <a [href]="partner.youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
         }
-        @if (partner.discord) {
-        <a [href]="partner.discord" target="_blank" rel="noopener noreferrer">Discord</a>
-        }
-        @if (partner.telegram) {
-        <a [href]="partner.telegram" target="_blank" rel="noopener noreferrer">Telegram</a>
+        @if (partner.github) {
+        <a [href]="partner.github" target="_blank" rel="noopener noreferrer">GitHub</a>
         }
       </div>
 

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using TechRiders.Application.Social;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -294,6 +295,11 @@ public static class DatabaseAuthService
             Name = user.Name + " " + user.LastName,
             Role = roles[0],
             Roles = roles,
+            LinkedIn = SocialProfileUrls.Build(SocialProfileUrls.LinkedIn, user.LinkedIn),
+            Instagram = SocialProfileUrls.Build(SocialProfileUrls.Instagram, user.Instagram),
+            X = SocialProfileUrls.Build(SocialProfileUrls.X, user.X),
+            YouTube = SocialProfileUrls.Build(SocialProfileUrls.YouTube, user.YouTube),
+            Github = SocialProfileUrls.Build(SocialProfileUrls.GitHub, user.Github),
         };
     }
 

@@ -32,8 +32,11 @@ body {
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
+html.has-ui-modal,
 body.has-ui-modal {
-  overflow: hidden;
+  overflow: hidden !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 h1, h2, h3, h4, h5, h6 {

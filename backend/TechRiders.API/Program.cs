@@ -115,7 +115,23 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/error");
+    app.UseExceptionHandler(errorApp =>
+    {
+        errorApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+
+            var problem = new
+            {
+                success = false,
+                message = "Se produjo un error inesperado en el servidor.",
+                timestamp = DateTime.UtcNow
+            };
+
+            await context.Response.WriteAsJsonAsync(problem);
+        });
+    });
     app.UseHsts(); // HTTP Strict Transport Security
 }
 

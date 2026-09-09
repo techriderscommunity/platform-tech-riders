@@ -17,6 +17,8 @@ public sealed class User : BaseEntity
     public string? About { get; set; }
     public string? LinkedIn { get; set; }
     public string? Instagram { get; set; }
+    public string? X { get; set; }
+    public string? YouTube { get; set; }
     public string? Github { get; set; }
 
     public Guid? StatusId { get; set; }

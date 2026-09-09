@@ -22,6 +22,11 @@ export interface UserProfile {
   name: string;
   role: AppRole;
   roles: AppRole[];
+  linkedIn?: string | null;
+  instagram?: string | null;
+  x?: string | null;
+  youTube?: string | null;
+  github?: string | null;
 }
 
 export interface LoginResponse {
@@ -116,6 +121,11 @@ export class AuthService {
       name: user.name,
       role: this.resolvePrimaryRole(normalizedRoles),
       roles: normalizedRoles,
+      linkedIn: user.linkedIn ?? null,
+      instagram: user.instagram ?? null,
+      x: user.x ?? null,
+      youTube: user.youTube ?? null,
+      github: user.github ?? null,
     };
   }
 
@@ -128,6 +138,11 @@ export class AuthService {
         Name?: string;
         Role?: string;
         Roles?: Array<string | AppRole>;
+        LinkedIn?: string | null;
+        Instagram?: string | null;
+        X?: string | null;
+        YouTube?: string | null;
+        Github?: string | null;
       };
     };
 
@@ -138,6 +153,11 @@ export class AuthService {
       name: payload.user?.name ?? payload.User?.Name ?? '',
       role: (payload.user?.role ?? payload.User?.Role) as AppRole | undefined,
       roles: (payload.user?.roles ?? payload.User?.Roles ?? []) as AppRole[],
+      linkedIn: payload.user?.linkedIn ?? payload.User?.LinkedIn ?? null,
+      instagram: payload.user?.instagram ?? payload.User?.Instagram ?? null,
+      x: payload.user?.x ?? payload.User?.X ?? null,
+      youTube: payload.user?.youTube ?? payload.User?.YouTube ?? null,
+      github: payload.user?.github ?? payload.User?.Github ?? null,
     };
 
     if (!token) {

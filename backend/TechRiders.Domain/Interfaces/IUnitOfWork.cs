@@ -51,6 +51,8 @@ public interface IUnitOfWork : IDisposable
     /// </summary>
     IIntranetUserCategoryRepository IntranetUserCategories { get; }
 
+    ICommunityPartnerApplicationRepository CommunityPartnerApplications { get; }
+
     /// <summary>
     /// Guarda todos los cambios pendientes en una única transacción
     /// </summary>

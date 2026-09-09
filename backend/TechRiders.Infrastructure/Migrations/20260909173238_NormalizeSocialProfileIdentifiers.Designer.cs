@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechRiders.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TechRiders.Infrastructure.Data;
 namespace TechRiders.Infrastructure.Migrations
 {
     [DbContext(typeof(TechRidersDbContext))]
-    partial class TechRidersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260909173238_NormalizeSocialProfileIdentifiers")]
+    partial class NormalizeSocialProfileIdentifiers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -12,6 +12,9 @@ public sealed class Center : BaseEntity
     public string? ParkingInfo { get; set; }
     public string? LinkedIn { get; set; }
     public string? Instagram { get; set; }
+    public string? X { get; set; }
+    public string? YouTube { get; set; }
+    public string? Github { get; set; }
     public string? Description { get; set; }
 
     // Compatibilidad con campos legacy que siguen usándose por DTOs y repositorios

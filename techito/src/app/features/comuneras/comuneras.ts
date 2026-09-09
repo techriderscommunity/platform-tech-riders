@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UiButton } from '@shared/ui/button/button';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiTextField } from '@shared/ui/text-field/text-field';
 import { CommunityPartnersStore } from './services/community-partners.store';
@@ -7,7 +8,7 @@ import { CommunityPartnersStore } from './services/community-partners.store';
 @Component({
   selector: 'app-comuneras',
   standalone: true,
-  imports: [RouterLink, UiSelect, UiTextField],
+  imports: [RouterLink, UiButton, UiSelect, UiTextField],
   templateUrl: './comuneras.html',
   styleUrl: './comuneras.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,10 +52,6 @@ export class Comuneras {
 
   onCardClick(id: string, name: string): void {
     this.store.trackCardClick(id, name);
-  }
-
-  onApplyClick(): void {
-    this.store.trackApplyClick('directory');
   }
 
   onScopeFilterChange(value: string): void {
