@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TechRiders.Api.Extensions;
@@ -10,24 +9,24 @@ using TechRiders.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-const string AzureAdScheme = "AzureAd";
-const string LocalJwtScheme = JwtBearerDefaults.AuthenticationScheme;
-
 // =====================================================================
 // CONFIGURACIÓN DE SERVICIOS - Dependency Injection
 // =====================================================================
 
-var localJwtSigningKey = builder.Configuration["LocalAuth:SigningKey"] ?? "techriders-local-auth-signing-key-2025";
-
-var authenticationBuilder = builder.Services.AddAuthentication(options =>
+var authSection = builder.Configuration.GetSection("Auth");
+var jwtSigningKey = authSection["SigningKey"];
+if (string.IsNullOrWhiteSpace(jwtSigningKey))
 {
-    options.DefaultScheme = LocalJwtScheme;
-    options.DefaultAuthenticateScheme = LocalJwtScheme;
-    options.DefaultChallengeScheme = LocalJwtScheme;
-});
+    throw new InvalidOperationException("Auth:SigningKey must be configured.");
+}
 
-authenticationBuilder
-    .AddJwtBearer(LocalJwtScheme, options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
@@ -37,16 +36,12 @@ authenticationBuilder
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["LocalAuth:Issuer"] ?? "TechRidersLocalAuth",
-            ValidAudience = builder.Configuration["LocalAuth:Audience"] ?? "TechRidersApi",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(localJwtSigningKey)),
+            ValidIssuer = authSection["Issuer"] ?? "TechRidersAuth",
+            ValidAudience = authSection["Audience"] ?? "TechRidersApi",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey)),
             ClockSkew = TimeSpan.FromMinutes(1)
         };
-    })
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"), jwtBearerScheme: AzureAdScheme)
-        .EnableTokenAcquisitionToCallDownstreamApi()
-            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-            .AddInMemoryTokenCaches();
+    });
 
 // 2. Configuración de servicios de infraestructura (DbContext con pooling, repositorios)
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -90,13 +85,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddSwaggerDocumentation();
 
 // 7. Configuración de Health Checks
-var useInMemoryDatabase = bool.TryParse(builder.Configuration["Database:UseInMemory"], out var useInMemoryParsed)
-    && useInMemoryParsed;
-var healthChecks = builder.Services.AddHealthChecks();
-if (!useInMemoryDatabase)
-{
-    healthChecks.AddDbContextCheck<TechRiders.Infrastructure.Data.TechRidersDbContext>();
-}
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<TechRidersDbContext>();
 
 // 8. Configuración de compresión de respuestas
 builder.Services.AddResponseCompression(options =>
@@ -171,7 +161,12 @@ using (var scope = app.Services.CreateScope())
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
 
-    if (dbContext.Database.IsRelational())
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        dbContext.Database.EnsureCreated();
+        app.Logger.LogInformation("Base de datos de test creada con EnsureCreated().");
+    }
+    else if (dbContext.Database.IsRelational())
     {
         var canConnect = dbContext.Database.CanConnect();
         if (!canConnect)
@@ -191,7 +186,7 @@ using (var scope = app.Services.CreateScope())
         app.Logger.LogInformation("Base de datos en memoria creada con EnsureCreated().");
     }
 
-    await LocalAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
+    await DatabaseAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
 }
 
 // Logging de inicio

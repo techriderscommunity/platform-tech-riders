@@ -1,12 +1,20 @@
 <label class="ui-textarea-field">
-  <span class="ui-textarea-label">{{ label }}</span>
+  <span class="ui-textarea-label" [id]="controlId + '-label'">{{ label }}</span>
   <textarea
+    [id]="controlId"
     class="ui-textarea-input"
     [name]="name"
     [placeholder]="placeholder"
     [rows]="rows"
     [required]="required"
+    [disabled]="disabled"
+    [attr.aria-labelledby]="controlId + '-label'"
+    [attr.aria-invalid]="invalid"
+    [attr.aria-describedby]="describedBy || (errorMessage ? controlId + '-error' : null)"
     [ngModel]="value"
     (ngModelChange)="valueChange.emit($event)"
   ></textarea>
+  @if (errorMessage) {
+    <span class="ui-textarea-error" [id]="controlId + '-error'" role="alert">{{ errorMessage }}</span>
+  }
 </label>

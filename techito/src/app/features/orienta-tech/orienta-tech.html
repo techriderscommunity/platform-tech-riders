@@ -32,35 +32,6 @@
     <app-ui-feature-cards [items]="studySections" [singleLineTitles]="true" [columns]="5"></app-ui-feature-cards>
   </section>
 
-  <section class="ot-block" aria-labelledby="ot-playlists-title">
-    <div class="panel-head">
-      <h2 id="ot-playlists-title">Listas de YouTube</h2>
-      <a class="panel-link" [href]="youtubePlaylistsUrl" target="_blank" rel="noopener noreferrer">Canal completo</a>
-    </div>
-    <p class="ot-playlists-description">Contenido curado para explorar perfiles, experiencias y entrevistas dentro de OrientaTech.</p>
-
-    <div class="ot-playlists-stack">
-      @for (section of youtubePlaylistSections; track section.url) {
-      <article class="ot-playlist-panel">
-        <div class="panel-head">
-          <h3>{{ section.title }}</h3>
-          <a class="panel-link" [href]="section.url" target="_blank" rel="noopener noreferrer">Abrir lista</a>
-        </div>
-        @if (sectionLoading(section)) {
-        <p class="panel-feedback">Cargando últimos vídeos del podcast...</p>
-        }
-        <app-ui-media-carousel
-          [items]="sectionItems(section)"
-          [ariaLabel]="'Lista de YouTube: ' + section.title"
-          [showCaptions]="true"
-          [autoplay]="true"
-          cardMinWidth="270px"
-        ></app-ui-media-carousel>
-      </article>
-      }
-    </div>
-  </section>
-
   <section class="ot-cta">
     <h2>¿Listo para transformar tu carrera?</h2>
     <p>Únete a Tech Riders y a por el siguiente paso.</p>

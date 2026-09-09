@@ -73,46 +73,6 @@
   color: var(--text-secondary);
 }
 
-.ot-playlists-description {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: var(--line-height-relaxed);
-}
-
-.ot-playlists-stack {
-  display: grid;
-  gap: var(--space-4);
-  min-width: 0;
-}
-
-.ot-playlist-panel {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
-  display: grid;
-  gap: var(--space-3);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.ot-playlist-panel .panel-head {
-  margin-bottom: var(--space-2);
-
-  h3 {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: var(--font-size-2xl);
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-}
-
-.ot-playlist-panel app-ui-media-carousel {
-  min-width: 0;
-}
-
 .ot-cta {
   display: grid;
   justify-items: center;
@@ -146,7 +106,4 @@
     align-items: flex-start;
   }
 
-  .ot-playlist-panel {
-    padding: var(--space-4);
-  }
 }

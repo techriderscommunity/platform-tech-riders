@@ -37,8 +37,8 @@ public sealed class AdminDashboardService : IAdminDashboardService
             Events = await _unitOfWork.Events.CountAsync(cancellationToken: cancellationToken),
             Sessions = await _unitOfWork.Sessions.CountAsync(cancellationToken: cancellationToken),
             Ambassadors = await _unitOfWork.Ambassadors.CountActiveAmbassadorsAsync(cancellationToken),
-            JobOffers = await _unitOfWork.Ofertas.CountAsync(cancellationToken: cancellationToken),
-            Applications = await _unitOfWork.Candidaturas.CountAsync(cancellationToken: cancellationToken),
+            JobOffers = 0,
+            Applications = 0,
         };
 
         return new AdminDashboardResponse

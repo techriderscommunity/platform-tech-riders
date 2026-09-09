@@ -3,7 +3,7 @@ import { PublicContentPayload } from './public-content.models';
 export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
   home: {
     stats: [
-      { value: '13', label: 'Años de comunidad', icon: '📅' },
+      { value: '5', label: 'Años de comunidad', icon: '📅' },
       { value: '1300+', label: 'Tutoriales publicados', icon: '📚' },
       { value: '50+', label: 'Centros inscritos #FPTOUR', icon: '🏫' },
       { value: '1500+', label: 'Alumnos #FPTOUR', icon: '👥' },
@@ -18,7 +18,7 @@ export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
       { title: 'Profesionales', description: 'Impulsa tu carrera en tecnología, comparte experiencia y amplía tu red de contactos.', icon: '💼', cta: 'Explorar', link: '/events', accent: 'blue' },
       { title: 'Empresas', description: 'Conecta con el talento, participa en eventos y comparte conocimiento real con la comunidad.', icon: '🏢', cta: 'Explorar', link: '/companies', accent: 'amber' },
       { title: 'Orientadores', description: 'Accede a recursos y actividades tecnológicas para tu alumnado y descubre iniciativas STEM.', icon: '🧭', cta: 'Explorar', link: '/orienta-tech', accent: 'pink' },
-      { title: 'Starters', description: 'Descubre profesiones, formaciones y tus primeros pasos en el mundo tech. No necesitas experiencia.', icon: '🚀', cta: 'Explorar', link: '/tutorials', accent: 'teal' },
+      { title: 'Starters', description: 'Descubre profesiones, formaciones y tus primeros pasos en el mundo tech. No necesitas experiencia.', icon: '🚀', cta: 'Explorar', link: '/knowledge', accent: 'teal' },
       { title: 'Women in Tech', description: 'Referentes, ayudas, comunidad y oportunidades para mujeres que quieren crecer en tecnología.', icon: '♀️', cta: 'Explorar', link: '/woman-tech', accent: 'fuchsia' },
       { title: 'Conócenos', description: 'Descubre quiénes somos, nuestra misión, valores y cómo trabajamos para impulsar el talento tech.', icon: '👥', cta: 'Explorar', link: '/about-us', accent: 'sky' },
     ],
@@ -99,12 +99,12 @@ export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
   opportunities: {
     tracks: [
       { title: 'Primer empleo tech', detail: 'Rutas para perfiles junior con foco en transición real al mercado.', progress: 78, status: 'Junior', ctaLabel: 'Ver guía', ctaLink: '/orienta-tech' },
-      { title: 'Upskilling profesional', detail: 'Sesiones y recursos para evolución de perfil técnico y liderazgo.', progress: 65, status: 'Profesional', ctaLabel: 'Explorar recursos', ctaLink: '/tutorials' },
+      { title: 'Upskilling profesional', detail: 'Sesiones y recursos para evolución de perfil técnico y liderazgo.', progress: 65, status: 'Profesional', ctaLabel: 'Explorar recursos', ctaLink: '/knowledge' },
       { title: 'Conexión con empresas', detail: 'Canales de colaboración, sesiones y oportunidades compartidas con partners.', progress: 71, status: 'Empresa', ctaLabel: 'Ir a empresas', ctaLink: '/companies' },
     ],
     resources: [
-      { mode: 'Comunidad', title: 'Banco de conocimiento Tech Riders', summary: 'Tutoriales, charlas y materiales prácticos para aprendizaje continuo.', tags: ['Tutoriales', 'Recursos', 'Aprendizaje'], meta: 'Actualización continua', ctaLabel: 'Ir a conocimiento', ctaLink: '/tutorials' },
-      { mode: 'Actividad', title: 'Próximas sesiones y actividades', summary: 'Agenda pública con oportunidades para participar y hacer networking.', tags: ['Eventos', 'Sesiones', 'Networking'], meta: 'Calendario abierto', ctaLabel: 'Ver calendario', ctaLink: '/calendar' },
+      { mode: 'Comunidad', title: 'Banco de conocimiento Tech Riders', summary: 'Tutoriales, charlas y materiales prácticos para aprendizaje continuo.', tags: ['Tutoriales', 'Recursos', 'Aprendizaje'], meta: 'Actualización continua', ctaLabel: 'Ir a conocimiento', ctaLink: '/knowledge' },
+      { mode: 'Actividad', title: 'Próximas sesiones y actividades', summary: 'Agenda pública con oportunidades para participar y hacer networking.', tags: ['Eventos', 'Sesiones', 'Networking'], meta: 'Calendario abierto', ctaLabel: 'Ver eventos', ctaLink: '/events' },
     ],
   },
   womanTech: {
@@ -148,7 +148,7 @@ export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
     participationTracks: [
       { title: 'Empresas colaboradoras', status: 'Activa', progress: 78, detail: 'Red de organizaciones que abren oportunidades reales de empleabilidad.', ctaLabel: 'Ver oportunidades', ctaLink: '/join' },
       { title: 'Recruiters y RRHH', status: 'Activa', progress: 74, detail: 'Sesiones de mercado laboral, procesos de selección y feedback estructurado.', ctaLabel: 'Participar', ctaLink: '/join' },
-      { title: 'Recursos y contenidos', status: 'En crecimiento', progress: 69, detail: 'Videoteca, guías y casos para crecer en soft skills y carrera profesional.', ctaLabel: 'Explorar', ctaLink: '/tutorials' },
+      { title: 'Recursos y contenidos', status: 'En crecimiento', progress: 69, detail: 'Videoteca, guías y casos para crecer en soft skills y carrera profesional.', ctaLabel: 'Explorar', ctaLink: '/knowledge' },
     ],
     studySections: [
       { icon: '', title: 'FP', description: 'Itinerarios base en desarrollo, sistemas, data y ciberseguridad para iniciar carrera tech.', points: ['SMR', 'ASIR', 'DAW', 'DAM'] },

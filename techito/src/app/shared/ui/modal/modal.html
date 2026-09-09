@@ -1,11 +1,11 @@
 <section class="ui-modal-shell" role="presentation">
   <button type="button" class="ui-modal-backdrop" aria-label="Cerrar modal" (click)="onClose()"></button>
-  <section class="ui-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="titleId">
+  <section #dialog class="ui-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="titleId" [attr.aria-describedby]="descriptionId" tabindex="-1">
     <header class="ui-modal-header">
       <h2 [id]="titleId"><ng-content select="[modal-title]"></ng-content></h2>
       <button type="button" class="ui-modal-close" (click)="onClose()" aria-label="Cerrar modal">Cerrar</button>
     </header>
-    <div class="ui-modal-content">
+    <div class="ui-modal-content" [id]="descriptionId">
       <ng-content></ng-content>
     </div>
   </section>

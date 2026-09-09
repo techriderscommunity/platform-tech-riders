@@ -3,15 +3,12 @@
     <span class="section-label">Comunidad</span>
     <h1 class="section-heading">Comuñeras</h1>
     <p class="section-subheading">{{ subtitle }}</p>
-
-    <section class="join-cta join-cta-hero">
-      <h2>¿Tienes una comunidad?</h2>
       <p>
         Nos encanta colaborar con personas y comunidades que comparten nuestros valores y
         nuestra pasión por ayudar a crecer a otras personas.
       </p>
+      <span>¿Tienes una comunidad?</span>
       <a class="btn btn-secondary" routerLink="/community-partners/apply" (click)="onApplyClick()">Quiero ser Comuñera</a>
-    </section>
 
     <ul class="topic-chips" aria-label="Temáticas del ecosistema">
       @for (topic of topicSummary(); track topic) {

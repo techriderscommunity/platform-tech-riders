@@ -95,18 +95,3 @@ public sealed class CompanyConfiguration : IEntityTypeConfiguration<Company>
     }
 }
 
-public sealed class JobOfferConfiguration : IEntityTypeConfiguration<JobOffer>
-{
-    public void Configure(EntityTypeBuilder<JobOffer> builder)
-    {
-        builder.ToTable("JobOffers");
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Title).HasMaxLength(180).IsRequired();
-        builder.Property(x => x.Description).HasMaxLength(4000);
-        builder.Property(x => x.Location).HasMaxLength(160);
-        builder.Property(x => x.ContractType).HasMaxLength(80);
-        builder.Property(x => x.Url).HasMaxLength(512);
-        builder.HasOne(x => x.Company).WithMany(x => x.JobOffers).HasForeignKey(x => x.CompanyId);
-        builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.SetNull);
-    }
-}

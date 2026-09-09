@@ -20,12 +20,10 @@ public class UnitOfWork : IUnitOfWork
     private ICenterRepository? _centers;
     private IFPTourRepository? _fpTours;
     private ICategoryRepository? _categories;
-    private IOfertaRepository? _ofertas;
-    private ICandidaturaRepository? _candidaturas;
-    private ITutorialRepository? _tutoriales;
     private IIntranetAuditLogRepository? _intranetAuditLogs;
     private IIntranetSettingRepository? _intranetSettings;
     private IIntranetUserCategoryRepository? _intranetUserCategories;
+
 
     public UnitOfWork(TechRidersDbContext context)
     {
@@ -43,12 +41,6 @@ public class UnitOfWork : IUnitOfWork
     public IFPTourRepository FPTours => _fpTours ??= new FPTourRepository(_context);
 
     public ICategoryRepository Categories => _categories ??= new CategoryRepository(_context);
-
-    public IOfertaRepository Ofertas => _ofertas ??= new OfertaRepository(_context);
-
-    public ICandidaturaRepository Candidaturas => _candidaturas ??= new CandidaturaRepository(_context);
-
-    public ITutorialRepository Tutoriales => _tutoriales ??= new TutorialRepository(_context);
 
     public IIntranetAuditLogRepository IntranetAuditLogs => _intranetAuditLogs ??= new IntranetAuditLogRepository(_context);
 

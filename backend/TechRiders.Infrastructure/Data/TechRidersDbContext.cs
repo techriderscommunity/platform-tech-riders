@@ -63,21 +63,6 @@ public class TechRidersDbContext : DbContext
     public DbSet<MT_Category> Categories => Set<MT_Category>();
 
     /// <summary>
-    /// DbSet de Ofertas de Empleo
-    /// </summary>
-    public DbSet<Oferta> Ofertas => Set<Oferta>();
-
-    /// <summary>
-    /// DbSet de Candidaturas
-    /// </summary>
-    public DbSet<Candidatura> Candidaturas => Set<Candidatura>();
-
-    /// <summary>
-    /// DbSet de Tutoriales
-    /// </summary>
-    public DbSet<Tutorial> Tutoriales => Set<Tutorial>();
-
-    /// <summary>
     /// DbSet de Audit Logs de Intranet
     /// </summary>
     public DbSet<IntranetAuditLog> IntranetAuditLogs => Set<IntranetAuditLog>();
@@ -357,12 +342,6 @@ public class TechRidersDbContext : DbContext
             entity.HasIndex(t => t.AmbassadorUserId);
             entity.HasIndex(t => t.HasScheduledDate);
             entity.HasIndex(t => t.IsActive);
-        });
-
-        modelBuilder.Entity<Oferta>(entity =>
-        {
-            entity.Property(o => o.Salario)
-                .HasPrecision(18, 2);
         });
 
         // Configuraciones de entidades migrables gestionadas directamente en este DbContext.

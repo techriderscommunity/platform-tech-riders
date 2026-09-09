@@ -10,6 +10,4 @@ public sealed class Company : BaseEntity
 
     public Guid? ContactUserId { get; set; }
     public User? ContactUser { get; set; }
-
-    public ICollection<JobOffer> JobOffers { get; set; } = new List<JobOffer>();
 }

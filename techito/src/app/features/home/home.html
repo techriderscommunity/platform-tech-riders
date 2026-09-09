@@ -14,8 +14,8 @@
       Porque las mejores oportunidades nacen cuando conectamos conocimiento, ideas y personas.
     </p>
     <div class="hero-actions">
-      <a routerLink="/tutorials" class="btn btn-primary">Explore tutorials</a>
-      <a routerLink="/about-us" class="btn btn-secondary">About us</a>
+      <a routerLink="/knowledge" class="btn btn-primary">Conocimiento</a>
+      <a routerLink="/about-us" class="btn btn-secondary">Sobre nosotros</a>
     </div>
 
     <app-ui-metrics-strip class="home-metrics-strip" [items]="stats"></app-ui-metrics-strip>
@@ -64,7 +64,7 @@
         } @else if (proximosEventos().length === 0) {
         <div class="community-empty">
           <span class="proximamente-icon">📅</span>
-          <p>Estamos cerrando nuevas fechas. <a routerLink="/contact">Escríbenos</a> para mantenerte al día.</p>
+          <p>Estamos cerrando nuevas fechas. <a routerLink="/join">Escríbenos</a> para mantenerte al día.</p>
         </div>
         } @else {
         <div class="community-events-list">

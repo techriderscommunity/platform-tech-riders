@@ -6,6 +6,7 @@ import { JuniorService } from '../services/junior.service';
 import { OfertaJunior } from '../models/junior.models';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
 import { UiButton  } from '@shared/ui/button/button';
+import { AuthService } from '@core/auth/auth.service';
 
 @Component({
   selector: 'app-mis-ofertas',
@@ -17,6 +18,7 @@ import { UiButton  } from '@shared/ui/button/button';
 })
 export class MisOfertas {
   private readonly juniorService = inject(JuniorService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly filtroActual = signal('todas');
@@ -69,10 +71,16 @@ export class MisOfertas {
   }
 
   enviarSolicitud(ofertaId: string) {
+    const user = this.authService.user();
+    if (!user) {
+      this.error.set('Debes iniciar sesión para enviar una solicitud.');
+      return;
+    }
+
     this.info.set(null);
     this.error.set(null);
     this.juniorService
-      .enviarSolicitud(ofertaId, 'junior-demo', 'Junior Demo', 'junior.demo@techriders.local')
+      .enviarSolicitud(ofertaId, user.id, user.name, user.email)
       .pipe(
         catchError(() => {
           this.error.set('No se pudo enviar tu solicitud. Intenta de nuevo.');

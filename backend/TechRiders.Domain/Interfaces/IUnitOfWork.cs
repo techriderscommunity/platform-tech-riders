@@ -37,21 +37,6 @@ public interface IUnitOfWork : IDisposable
     ICategoryRepository Categories { get; }
 
     /// <summary>
-    /// Repositorio de Ofertas de Empleo
-    /// </summary>
-    IOfertaRepository Ofertas { get; }
-
-    /// <summary>
-    /// Repositorio de Candidaturas
-    /// </summary>
-    ICandidaturaRepository Candidaturas { get; }
-
-    /// <summary>
-    /// Repositorio de Tutoriales
-    /// </summary>
-    ITutorialRepository Tutoriales { get; }
-
-    /// <summary>
     /// Repositorio de Audit Logs de Intranet
     /// </summary>
     IIntranetAuditLogRepository IntranetAuditLogs { get; }

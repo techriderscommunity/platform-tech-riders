@@ -57,7 +57,7 @@ export class IntranetHome {
 
   readonly userName = computed(() => this.authService.user()?.name || 'Usuario');
   readonly userRoles = computed(() => this.authService.user()?.roles ?? []);
-  readonly userEmail = computed(() => this.authService.user()?.email || 'usuario@techriders.local');
+  readonly userEmail = computed(() => this.authService.user()?.email ?? '');
   readonly userInitials = computed(() => {
     const name = this.userName().trim();
     if (!name) return 'TR';
@@ -351,7 +351,12 @@ export class IntranetHome {
   }
 
   private resolveUserKey(): string {
-    return this.authService.user()?.email || 'local-user@techriders.local';
+    const email = this.authService.user()?.email;
+    if (!email) {
+      throw new Error('Authenticated user email is required.');
+    }
+
+    return email;
   }
 }
 

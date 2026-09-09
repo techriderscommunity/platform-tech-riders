@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, tap } from 'rxjs';
-import { Router, RouterLink } from '@angular/router';
 import { PublicContentService } from '@core/content/public-content.service';
 import { MetricItem } from '@core/content/public-content.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton  } from '@shared/ui/button/button';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
-import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
+import { UiModal } from '@shared/ui/modal/modal';
 import { IntakeType, JoinRequestPayload } from './models/unete.models';
 import { UneteIntakeService } from './services/unete-intake.service';
 
@@ -18,7 +17,7 @@ import { UneteIntakeService } from './services/unete-intake.service';
   selector: 'app-unete',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, UiTextField, UiTextarea, UiButton, UiSelect, UiMetricsStrip],
+  imports: [CommonModule, FormsModule, UiTextField, UiTextarea, UiButton, UiSelect, UiModal],
   templateUrl: './unete.html',
   styleUrl: './unete.scss'
 })
@@ -26,7 +25,6 @@ export class Unete implements OnInit {
   private readonly uneteIntakeService = inject(UneteIntakeService);
   private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly router = inject(Router);
 
   intakeOptions: UiSelectOption[] = [];
 
@@ -50,6 +48,7 @@ export class Unete implements OnInit {
   loading = signal(false);
   error = signal('');
   successMessage = signal('');
+  showJoinModal = signal(false);
 
   ngOnInit(): void {
     this.publicContentService
@@ -78,6 +77,22 @@ export class Unete implements OnInit {
     if (value === 'member' || value === 'ambassador' || value === 'session') {
       this.seleccionarFlujo(value);
     }
+  }
+
+  abrirSolicitud(requestType: IntakeType = 'member') {
+    this.seleccionarFlujo(requestType);
+    this.error.set('');
+    this.enviado.set(false);
+    this.showJoinModal.set(true);
+  }
+
+  cerrarSolicitud() {
+    if (this.loading()) {
+      return;
+    }
+
+    this.showJoinModal.set(false);
+    this.error.set('');
   }
 
   flowTitle(): string {
@@ -115,13 +130,12 @@ export class Unete implements OnInit {
       audience: null,
       organization: this.formulario().organizacion || null,
       motivation: this.formulario().motivacion,
-      sessionTopic: this.formulario().requestType === 'session' ? this.formulario().sessionTopic || null : null,
-      sessionFormat: this.formulario().requestType === 'session' ? 'por-definir' : null,
+      sessionTopic: null,
+      sessionFormat: null,
     };
 
     this.uneteIntakeService.submitJoinRequest(payload).subscribe({
       next: () => {
-        this.persistLocalDraft(payload);
         this.loading.set(false);
         this.enviado.set(true);
         this.successMessage.set(this.buildSuccessMessage(this.formulario().requestType));
@@ -134,12 +148,14 @@ export class Unete implements OnInit {
           motivacion: '',
           sessionTopic: '',
         });
-        setTimeout(() => this.enviado.set(false), 3000);
+        setTimeout(() => {
+          this.enviado.set(false);
+          this.showJoinModal.set(false);
+        }, 2400);
       },
-      error: (err) => {
+      error: () => {
         this.loading.set(false);
-        this.error.set('Oops, algo salió mal. ¡Reinténtalo en un momento! 🚀');
-        console.error(err);
+        this.error.set('No se pudo enviar la solicitud. Reinténtalo en un momento.');
       }
     });
   }
@@ -150,14 +166,6 @@ export class Unete implements OnInit {
 
   updateEmail(value: string) {
     this.formulario.update(f => ({ ...f, email: value }));
-  }
-
-  updateOrganizacion(value: string) {
-    this.formulario.update(f => ({ ...f, organizacion: value }));
-  }
-
-  updateSessionTopic(value: string) {
-    this.formulario.update(f => ({ ...f, sessionTopic: value }));
   }
 
   updateMotivacion(value: string) {
@@ -172,31 +180,6 @@ export class Unete implements OnInit {
         return 'member';
       default:
         return 'member';
-    }
-  }
-
-  irAlPortalAmbassador() {
-    this.router.navigateByUrl('/intranet/ambassador/portal');
-  }
-
-  private persistLocalDraft(payload: JoinRequestPayload) {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
-
-    if (payload.requestType === 'ambassador') {
-      localStorage.setItem('techriders.mvp.ambassadorDraft', JSON.stringify(payload));
-    }
-
-    if (payload.requestType === 'member') {
-      localStorage.setItem('techriders.mvp.memberProfile', JSON.stringify({
-        nombre: payload.name,
-        email: payload.email,
-        bio: payload.motivation,
-        intereses: 'por-definir',
-        organizacion: payload.organization,
-        communityRole: payload.communityRole,
-      }));
     }
   }
 

@@ -22,7 +22,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
     }
 
     [Fact]
-    public async Task Local_admin_seed_should_create_admin_role_and_allow_login_with_test_credentials()
+    public async Task Database_admin_seed_should_create_admin_role_and_allow_login_with_test_credentials()
     {
         using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
         {
@@ -40,7 +40,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
 
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
 
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LocalLoginResponse>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
         Assert.NotNull(loginResult);
         Assert.False(string.IsNullOrWhiteSpace(loginResult!.Token));
         Assert.Equal("admin", loginResult.User.Role);
@@ -54,7 +54,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
 
         Assert.NotNull(user.PasswordHash);
         Assert.Contains(user.UserRoles, ur => string.Equals(ur.Role.Name, "Admin", StringComparison.OrdinalIgnoreCase));
-        Assert.True(TechRiders.Api.Services.LocalAuthService.VerifyPassword(password, user.PasswordHash!));
+        Assert.True(TechRiders.Api.Services.DatabaseAuthService.VerifyPassword(password, user.PasswordHash!));
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
         });
 
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LocalLoginResponse>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
         Assert.NotNull(loginResult);
         Assert.False(string.IsNullOrWhiteSpace(loginResult!.Token));
 
@@ -134,9 +134,14 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
 {
     private static readonly string DatabaseName = $"TechRidersAuthFlowTests_{Guid.NewGuid():N}";
 
+    public AuthApiFactory()
+    {
+        Environment.SetEnvironmentVariable("Auth__SigningKey", "auth-flow-tests-signing-key-with-enough-length");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Testing");
 
         var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={DatabaseName};Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True";
 
@@ -145,7 +150,8 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = connectionString,
-                ["Database:UseInMemory"] = "false"
+                ["Auth:SigningKey"] = "auth-flow-tests-signing-key-with-enough-length",
+                ["Auth:DefaultAdminPassword"] = "TechAdmin"
             });
         });
 
@@ -172,12 +178,8 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TechRidersDbContext>();
 
-            if (dbContext.Database.CanConnect())
-            {
-                dbContext.Database.EnsureDeleted();
-            }
-
-            dbContext.Database.Migrate();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
         });
     }
 }

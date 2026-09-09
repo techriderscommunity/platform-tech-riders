@@ -17,29 +17,16 @@ public static class InfrastructureServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var useInMemoryDatabase = bool.TryParse(configuration["Database:UseInMemory"], out var parsedValue)
-            && parsedValue;
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found in configuration.");
 
-        if (useInMemoryDatabase)
+        services.AddDbContext<TechRidersDbContext>(options =>
         {
-            services.AddDbContext<TechRidersDbContext>(options =>
+            options.UseSqlServer(connectionString, sqlOptions =>
             {
-                options.UseInMemoryDatabase("TechRidersDb");
+                sqlOptions.EnableRetryOnFailure();
             });
-        }
-        else
-        {
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found in configuration.");
-
-            services.AddDbContext<TechRidersDbContext>(options =>
-            {
-                options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    sqlOptions.EnableRetryOnFailure();
-                });
-            });
-        }
+        });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

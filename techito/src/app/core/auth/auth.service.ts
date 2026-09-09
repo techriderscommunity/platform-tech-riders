@@ -84,27 +84,36 @@ export class AuthService {
     if (!this.isBrowser()) return;
     const userJson = localStorage.getItem('user');
     if (userJson) {
-      const parsed = JSON.parse(userJson) as Partial<UserProfile>;
-      const normalized = this.normalizeUser(parsed);
-      this.currentUser.set(normalized);
-      this.userType.set(normalized.role);
+      try {
+        const parsed = JSON.parse(userJson) as Partial<UserProfile>;
+        const normalized = this.normalizeUser(parsed);
+        this.currentUser.set(normalized);
+        this.userType.set(normalized.role);
+      }
+      catch {
+        this.logout();
+      }
     }
   }
 
   private normalizeUser(user: Partial<UserProfile>): UserProfile {
-    const fallbackRole = (user.role ?? 'junior') as AppRole;
+    const primaryRole = user.role as AppRole | undefined;
     const normalizedRoles = (user.roles ?? [])
       .filter((role): role is AppRole => !!role)
       .map(role => role as AppRole);
 
-    if (!normalizedRoles.includes(fallbackRole)) {
-      normalizedRoles.push(fallbackRole);
+    if (primaryRole && !normalizedRoles.includes(primaryRole)) {
+      normalizedRoles.push(primaryRole);
+    }
+
+    if (!user.id || !user.email || !user.name || !normalizedRoles.length) {
+      throw new Error('Invalid authentication profile.');
     }
 
     return {
-      id: user.id ?? '',
-      email: user.email ?? '',
-      name: user.name ?? '',
+      id: user.id,
+      email: user.email,
+      name: user.name,
       role: this.resolvePrimaryRole(normalizedRoles),
       roles: normalizedRoles,
     };
@@ -127,9 +136,13 @@ export class AuthService {
       id: payload.user?.id ?? payload.User?.Id ?? '',
       email: payload.user?.email ?? payload.User?.Email ?? '',
       name: payload.user?.name ?? payload.User?.Name ?? '',
-      role: (payload.user?.role ?? payload.User?.Role ?? 'junior') as AppRole,
+      role: (payload.user?.role ?? payload.User?.Role) as AppRole | undefined,
       roles: (payload.user?.roles ?? payload.User?.Roles ?? []) as AppRole[],
     };
+
+    if (!token) {
+      throw new Error('Authentication token was not returned by the backend.');
+    }
 
     return { token, user: this.normalizeUser(user) };
   }

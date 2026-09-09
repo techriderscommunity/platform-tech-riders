@@ -34,7 +34,7 @@ public sealed class AuthController : BaseApiController
 
         try
         {
-            var user = await LocalAuthService.RegisterAsync(
+            var user = await DatabaseAuthService.RegisterAsync(
                 _dbContext,
                 request.Nickname,
                 request.Name,
@@ -43,15 +43,15 @@ public sealed class AuthController : BaseApiController
                 request.Password,
                 cancellationToken);
 
-            var profile = LocalAuthService.BuildUserProfile(user);
-            var token = LocalAuthService.CreateToken(user, _configuration);
+            var profile = DatabaseAuthService.BuildUserProfile(user);
+            var token = DatabaseAuthService.CreateToken(user, _configuration);
 
             return Ok(new RegisterResponse
             {
                 Token = token,
                 Message = "Cuenta creada correctamente.",
                 Email = user.Email,
-                User = new LocalUserProfile
+                User = new UserProfileResponse
                 {
                     Id = profile.Id,
                     Email = profile.Email,
@@ -73,28 +73,28 @@ public sealed class AuthController : BaseApiController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(LocalLoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<LocalLoginResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return ValidationProblem(ModelState);
         }
 
-        var user = await LocalAuthService.AuthenticateAsync(_dbContext, request.Email, request.Password, cancellationToken);
+        var user = await DatabaseAuthService.AuthenticateAsync(_dbContext, request.Email, request.Password, cancellationToken);
         if (user is null)
         {
             return Unauthorized(new { message = "Credenciales inválidas." });
         }
 
-        var profile = LocalAuthService.BuildUserProfile(user);
-        var token = LocalAuthService.CreateToken(user, _configuration);
+        var profile = DatabaseAuthService.BuildUserProfile(user);
+        var token = DatabaseAuthService.CreateToken(user, _configuration);
 
-        return Ok(new LocalLoginResponse
+        return Ok(new LoginResponse
         {
             Token = token,
-            User = new LocalUserProfile
+            User = new UserProfileResponse
             {
                 Id = profile.Id,
                 Email = profile.Email,
@@ -115,7 +115,7 @@ public sealed class AuthController : BaseApiController
             return ValidationProblem(ModelState);
         }
 
-        var response = await LocalAuthService.RequestPasswordResetAsync(_dbContext, request.Email, cancellationToken);
+        var response = await DatabaseAuthService.RequestPasswordResetAsync(_dbContext, request.Email, cancellationToken);
         return Ok(response);
     }
 
@@ -130,7 +130,7 @@ public sealed class AuthController : BaseApiController
             return ValidationProblem(ModelState);
         }
 
-        var success = await LocalAuthService.ResetPasswordAsync(_dbContext, request.Email, request.Token, request.NewPassword, cancellationToken);
+        var success = await DatabaseAuthService.ResetPasswordAsync(_dbContext, request.Email, request.Token, request.NewPassword, cancellationToken);
         if (!success)
         {
             return BadRequest(new { message = "El token es inválido o ha expirado." });

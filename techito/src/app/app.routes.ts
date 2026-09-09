@@ -5,21 +5,17 @@ export const routes: Routes = [
   // === Público: Comunidad ===
   { path: '', loadComponent: () => import('./features/home/home').then(m => m.Home) },
   { path: 'join', loadComponent: () => import('./features/unete/unete').then(m => m.Unete) },
-  { path: 'about-us', loadComponent: () => import('./features/quienes-somos/quienes-somos').then(m => m.QuienesSomos) },
+  { path: 'about-us', loadComponent: () => import('./features/about-us/quienes-somos').then(m => m.QuienesSomos) },
   { path: 'community-partners', loadComponent: () => import('./features/comuneras/comuneras').then(m => m.Comuneras) },
   { path: 'community-partners/apply', loadComponent: () => import('./features/comuneras/community-partner-apply').then(m => m.CommunityPartnerApply) },
   { path: 'community-partners/:id', loadComponent: () => import('./features/comuneras/community-partner-detail').then(m => m.CommunityPartnerDetail) },
-  { path: 'woman-tech', loadComponent: () => import('./features/woman-tech/woman-tech').then(m => m.WomanTech) },
-  { path: 'events', loadComponent: () => import('./features/eventos/eventos').then(m => m.Eventos) },
-  { path: 'calendar', loadComponent: () => import('./features/calendario-publico/calendario-publico').then(m => m.CalendarioPublico) },
+  { path: 'events', loadComponent: () => import('./features/events/events').then(m => m.Events) },
   { path: 'orienta-tech', loadComponent: () => import('./features/orienta-tech/orienta-tech').then(m => m.OrientaTech) },
-  { path: 'opportunities', redirectTo: 'orienta-tech', pathMatch: 'full' },
-  { path: 'centers', loadComponent: () => import('./features/centros/centros').then(m => m.Centros) },
-  { path: 'companies', loadComponent: () => import('./features/empresas/empresas').then(m => m.Empresas) },
+  { path: 'tutorials', redirectTo: 'knowledge', pathMatch: 'full' },
+  { path: 'contact', redirectTo: 'join', pathMatch: 'full' },
 
   // === Público: Contenido ===
-  { path: 'tutorials', loadComponent: () => import('./features/tutoriales/tutoriales').then(m => m.Tutoriales) },
-  { path: 'knowledge-bank', redirectTo: 'tutorials', pathMatch: 'full' },
+  { path: 'knowledge', loadComponent: () => import('./features/knowledge/knowledge').then(m => m.Knowledge) },
 
   // === Auth ===
   { path: 'login', loadComponent: () => import('./features/login/login-redirect').then(m => m.LoginRedirect) },
@@ -40,7 +36,7 @@ export const routes: Routes = [
       { path: 'admin/community-partners', canActivate: [roleGuard(['admin', 'superadmin'])], loadComponent: () => import('./features/intranet/comuneras/admin-comuneras').then(m => m.AdminComuneras) },
       { path: 'admin/fp-tour', canActivate: [roleGuard(['admin', 'superadmin'])], loadComponent: () => import('./features/intranet/fp-tour/admin-sesiones').then(m => m.AdminSesiones) },
       { path: 'admin/events', redirectTo: 'admin/fp-tour', pathMatch: 'full' },
-      { path: 'admin/eventos', redirectTo: 'admin/events', pathMatch: 'full' },
+      { path: 'admin/events', redirectTo: 'admin/events', pathMatch: 'full' },
       { path: 'admin/sessions', canActivate: [roleGuard(['admin', 'superadmin'])], loadComponent: () => import('./features/intranet/fp-tour/admin-gestion-sesiones').then(m => m.AdminGestionSesiones) },
 
       // === Intranet: FP Tour (navegacion modular interna) ===
@@ -55,7 +51,7 @@ export const routes: Routes = [
       { path: 'events/management', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador'])], loadComponent: () => import('./features/intranet/fp-tour/admin-sesiones').then(m => m.AdminSesiones) },
 
       // === Intranet: Member / Ambassador ===
-      { path: 'member/profile', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'embajador', 'colaborador', 'centro', 'member'])], loadComponent: () => import('./features/perfil-usuario/perfil-usuario').then(m => m.PerfilUsuario) },
+      { path: 'member/profile', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'embajador', 'colaborador', 'centro', 'member'])], loadComponent: () => import('./features/intranet/perfil-usuario/perfil-usuario').then(m => m.PerfilUsuario) },
       { path: 'ambassador/portal', canActivate: [roleGuard(['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'])], loadComponent: () => import('./features/intranet/embajadores/embajador').then(m => m.EmbajadorComponent) },
 
       // === Intranet: Sesiones (navegacion modular interna) ===
