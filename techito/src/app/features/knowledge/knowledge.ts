@@ -4,7 +4,6 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { KnowledgeService } from './services/knowledge.service';
 import { PagedResult, KnowledgeModel } from './models/knowledge.models';
-import { PublicContentService } from '@core/content/public-content.service';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 import { UiCarouselItem, UiMediaCarousel } from '@shared/ui/media-carousel/media-carousel';
@@ -33,10 +32,10 @@ function playlistVideoItem(title: string, videoId: string, listId: string): UiCa
 export class Knowledge {
   readonly destroyRef = inject(DestroyRef);
   readonly knowledgeService = inject(KnowledgeService);
-  readonly publicContentService = inject(PublicContentService);
   readonly knowledgePlaylistsService = inject(KnowledgePlaylistsService);
   private readonly platformId = inject(PLATFORM_ID);
 
+  private readonly knownCategories = new Set<string>();
   featuredCategories: string[] = [];
 
   readonly pageSize = 12;
@@ -76,7 +75,8 @@ export class Knowledge {
     summary: tutorial.extracto,
     tags: tutorial.categorias,
     meta: `${this.formatFecha(tutorial.fechaPublicacion)} · ${tutorial.autor}`,
-    ctaLabel: 'Registro y detalles',
+    ctaLabel: 'Ver detalle',
+    ctaLink: tutorial.url,
     ctaHref: tutorial.url
   })));
 
@@ -124,17 +124,6 @@ export class Knowledge {
   });
 
   constructor() {
-    this.publicContentService
-      .getPublicContent()
-      .pipe(
-        tap((content) => {
-          this.featuredCategories = content.tutorials.featuredCategories;
-        }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-
     if (isPlatformBrowser(this.platformId)) toObservable(this.knowledgeQuery)
       .pipe(
         tap(() => {
@@ -159,6 +148,10 @@ export class Knowledge {
       )
       .subscribe(result => {
         this.knowledgePaged.set(result);
+        result.items.flatMap((item) => item.categorias).forEach((cat) => {
+          if (cat && cat.trim()) this.knownCategories.add(cat.trim());
+        });
+        this.featuredCategories = Array.from(this.knownCategories).sort((a, b) => a.localeCompare(b, 'es'));
         this.loadingKnowledges.set(false);
       });
 

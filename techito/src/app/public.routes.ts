@@ -10,6 +10,7 @@ export const publicRoutes: Routes = [
   { path: 'events', loadComponent: () => import('./features/events/events').then(m => m.Events) },
   { path: 'orienta-tech', loadComponent: () => import('./features/orienta-tech/orienta-tech').then(m => m.OrientaTech) },
   { path: 'knowledge', loadComponent: () => import('./features/knowledge/knowledge').then(m => m.Knowledge) },
+  { path: 'knowledge/:slug', loadComponent: () => import('./features/knowledge/knowledge-detail').then(m => m.KnowledgeDetail) },
   { path: 'tutorials', redirectTo: 'knowledge', pathMatch: 'full' },
   { path: 'contact', redirectTo: 'join', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./features/login/login-redirect').then(m => m.LoginRedirect) },

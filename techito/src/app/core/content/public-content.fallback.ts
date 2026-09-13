@@ -37,15 +37,6 @@ export const PUBLIC_CONTENT_FALLBACK: PublicContentPayload = {
     ],
     galleryGroups: [
       {
-        title: 'Talks',
-        subtitle: 'Charlas y encuentros de la comunidad técnica.',
-        items: [
-          { src: 'assets/techito_salero_ming.jpg', alt: 'Talk en evento TechRiders' },
-          { src: 'assets/techito_salero_ming.jpg', alt: 'Comunidad participando en una charla' },
-          { src: 'assets/techito_salero_ming.jpg', alt: 'Ponencia técnica en TechRiders' },
-        ],
-      },
-      {
         title: '#FPTour',
         subtitle: 'Meetups y sesiones en centros de formación.',
         items: [

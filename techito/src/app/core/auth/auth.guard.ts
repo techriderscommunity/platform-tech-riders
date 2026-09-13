@@ -35,8 +35,8 @@ export function roleGuard(requiredRole: AppRole | AppRole[]): CanActivateFn {
       return true;
     }
 
-    // Autenticado pero rol incorrecto → redirigir a su área
-    return router.parseUrl(auth.getDefaultRoute());
+    // Autenticado pero rol incorrecto → redirigir a su área por perfil.
+    return router.parseUrl(auth.getRoleHomeRoute());
   };
 }
 

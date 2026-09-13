@@ -17,7 +17,7 @@ public static class ApplicationServiceExtensions
     {
         // Registrar Mapster con todos los perfiles del assembly de Application
         var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(typeof(ApplicationServiceExtensions).Assembly);
+        config.Scan(typeof(IKnowledgeArticleService).Assembly);
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
 
@@ -31,6 +31,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IFPTourService, FPTourService>();
         services.AddScoped<IIntranetService, IntranetService>();
         services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IKnowledgeArticleService, KnowledgeArticleService>();
 
         return services;
     }

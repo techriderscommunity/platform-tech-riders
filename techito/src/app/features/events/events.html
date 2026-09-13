@@ -1,24 +1,19 @@
 <section class="events-page">
   <div class="events-inner">
     <header class="events-header">
-      <span class="section-label">events</span>
+      <span class="section-label">eventos</span>
       <h1>Participación comunitaria TechRiders</h1>
       <p>
         Descubre próximos encuentros, histórico de talks, galerías y calendario de actividades para conectar con la comunidad.
       </p>
       <div class="events-featured-banner" aria-labelledby="events-featured-title">
-        <div class="events-featured-intro">
-          <span class="section-label">Próximamente</span>
-          <h2 id="events-featured-title">Tres formas de vivir la comunidad</h2>
-          <p>Reserva tu sitio en los encuentros que están marcando la agenda TechRiders.</p>
-        </div>
         <div class="events-featured-grid">
           @for (event of featuredEvents; track event.title) {
           <a class="events-featured-card" [class]="'events-featured-card--' + event.accent" href="#calendario-publico">
             <span class="events-featured-eyebrow">{{ event.eyebrow }}</span>
             <h3>{{ event.title }}</h3>
             <p>{{ event.description }}</p>
-            <span class="events-featured-link">Ver agenda <span aria-hidden="true">↗</span></span>
+            <span class="events-featured-link">Ver Evento<span aria-hidden="true">↗</span></span>
           </a>
           }
         </div>
@@ -88,12 +83,6 @@
       }
     </div>
   </div>
-
-  <div class="event-actions">
-    <a href="https://luma.com/cal-24k3WtXkbkzA2tg" target="_blank" rel="noopener" class="btn btn-secondary">Abrir agenda completa en Luma</a>
-    <a routerLink="/events" class="btn btn-secondary">Ver eventos destacados</a>
-    <a routerLink="/join" class="btn btn-primary">Solicitar sesión</a>
-  </div>
 </section>
 
     <section class="events-panel">
@@ -122,34 +111,25 @@
       <div class="panel-head">
         <h2>Calendario de eventos</h2>
       </div>
-      <div class="calendar-shell">
-        <iframe
-          src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
-          title="Calendario de eventos TechRiders"
-          loading="lazy"
-          frameborder="0"
-          allowfullscreen=""
-          aria-hidden="false"
-          tabindex="0"
-        ></iframe>
-      </div>
-    </section>
-
-    <section class="events-panel">
-      <div class="panel-head">
-        <h2>Eventos pasados</h2>
-      </div>
-      @if (eventsPasados().length === 0) {
-      <p class="panel-feedback">El histórico de eventos pasados estará disponible próximamente.</p>
+      @if (showLumaCalendar()) {
+        <div class="calendar-shell">
+          <iframe
+            src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
+            title="Calendario de eventos TechRiders"
+            loading="lazy"
+            frameborder="0"
+            allowfullscreen=""
+            aria-hidden="false"
+            tabindex="0"
+          ></iframe>
+        </div>
       } @else {
-      <ul class="events-pasados-list">
-        @for (evento of eventsPasados(); track evento.id) {
-        <li>
-          <span>{{ evento.titulo }}</span>
-          <span class="meta">{{ evento.categoria }} · {{ evento.ubicacion }}</span>
-        </li>
-        }
-      </ul>
+        <div class="calendar-shell">
+          <p>Consulta nuestras actividades y reserva plaza desde el calendario oficial de TechRiders.</p>
+          <a class="btn btn-primary" href="https://luma.com/calendar/cal-24k3WtXkbkzA2tg/events" target="_blank" rel="noopener noreferrer">
+            Ver calendario
+          </a>
+        </div>
       }
     </section>
   </div>

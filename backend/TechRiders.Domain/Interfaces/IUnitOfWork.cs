@@ -54,6 +54,11 @@ public interface IUnitOfWork : IDisposable
     ICommunityPartnerApplicationRepository CommunityPartnerApplications { get; }
 
     /// <summary>
+    /// Repositorio de Artículos de conocimiento (tutoriales)
+    /// </summary>
+    IKnowledgeArticleRepository KnowledgeArticles { get; }
+
+    /// <summary>
     /// Guarda todos los cambios pendientes en una única transacción
     /// </summary>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

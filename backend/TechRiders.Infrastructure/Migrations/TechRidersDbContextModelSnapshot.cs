@@ -810,7 +810,7 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IntranetAuditLogs");
+                    b.ToTable("IntranetAuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.IntranetSetting", b =>
@@ -853,7 +853,7 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IntranetSettings");
+                    b.ToTable("IntranetSettings", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.IntranetUserCategory", b =>
@@ -889,7 +889,7 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IntranetUserCategories");
+                    b.ToTable("IntranetUserCategories", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.KnowledgeArticle", b =>

@@ -24,6 +24,7 @@ public class UnitOfWork : IUnitOfWork
     private IIntranetSettingRepository? _intranetSettings;
     private IIntranetUserCategoryRepository? _intranetUserCategories;
     private ICommunityPartnerApplicationRepository? _communityPartnerApplications;
+    private IKnowledgeArticleRepository? _knowledgeArticles;
 
 
     public UnitOfWork(TechRidersDbContext context)
@@ -51,6 +52,9 @@ public class UnitOfWork : IUnitOfWork
 
     public ICommunityPartnerApplicationRepository CommunityPartnerApplications =>
         _communityPartnerApplications ??= new CommunityPartnerApplicationRepository(_context);
+
+    public IKnowledgeArticleRepository KnowledgeArticles =>
+        _knowledgeArticles ??= new KnowledgeArticleRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

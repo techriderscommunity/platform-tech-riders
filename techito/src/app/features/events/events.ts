@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, tap } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 import { EventoResumen } from '@core/events/public-events.models';
 import { PublicEventsService } from '@core/events/public-events.service';
 import { PublicContentService } from '@core/content/public-content.service';
@@ -29,6 +30,7 @@ export class Events implements OnInit {
   private readonly publicEventsAgendaService = inject(PublicEventsAgendaService);
   private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly events = signal<EventoResumen[]>([]);
   readonly eventsPasados = computed(() => this.events().filter(evento => evento.esPasado));
@@ -55,6 +57,7 @@ export class Events implements OnInit {
   ] as const;
 
   readonly agendaEvents = signal<PublicEvent[]>([]);
+  readonly showLumaCalendar = signal(false);
   readonly agendaTypes = PUBLIC_EVENT_TYPES;
   readonly agendaModalities = PUBLIC_EVENT_MODALITIES;
   readonly agendaTopics = PUBLIC_EVENT_TOPICS;
@@ -102,6 +105,8 @@ export class Events implements OnInit {
   galerias: GalleryGroupItem[] = [];
 
   ngOnInit(): void {
+    this.showLumaCalendar.set(isPlatformBrowser(this.platformId));
+
     this.publicContentService
       .getPublicContent()
       .pipe(

@@ -68,12 +68,23 @@ export class AuthService {
   }
 
   getDefaultRoute(): string {
-    if (this.hasRole('superadmin')) return '/intranet/staff';
-    if (this.hasRole('staff') || this.hasRole('coordinador')) return '/intranet/staff';
-    if (this.hasRole('admin')) return '/intranet/admin';
-    if (this.hasRole('empresa')) return '/intranet/company';
-    if (this.hasRole(['embajador', 'colaborador'])) return '/intranet/ambassador/portal';
-    return '/intranet/junior';
+    if (!this.currentUser()) return '/';
+    return '/intranet';
+  }
+
+  getRoleHomeRoute(): string {
+    const user = this.currentUser();
+    if (!user) return '/intranet';
+
+    const roles = user.roles?.length ? user.roles : [user.role];
+
+    if (roles.some(role => ['superadmin', 'staff', 'coordinador'].includes(role))) return '/intranet/staff';
+    if (roles.some(role => ['admin'].includes(role))) return '/intranet/admin';
+    if (roles.some(role => ['empresa'].includes(role))) return '/intranet/company';
+    if (roles.some(role => ['junior'].includes(role))) return '/intranet/junior';
+    if (roles.some(role => ['embajador', 'colaborador', 'member', 'centro', 'young-riders'].includes(role))) return '/intranet';
+
+    return '/intranet';
   }
 
   logout(): void {

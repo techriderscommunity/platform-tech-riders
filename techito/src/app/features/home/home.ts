@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 import { EventoResumen } from '@core/events/public-events.models';
 import { PublicEventsService } from '@core/events/public-events.service';
 import { PublicContentService } from '@core/content/public-content.service';
@@ -22,9 +23,11 @@ export class Home implements OnInit {
   private readonly publicEventsService = inject(PublicEventsService);
   private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly eventos = signal<EventoResumen[]>([]);
   readonly loadingEventos = signal(false);
+  readonly showLumaCalendar = signal(false);
   readonly proximosEventos = computed(() => this.eventos().filter(evento => !evento.esPasado).slice(0, 6));
   eventosPasadosFotos: HomePastEventPhotoItem[] = [];
   readonly eventosPasadosSlides = computed<UiCarouselItem[]>(() => this.eventosPasadosFotos.map(foto => ({
@@ -37,6 +40,8 @@ export class Home implements OnInit {
   profilePanelCards: HomeProfileCardItem[] = [];
 
   ngOnInit(): void {
+    this.showLumaCalendar.set(isPlatformBrowser(this.platformId));
+
     this.publicContentService
       .getPublicContent()
       .pipe(
@@ -66,6 +71,7 @@ export class Home implements OnInit {
       )
       .subscribe();
   }
+
 }
 
 

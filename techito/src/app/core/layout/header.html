@@ -16,6 +16,9 @@
       <li><a class="nav-link" routerLink="/knowledge" routerLinkActive="active">Conocimiento</a></li>
       <li><a class="nav-link" routerLink="/events" routerLinkActive="active">Eventos</a></li>
       <li><a class="nav-link" routerLink="/orienta-tech" routerLinkActive="active">OrientaTech</a></li>
+      @if (isLoggedIn()) {
+      <li><a class="nav-link" routerLink="/intranet" routerLinkActive="active">Intranet</a></li>
+      }
     </ul>
 
     <!-- Actions (right) -->
@@ -49,6 +52,9 @@
   <a class="nav-mobile-link" routerLink="/knowledge" (click)="closeMobileMenu()">Conocimiento</a>
   <a class="nav-mobile-link" routerLink="/events" (click)="closeMobileMenu()">Eventos</a>
   <a class="nav-mobile-link" routerLink="/orienta-tech" (click)="closeMobileMenu()">OrientaTech</a>
+  @if (isLoggedIn()) {
+  <a class="nav-mobile-link" routerLink="/intranet" (click)="closeMobileMenu()">Intranet</a>
+  }
   @if (isLoggedIn()) {
   <button class="nav-mobile-cta" (click)="logout(); closeMobileMenu()">Cerrar sesión</button>
   } @else {

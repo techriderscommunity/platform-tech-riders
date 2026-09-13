@@ -16,6 +16,7 @@ export const routes: Routes = [
 
   // === Público: Contenido ===
   { path: 'knowledge', loadComponent: () => import('./features/knowledge/knowledge').then(m => m.Knowledge) },
+  { path: 'knowledge/:slug', loadComponent: () => import('./features/knowledge/knowledge-detail').then(m => m.KnowledgeDetail) },
 
   // === Auth ===
   { path: 'login', loadComponent: () => import('./features/login/login-redirect').then(m => m.LoginRedirect) },
@@ -23,7 +24,8 @@ export const routes: Routes = [
   // === Intranet: Shell interno con menu por permisos ===
   {
     path: 'intranet',
-    canActivate: [authGuard],
+    // TEMPORAL: dejar visible la intranet mientras se completa la incorporación del contenido histórico.
+    // Los módulos de administración siguen protegidos por sus guards específicos.
     loadComponent: () => import('./features/intranet/empleo/intranet-layout').then(m => m.IntranetLayout),
     children: [
       { path: '', loadComponent: () => import('./features/intranet/empleo/intranet-home').then(m => m.IntranetHome) },

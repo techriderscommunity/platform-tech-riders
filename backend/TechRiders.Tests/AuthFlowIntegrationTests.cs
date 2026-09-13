@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TechRiders.Api.Contracts.Requests.Auth;
 using TechRiders.Api.Contracts.Responses.Auth;
 using TechRiders.Infrastructure.Data;
+using TechRiders.Infrastructure.Storage;
 using Xunit;
 
 namespace TechRiders.Tests;
@@ -127,6 +128,56 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
             Password = newPassword
         });
         Assert.Equal(HttpStatusCode.OK, newPasswordLoginResponse.StatusCode);
+    }
+
+    [Fact]
+    public void Storage_client_should_prefer_connection_string_when_configured()
+    {
+        var settings = new KnowledgeStorageOptions
+        {
+            ConnectionString = "DefaultEndpointsProtocol=https;AccountName=demo;AccountKey=ZmFrZV9hY2NvdW50X2tleQ==;EndpointSuffix=core.windows.net",
+            AccountUrl = "https://storagetetxito.blob.core.windows.net",
+            KnowledgeContainer = "knowledge"
+        };
+
+        var client = KnowledgeContentBlobService.CreateContainerClient(settings);
+
+        Assert.Equal("https://demo.blob.core.windows.net/knowledge", client.Uri.ToString());
+    }
+
+    [Fact]
+    public void Storage_client_should_use_environment_connection_string_when_option_is_missing()
+    {
+        var originalValue = Environment.GetEnvironmentVariable("Storage__ConnectionString");
+
+        try
+        {
+            Environment.SetEnvironmentVariable("Storage__ConnectionString",
+                "DefaultEndpointsProtocol=https;AccountName=demo;AccountKey=ZmFrZV9hY2NvdW50X2tleQ==;EndpointSuffix=core.windows.net");
+
+            var settings = new KnowledgeStorageOptions
+            {
+                AccountUrl = "https://storagetetxito.blob.core.windows.net",
+                KnowledgeContainer = "knowledge"
+            };
+
+            var client = KnowledgeContentBlobService.CreateContainerClient(settings);
+
+            Assert.Equal("https://demo.blob.core.windows.net/knowledge", client.Uri.ToString());
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("Storage__ConnectionString", originalValue);
+        }
+    }
+
+    [Fact]
+    public void Storage_blob_resolution_should_fallback_to_legacy_articles_path()
+    {
+        var candidates = KnowledgeContentBlobService.ResolveCandidatePaths("knowledge/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md");
+
+        Assert.Contains("knowledge/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md", candidates);
+        Assert.Contains("articles/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md", candidates);
     }
 }
 

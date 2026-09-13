@@ -80,6 +80,27 @@ public class TechRidersDbContext : DbContext
     public DbSet<CommunityPartnerApplication> CommunityPartnerApplications => Set<CommunityPartnerApplication>();
 
     /// <summary>
+    /// DbSet de Artículos de conocimiento (tutoriales)
+    /// </summary>
+    public DbSet<KnowledgeArticle> KnowledgeArticles => Set<KnowledgeArticle>();
+
+    /// <summary>
+    /// Categorías (Guid) usadas por KnowledgeArticle/Event/Session/User. Distinta de la
+    /// tabla legacy MT_Category (int) expuesta como <see cref="Categories"/>.
+    /// </summary>
+    public DbSet<Category> ContentCategories => Set<Category>();
+
+    /// <summary>
+    /// Skills jerárquicos usados por KnowledgeArticle/Session/User.
+    /// </summary>
+    public DbSet<Skill> Skills => Set<Skill>();
+
+    /// <summary>
+    /// Estados reutilizables (p.ej. Scope = "KnowledgeArticle").
+    /// </summary>
+    public DbSet<Status> Statuses => Set<Status>();
+
+    /// <summary>
     /// Configuración del modelo usando Fluent API y Entity Type Configurations
     /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -139,7 +139,12 @@ else
 app.UseSwaggerDocumentation();
 
 // 3. Redirección HTTPS
-app.UseHttpsRedirection();
+// En localhost y perfiles de desarrollo/pruebas hay que evitar un 307 forzado
+// porque la app frontend y la API se ejecutan con HTTP local en el mismo entorno.
+if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing"))
+{
+    app.UseHttpsRedirection();
+}
 
 // 4. Archivos estáticos (para custom CSS de Swagger)
 app.UseStaticFiles();
@@ -203,6 +208,7 @@ using (var scope = app.Services.CreateScope())
     }
 
     await DatabaseAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
+    await KnowledgeArticleSeedService.EnsureDefaultsAsync(dbContext, logger);
 }
 
 // Logging de inicio

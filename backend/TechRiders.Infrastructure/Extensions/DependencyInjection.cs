@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Interfaces;
 using TechRiders.Infrastructure.Data;
 using TechRiders.Infrastructure.Repositories;
+using TechRiders.Infrastructure.Storage;
 
 namespace TechRiders.Infrastructure.Extensions;
 
@@ -29,6 +31,9 @@ public static class InfrastructureServiceCollectionExtensions
         });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.Configure<KnowledgeStorageOptions>(configuration.GetSection(KnowledgeStorageOptions.SectionName));
+        services.AddScoped<IKnowledgeContentBlobService, KnowledgeContentBlobService>();
 
         return services;
     }
