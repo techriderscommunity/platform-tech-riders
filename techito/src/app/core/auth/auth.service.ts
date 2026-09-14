@@ -2,19 +2,88 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { environment } from '@env/environment';
+import { resolveIntranetWorkspace } from '../../features/intranet/empleo/intranet-nav.config';
 
 export type AppRole =
   | 'member'
   | 'admin'
-  | 'superadmin'
   | 'staff'
-  | 'coordinador'
-  | 'empresa'
-  | 'junior'
-  | 'colaborador'
-  | 'embajador'
-  | 'young-riders'
-  | 'centro';
+  | 'community-leader'
+  | 'ambassador'
+  | 'center'
+  | 'community-partner';
+
+export type AppPermission =
+  | 'profile.manage'
+  | 'preferences.manage'
+  | 'favorites.manage'
+  | 'events.register'
+  | 'sessions.request'
+  | 'communities.follow'
+  | 'ambassador.profile.manage'
+  | 'ambassador.availability.manage'
+  | 'sessions.assigned.view'
+  | 'sessions.assigned.respond'
+  | 'sessions.history.view'
+  | 'sessions.propose'
+  | 'events.participate'
+  | 'community.profile.manage'
+  | 'community.info.manage'
+  | 'events.create'
+  | 'activities.create'
+  | 'collaborations.propose'
+  | 'center.info.manage'
+  | 'center.requests.view'
+  | 'center.sessions.view'
+  | 'center.sessions.request'
+  | 'center.sessions.history.view'
+  | 'center.contacts.manage'
+  | 'community.events.approve'
+  | 'community.activities.manage'
+  | 'community.requests.validate'
+  | 'community.initiatives.coordinate'
+  | 'community.manage'
+  | 'role-requests.approve'
+  | 'sessions.fptour.manage'
+  | 'events.official.create'
+  | 'taxonomy.manage'
+  | 'content.manage'
+  | 'validations.manage'
+  | 'functional-config.manage'
+  | 'platform.manage'
+  | 'security.manage'
+  | 'audit.manage'
+  | 'users.manage';
+
+const PERMISSIONS_BY_ROLE: Record<AppRole, readonly AppPermission[]> = {
+  member: [
+    'profile.manage', 'preferences.manage', 'favorites.manage', 'events.register',
+    'sessions.request', 'communities.follow',
+  ],
+  ambassador: [
+    'ambassador.profile.manage', 'ambassador.availability.manage', 'sessions.assigned.view',
+    'sessions.assigned.respond', 'sessions.history.view', 'sessions.propose', 'events.participate',
+  ],
+  'community-partner': [
+    'community.profile.manage', 'community.info.manage', 'events.create', 'activities.create',
+    'collaborations.propose',
+  ],
+  center: [
+    'center.info.manage', 'center.requests.view', 'center.sessions.view', 'center.sessions.request',
+    'center.sessions.history.view', 'center.contacts.manage',
+  ],
+  'community-leader': [
+    'community.events.approve', 'community.activities.manage', 'community.requests.validate',
+    'community.initiatives.coordinate', 'events.create', 'community.manage',
+  ],
+  staff: [
+    'role-requests.approve', 'sessions.fptour.manage', 'events.official.create', 'community.manage',
+    'taxonomy.manage', 'content.manage', 'validations.manage', 'functional-config.manage',
+  ],
+  admin: [
+    'platform.manage', 'security.manage', 'audit.manage', 'users.manage',
+  ],
+};
 
 export interface UserProfile {
   id: string;
@@ -67,24 +136,32 @@ export class AuthService {
     );
   }
 
+  hasPermission(required: AppPermission | AppPermission[]): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
+
+    const requiredPermissions = Array.isArray(required) ? required : [required];
+    const roles = user.roles?.length ? user.roles : [user.role];
+    const permissions = new Set<AppPermission>([
+      ...roles.flatMap(role => PERMISSIONS_BY_ROLE[role] ?? []),
+      ...(roles.includes('admin') ? Object.values(PERMISSIONS_BY_ROLE).flat() : []),
+    ]);
+
+    return requiredPermissions.some(permission => permissions.has(permission));
+  }
+
   getDefaultRoute(): string {
-    if (!this.currentUser()) return '/';
-    return '/intranet';
+    const user = this.currentUser();
+    if (!user) return '/';
+
+    return resolveIntranetWorkspace(this.getUserRoles(user)).homeRoute;
   }
 
   getRoleHomeRoute(): string {
     const user = this.currentUser();
     if (!user) return '/intranet';
 
-    const roles = user.roles?.length ? user.roles : [user.role];
-
-    if (roles.some(role => ['superadmin', 'staff', 'coordinador'].includes(role))) return '/intranet/staff';
-    if (roles.some(role => ['admin'].includes(role))) return '/intranet/admin';
-    if (roles.some(role => ['empresa'].includes(role))) return '/intranet/company';
-    if (roles.some(role => ['junior'].includes(role))) return '/intranet/junior';
-    if (roles.some(role => ['embajador', 'colaborador', 'member', 'centro', 'young-riders'].includes(role))) return '/intranet';
-
-    return '/intranet';
+    return resolveIntranetWorkspace(this.getUserRoles(user)).homeRoute;
   }
 
   logout(): void {
@@ -190,9 +267,11 @@ export class AuthService {
   }
 
   private resolvePrimaryRole(roles: AppRole[]): AppRole {
-    const priority: AppRole[] = ['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'colaborador', 'embajador', 'member', 'young-riders', 'centro'];
-    const matched = priority.find(role => roles.includes(role));
-    return matched ?? 'junior';
+    return resolveIntranetWorkspace(roles).role;
+  }
+
+  private getUserRoles(user: UserProfile): AppRole[] {
+    return user.roles?.length ? user.roles : [user.role];
   }
 
   private isBrowser(): boolean {

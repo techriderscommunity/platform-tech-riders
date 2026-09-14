@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-24T13:45:17.442621+00:00",
+  "timestamp": "2026-09-13T23:30:23.605244+00:00",
   "source": "observability/logs/iteration-metrics.jsonl",
   "filters": {
     "source": "copilot-session",
@@ -7,20 +7,20 @@
     "to": ""
   },
   "totals": {
-    "events": 38,
-    "input_tokens": 3941831,
-    "output_tokens": 512248,
-    "total_tokens": 4454079,
-    "copilot_credits": 1110.364116
+    "events": 47,
+    "input_tokens": 6947561,
+    "output_tokens": 666401,
+    "total_tokens": 7613962,
+    "copilot_credits": 2861.862042
   },
   "breakdown": {
     "model": {
       "copilot/auto": {
-        "count": 15,
-        "input_tokens": 1928889,
-        "output_tokens": 101419,
-        "total_tokens": 2030308,
-        "copilot_credits": 880.857018
+        "count": 24,
+        "input_tokens": 4934619,
+        "output_tokens": 255572,
+        "total_tokens": 5190191,
+        "copilot_credits": 2632.3549440000006
       },
       "copilot/mai-code-1.1-flash": {
         "count": 23,
@@ -72,6 +72,13 @@
         "output_tokens": 48695,
         "total_tokens": 455952,
         "copilot_credits": 27.562992
+      },
+      "2026-09-13": {
+        "count": 9,
+        "input_tokens": 3005730,
+        "output_tokens": 154153,
+        "total_tokens": 3159883,
+        "copilot_credits": 1751.497926
       }
     }
   },
@@ -83,10 +90,10 @@
     "official_plans_url": "https://github.com/features/copilot/plans?ref_cta=View+pricing+and+plans&ref_loc=hero&ref_page=%2Ffeatures_copilot_copilot_business&plans=business"
   },
   "budget": {
-    "used_copilot_credits": 1110.364116,
-    "budget_utilization_rate": 58.440217,
-    "overage_credits": 1091.364116,
-    "equivalent_seats_used": 58.440217,
-    "percent_of_one_seat": 5844.02
+    "used_copilot_credits": 2861.862042,
+    "budget_utilization_rate": 150.624318,
+    "overage_credits": 2842.862042,
+    "equivalent_seats_used": 150.624318,
+    "percent_of_one_seat": 15062.43
   }
 }

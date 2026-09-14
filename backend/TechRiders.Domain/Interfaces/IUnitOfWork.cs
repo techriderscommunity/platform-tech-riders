@@ -22,11 +22,6 @@ public interface IUnitOfWork : IDisposable
     IAmbassadorRepository Ambassadors { get; }
 
     /// <summary>
-    /// Repositorio de Centros
-    /// </summary>
-    ICenterRepository Centers { get; }
-
-    /// <summary>
     /// Repositorio de Tours FP
     /// </summary>
     IFPTourRepository FPTours { get; }

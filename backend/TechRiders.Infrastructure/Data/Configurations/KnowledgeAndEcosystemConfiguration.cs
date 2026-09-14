@@ -80,18 +80,3 @@ public sealed class CommunityCollaborationConfiguration : IEntityTypeConfigurati
     }
 }
 
-public sealed class CompanyConfiguration : IEntityTypeConfiguration<Company>
-{
-    public void Configure(EntityTypeBuilder<Company> builder)
-    {
-        builder.ToTable("Companies");
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Name).HasMaxLength(180).IsRequired();
-        builder.Property(x => x.Description).HasMaxLength(2000);
-        builder.Property(x => x.Website).HasMaxLength(512);
-        builder.Property(x => x.LinkedIn).HasMaxLength(512);
-        builder.Property(x => x.LogoUrl).HasMaxLength(512);
-        builder.HasOne(x => x.ContactUser).WithMany().HasForeignKey(x => x.ContactUserId).OnDelete(DeleteBehavior.SetNull);
-    }
-}
-

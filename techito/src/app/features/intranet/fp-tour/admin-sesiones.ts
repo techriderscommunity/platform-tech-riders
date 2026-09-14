@@ -28,10 +28,10 @@ export class AdminSesiones {
   readonly context = computed(() => {
     const url = this.router.url;
 
-    if (url.includes('/intranet/fp-tour/centers')) {
+    if (url.includes('/intranet/fp-tour/organizations')) {
       return {
-        title: 'FP Tour · Centros',
-        subtitle: 'Solicitudes por centro con prioridad en pendientes y gestion de estados.',
+        title: 'FP Tour · Organizaciones',
+        subtitle: 'Solicitudes por organización con prioridad en pendientes y gestión de estados.',
         createLabel: '➕ Solicitar sesion',
       };
     }

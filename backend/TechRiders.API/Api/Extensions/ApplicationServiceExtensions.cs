@@ -25,7 +25,6 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAmbassadorService, AmbassadorService>();
         services.AddScoped<IAdminDashboardService, AdminDashboardService>();
         services.AddScoped<ICategoryService, CategoryService>();
-        services.AddScoped<ICenterService, CenterService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ICommunityPartnerApplicationService, CommunityPartnerApplicationService>();
         services.AddScoped<IFPTourService, FPTourService>();

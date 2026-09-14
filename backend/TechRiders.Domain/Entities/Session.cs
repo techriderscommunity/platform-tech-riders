@@ -29,8 +29,8 @@ public sealed class Session : BaseEntity
     public Guid EventId { get; set; }
     public Event Event { get; set; } = default!;
 
-    public Guid? CenterId { get; set; }
-    public Center? Center { get; set; }
+    public Guid? OrganizationId { get; set; }
+    public Organization? Organization { get; set; }
 
     public Guid? StatusId { get; set; }
     public Status? Status { get; set; }

@@ -13,7 +13,6 @@ public sealed class User : BaseEntity
     public string? Locality { get; set; }
     public bool IsWorking { get; set; }
     public DateTimeOffset? LastActivityDate { get; set; }
-    public string? GPFId { get; set; }
     public string? About { get; set; }
     public string? LinkedIn { get; set; }
     public string? Instagram { get; set; }
@@ -23,6 +22,19 @@ public sealed class User : BaseEntity
 
     public Guid? StatusId { get; set; }
     public Status? Status { get; set; }
+
+    public Membership? Membership { get; set; }
+    public ICollection<UserProfileHistory> ProfileHistories { get; set; } = new List<UserProfileHistory>();
+    public ICollection<UserCapability> Capabilities { get; set; } = new List<UserCapability>();
+    public ICollection<PersonStudy> Studies { get; set; } = new List<PersonStudy>();
+    public ICollection<UserOrientationScope> OrientationScopes { get; set; } = new List<UserOrientationScope>();
+
+    public GpfPersonLink? GpfLink { get; set; }
+    public ICollection<PersonOrganization> OrganizationRelations { get; set; } = new List<PersonOrganization>();
+    public ICollection<UserPreference> Preferences { get; set; } = new List<UserPreference>();
+    public ICollection<Consent> Consents { get; set; } = new List<Consent>();
+    public ICollection<PrivacyRequest> PrivacyRequests { get; set; } = new List<PrivacyRequest>();
+    public ICollection<UserFieldVisibility> FieldVisibilities { get; set; } = new List<UserFieldVisibility>();
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public ICollection<UserCategory> UserCategories { get; set; } = new List<UserCategory>();

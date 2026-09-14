@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TechRiders.Api.Contracts.Responses.Auth;
 using TechRiders.Domain.Entities;
+using TechRiders.Domain.Enums;
 using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Services;
@@ -88,6 +89,26 @@ public static class DatabaseAuthService
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        var hasMembership = await dbContext.Set<Membership>().AnyAsync(m => m.UserId == user.Id, cancellationToken);
+        if (!hasMembership)
+        {
+            var staffProfile = await IdentityCatalogSeedService.GetProfileAsync(dbContext, IdentityCatalogSeedService.StaffTajamarProfile, cancellationToken);
+            dbContext.Set<UserProfileHistory>().Add(new UserProfileHistory
+            {
+                UserId = user.Id,
+                ProfileId = staffProfile.Id,
+                IsCurrent = true,
+            });
+            dbContext.Set<Membership>().Add(new Membership
+            {
+                UserId = user.Id,
+                Status = MembershipStatus.Activa,
+                ActivatedAt = DateTime.UtcNow,
+                Origin = "seed-admin",
+            });
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         logger.LogInformation("Database auth admin user ensured for {Email}", email);
     }
 
@@ -117,7 +138,7 @@ public static class DatabaseAuthService
             throw new InvalidOperationException("Ya existe una cuenta registrada con ese correo.");
         }
 
-        var ambassadorRole = await GetOrCreateRoleAsync(dbContext, "Ambassador", cancellationToken);
+        var memberRole = await GetOrCreateRoleAsync(dbContext, "Member", cancellationToken);
 
         var user = new User
         {
@@ -141,7 +162,22 @@ public static class DatabaseAuthService
         dbContext.Set<UserRole>().Add(new UserRole
         {
             UserId = user.Id,
-            RoleId = ambassadorRole.Id,
+            RoleId = memberRole.Id,
+        });
+
+        var visitanteProfile = await IdentityCatalogSeedService.GetProfileAsync(dbContext, IdentityCatalogSeedService.VisitanteProfile, cancellationToken);
+        dbContext.Set<UserProfileHistory>().Add(new UserProfileHistory
+        {
+            UserId = user.Id,
+            ProfileId = visitanteProfile.Id,
+            IsCurrent = true,
+        });
+        dbContext.Set<Membership>().Add(new Membership
+        {
+            UserId = user.Id,
+            Status = MembershipStatus.Activa,
+            ActivatedAt = DateTime.UtcNow,
+            Origin = "auto-registro",
         });
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -156,6 +192,8 @@ public static class DatabaseAuthService
         var user = await dbContext.Users
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
+            .ThenInclude(role => role.RolePermissions)
+            .ThenInclude(rp => rp.Permission)
             .FirstOrDefaultAsync(u => u.Email == normalizedEmail && u.IsActive, cancellationToken);
 
         if (user is null) return null;
@@ -259,6 +297,13 @@ public static class DatabaseAuthService
         };
 
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        var permissions = user.UserRoles
+            .SelectMany(userRole => userRole.Role.RolePermissions)
+            .Select(rolePermission => rolePermission.Permission.Name)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(StringComparer.OrdinalIgnoreCase);
+        claims.AddRange(permissions.Select(permission => new Claim("permission", permission)));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -370,15 +415,13 @@ public static class DatabaseAuthService
     private static string NormalizeRole(string role)
     {
         var normalized = role.Trim();
-        if (normalized.Equals("SuperAdmin", StringComparison.OrdinalIgnoreCase)) return "superadmin";
-        if (normalized.Equals("Admin", StringComparison.OrdinalIgnoreCase)) return "admin";
+        if (normalized.Equals("SuperAdmin", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Admin", StringComparison.OrdinalIgnoreCase)) return "admin";
         if (normalized.Equals("Staff", StringComparison.OrdinalIgnoreCase)) return "staff";
-        if (normalized.Equals("Coordinador", StringComparison.OrdinalIgnoreCase)) return "coordinador";
-        if (normalized.Equals("Empresa", StringComparison.OrdinalIgnoreCase)) return "empresa";
-        if (normalized.Equals("Junior", StringComparison.OrdinalIgnoreCase)) return "junior";
-        if (normalized.Equals("Colaborador", StringComparison.OrdinalIgnoreCase)) return "colaborador";
-        if (normalized.Equals("Ambassador", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Embajador", StringComparison.OrdinalIgnoreCase)) return "embajador";
-        if (normalized.Equals("Member", StringComparison.OrdinalIgnoreCase)) return "member";
+        if (normalized.Equals("Community Leader", StringComparison.OrdinalIgnoreCase) || normalized.Equals("CommunityLeader", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Coordinador", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Colaborador", StringComparison.OrdinalIgnoreCase)) return "community-leader";
+        if (normalized.Equals("Ambassador", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Embajador", StringComparison.OrdinalIgnoreCase)) return "ambassador";
+        if (normalized.Equals("Center", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Centro", StringComparison.OrdinalIgnoreCase)) return "center";
+        if (normalized.Equals("Community Partner", StringComparison.OrdinalIgnoreCase) || normalized.Equals("CommunityPartner", StringComparison.OrdinalIgnoreCase)) return "community-partner";
+        if (normalized.Equals("Member", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Junior", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Empresa", StringComparison.OrdinalIgnoreCase)) return "member";
         return normalized.ToLowerInvariant();
     }
 }

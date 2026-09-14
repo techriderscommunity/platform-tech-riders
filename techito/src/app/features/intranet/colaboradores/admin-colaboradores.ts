@@ -93,8 +93,8 @@ export class AdminColaboradores {
       email,
       nombre,
       password,
-      primaryRole: 'colaborador',
-      roles: ['colaborador'],
+      primaryRole: 'community-leader',
+      roles: ['community-leader'],
     })
       .pipe(
         tap(() => {

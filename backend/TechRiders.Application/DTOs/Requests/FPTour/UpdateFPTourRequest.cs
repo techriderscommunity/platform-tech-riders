@@ -8,9 +8,9 @@ namespace TechRiders.Application.DTOs.Requests.FPTour;
 public class UpdateFPTourRequest
 {
     /// <summary>
-    /// ID del centro educativo
+    /// ID de la organización educativa
     /// </summary>
-    public Guid? CenterId { get; set; }
+    public Guid? OrganizationId { get; set; }
 
     /// <summary>
     /// ID del ambassador asignado

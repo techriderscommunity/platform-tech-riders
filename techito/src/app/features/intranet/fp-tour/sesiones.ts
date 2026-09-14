@@ -154,11 +154,11 @@ export class Sesiones {
   }
 
   canSelfAssign(): boolean {
-    return this.authService.hasRole(['embajador', 'colaborador']);
+    return this.authService.hasRole(['ambassador', 'community-leader']);
   }
 
   canManageSessions(): boolean {
-    return this.authService.hasRole(['superadmin', 'staff', 'coordinador']);
+    return this.authService.hasRole(['admin', 'staff', 'community-leader']);
   }
 
   asignarmeSesion(id: string) {

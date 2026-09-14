@@ -6,7 +6,7 @@ export interface AdminDashboardApiResponse {
   Stats: {
     TotalUsers: number;
     ActiveUsers: number;
-    SuperAdmins: number;
+    Admins: number;
     Events: number;
     Sessions: number;
     Ambassadors: number;

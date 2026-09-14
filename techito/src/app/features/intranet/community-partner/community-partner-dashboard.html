@@ -1,0 +1,22 @@
+<section class="workspace" aria-labelledby="partner-title">
+  <header>
+    <p class="eyebrow">Entidad colaboradora</p>
+    <h1 id="partner-title">Comunidad de entidades</h1>
+    <p>Consulta las Comuñeras activas y presenta iniciativas de colaboración.</p>
+    <a class="primary-link" routerLink="/community-partners/apply">Proponer colaboración</a>
+  </header>
+
+  <section aria-labelledby="partners-title">
+    <h2 id="partners-title">Comuñeras activas</h2>
+    <div class="partner-grid">
+      @for (partner of approvedPartners(); track partner.id) {
+      <a [routerLink]="['/community-partners', partner.id]">
+        <h3>{{ partner.name }}</h3>
+        <p>{{ partner.shortDescription }}</p>
+      </a>
+      } @empty {
+      <p class="empty-state">No hay entidades activas para mostrar.</p>
+      }
+    </div>
+  </section>
+</section>

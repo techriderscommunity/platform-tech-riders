@@ -28,9 +28,8 @@ public sealed class AdminDashboardService : IAdminDashboardService
         {
             TotalUsers = allUserCategories.Select(item => item.UserId).Distinct().Count(),
             ActiveUsers = activeUserCategories.Select(item => item.UserId).Distinct().Count(),
-            SuperAdmins = allUserCategories
-                .Where(item => string.Equals(item.Category, "Admin", StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(item.Category, "SuperAdmin", StringComparison.OrdinalIgnoreCase))
+            Admins = allUserCategories
+                .Where(item => string.Equals(item.Category, "Admin", StringComparison.OrdinalIgnoreCase))
                 .Select(item => item.UserId)
                 .Distinct()
                 .Count(),

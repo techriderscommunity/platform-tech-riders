@@ -27,7 +27,8 @@ public class PublicContentController : BaseApiController
             .CountAsync(u => u.IsActive && u.UserRoles.Any(ur => ur.Role.Name.ToLower() == "ambassador" || ur.Role.Name.ToLower() == "embajador"), cancellationToken);
         var activeEvents = await _dbContext.Events.CountAsync(e => e.IsActive, cancellationToken);
         var upcomingSessions = await _dbContext.Sessions.CountAsync(s => s.IsActive, cancellationToken);
-        var centerCount = await _dbContext.Centers.CountAsync(c => c.IsActive, cancellationToken);
+        var centerCount = await _dbContext.Organizations
+            .CountAsync(o => o.IsActive && (o.OrganizationType == TechRiders.Domain.Enums.OrganizationType.CentroFormacion || o.OrganizationType == TechRiders.Domain.Enums.OrganizationType.CentroEducativo), cancellationToken);
 
         var response = new PublicContentResponse
         {

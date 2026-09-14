@@ -45,5 +45,66 @@
 				}
 			</ul>
 		</article>
+
+		<article class="perfil-card">
+			<h3>Solicitar rol de comunidad</h3>
+			<p class="perfil-intro">Pide pasar de Member a un rol con más responsabilidad (Staff, Community Leader, Ambassador, Center o Community Partner). Un admin o staff debe aprobarlo antes de que se active.</p>
+			@if (requestableRoles().length) {
+				<div class="perfil-form">
+					<app-ui-select label="Rol a solicitar" [options]="roleRequestOptions()" [value]="selectedRoleRequest()" (valueChange)="updateSelectedRoleRequest($event)"></app-ui-select>
+					<div class="perfil-actions">
+						<app-ui-button type="button" [disabled]="roleRequestSending()" (click)="solicitarRol()">Solicitar rol</app-ui-button>
+					</div>
+				</div>
+			} @else {
+				<p>Ya tienes todos los roles de comunidad disponibles.</p>
+			}
+			@if (roleRequestFeedback()) {
+				<p class="status-message status-message-success">{{ roleRequestFeedback() }}</p>
+			}
+		</article>
+
+		<article class="perfil-card">
+			<h3>Mis preferencias</h3>
+			<p class="perfil-intro">Marca los temas, formatos y modalidades sobre los que quieres recibir contenido. No implica autorización para recibir comunicaciones.</p>
+			@for (dimension of preferenceDimensions(); track dimension.id) {
+				<div class="perfil-preference-group">
+					<h4>{{ dimension.name }}</h4>
+					<div class="perfil-preference-values">
+						@for (value of dimension.values; track value.id) {
+							<label class="perfil-preference-chip">
+								<input type="checkbox" [checked]="isPreferenceSelected(value.id)" (change)="togglePreference(value.id, $any($event.target).checked)" />
+								{{ value.name }}
+							</label>
+						}
+					</div>
+				</div>
+			}
+			<div class="perfil-actions">
+				<app-ui-button type="button" [disabled]="preferencesSaving()" (click)="guardarPreferencias()">Guardar preferencias</app-ui-button>
+			</div>
+			@if (preferencesFeedback()) {
+				<p class="status-message status-message-success">{{ preferencesFeedback() }}</p>
+			}
+		</article>
+
+		<article class="perfil-card">
+			<h3>Mis consentimientos</h3>
+			<p class="perfil-intro">Autoriza o retira el tratamiento de tus datos por finalidad. Puedes cambiar de opinión en cualquier momento.</p>
+			<ul class="perfil-list">
+				@for (purpose of consentPurposes(); track purpose.code) {
+					<li>
+						<label class="perfil-preference-chip">
+							<input type="checkbox" [checked]="purpose.granted" [disabled]="consentUpdatingCode() === purpose.code" (change)="toggleConsent(purpose.code, $any($event.target).checked)" />
+							<strong>{{ purpose.name }}</strong>
+						</label>
+						<span>{{ purpose.status }}</span>
+					</li>
+				}
+			</ul>
+			@if (consentsFeedback()) {
+				<p class="status-message status-message-success">{{ consentsFeedback() }}</p>
+			}
+		</article>
 	</div>
 </section>

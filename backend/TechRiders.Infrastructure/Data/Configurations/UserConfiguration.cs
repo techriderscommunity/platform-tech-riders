@@ -20,7 +20,6 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.PasswordResetTokenExpiresAt);
         builder.Property(x => x.Phone).HasMaxLength(40);
         builder.Property(x => x.Locality).HasMaxLength(120);
-        builder.Property(x => x.GPFId).HasMaxLength(80);
         builder.Property(x => x.LinkedIn).HasMaxLength(512);
         builder.Property(x => x.Instagram).HasMaxLength(512);
         builder.Property(x => x.X).HasMaxLength(512);

@@ -366,6 +366,7 @@ button:focus-visible {
 .main {
   min-height: 100vh;
   background: var(--bg-canvas);
+  padding-top: var(--nav-height);
 }
 
 main router-outlet + * {

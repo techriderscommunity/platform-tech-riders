@@ -17,7 +17,6 @@ public class UnitOfWork : IUnitOfWork
     private IEventRepository? _events;
     private ISessionRepository? _sessions;
     private IAmbassadorRepository? _ambassadors;
-    private ICenterRepository? _centers;
     private IFPTourRepository? _fpTours;
     private ICategoryRepository? _categories;
     private IIntranetAuditLogRepository? _intranetAuditLogs;
@@ -37,8 +36,6 @@ public class UnitOfWork : IUnitOfWork
     public ISessionRepository Sessions => _sessions ??= new SessionRepository(_context);
 
     public IAmbassadorRepository Ambassadors => _ambassadors ??= new AmbassadorRepository(_context);
-
-    public ICenterRepository Centers => _centers ??= new CenterRepository(_context);
 
     public IFPTourRepository FPTours => _fpTours ??= new FPTourRepository(_context);
 

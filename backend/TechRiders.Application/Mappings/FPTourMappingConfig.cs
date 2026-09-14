@@ -13,8 +13,8 @@ public class FPTourMappingConfig : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<FPTour, FPTourResponse>()
-            .Map(dest => dest.CenterName, src => src.Center.Name)
-            .Map(dest => dest.AmbassadorName, src => $"{src.Ambassador.Name} {src.Ambassador.LastName}");
+            .Map(dest => dest.OrganizationName, src => src.Organization!.Name)
+            .Map(dest => dest.AmbassadorName, src => src.Ambassador == null ? string.Empty : $"{src.Ambassador.Name} {src.Ambassador.LastName}");
 
         config.NewConfig<CreateFPTourRequest, FPTour>();
 

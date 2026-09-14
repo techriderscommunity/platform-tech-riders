@@ -23,6 +23,6 @@ export interface CreateColaboradorPayload {
   readonly email: string;
   readonly nombre: string;
   readonly password: string;
-  readonly primaryRole: 'colaborador';
-  readonly roles: ['colaborador'];
+  readonly primaryRole: 'community-leader';
+  readonly roles: ['community-leader'];
 }

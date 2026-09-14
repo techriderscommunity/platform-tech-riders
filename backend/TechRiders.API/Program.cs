@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TechRiders.Api.Authorization;
 using TechRiders.Api.Extensions;
 using TechRiders.Api.Services;
 using TechRiders.Infrastructure.Data;
@@ -42,6 +44,10 @@ builder.Services.AddAuthentication(options =>
             ClockSkew = TimeSpan.FromMinutes(1)
         };
     });
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddAuthorization();
 
 // 2. Configuración de servicios de infraestructura (DbContext con pooling, repositorios)
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -207,6 +213,9 @@ using (var scope = app.Services.CreateScope())
         app.Logger.LogInformation("Base de datos en memoria creada con EnsureCreated().");
     }
 
+    await IdentityCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
+    await PreferenceCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
+    await RolePermissionCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
     await DatabaseAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
     await KnowledgeArticleSeedService.EnsureDefaultsAsync(dbContext, logger);
 }
