@@ -24,6 +24,9 @@ export interface AdminDashboardApiResponse {
     Uploads: string;
     Cpu: string;
   };
+  PendingApprovals: Array<{ Type: string; Count: number }>;
+  UpcomingEvents: Array<{ Id: string; Title: string; StartDateTime: string }>;
+  UpcomingSessions: Array<{ Id: string; Title: string; StartDateTime: string }>;
 }
 
 @Injectable({ providedIn: 'root' })

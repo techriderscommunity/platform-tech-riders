@@ -20,7 +20,7 @@ public static class RolePermissionCatalogSeedService
         ["Community Partner"] = [.. MemberPermissions, "community.profile.manage", "community.info.manage", "events.create", "activities.create", "collaborations.propose"],
         ["Center"] = [.. MemberPermissions, "center.info.manage", "center.requests.view", "center.sessions.view", "center.sessions.request", "center.sessions.history.view", "center.contacts.manage"],
         ["Community Leader"] = [.. MemberPermissions, "community.events.approve", "community.activities.manage", "community.requests.validate", "community.initiatives.coordinate", "events.create", "community.manage"],
-        ["Staff"] = [.. MemberPermissions, "role-requests.approve", "sessions.fptour.manage", "events.official.create", "community.manage", "taxonomy.manage", "content.manage", "validations.manage", "functional-config.manage", "privacy.manage"],
+        ["Staff"] = [.. MemberPermissions, "role-requests.approve", "sessions.fptour.manage", "events.official.create", "community.manage", "taxonomy.manage", "content.manage", "validations.manage", "functional-config.manage", "privacy.manage", "users.manage", "center.info.manage", "approvals.manage", "assignments.manage"],
     };
 
     private static readonly string[] AdminPermissions =

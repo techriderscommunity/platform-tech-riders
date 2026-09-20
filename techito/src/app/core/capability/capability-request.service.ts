@@ -27,6 +27,17 @@ export class CapabilityRequestService {
   reject(id: string) {
     return this.http.post(`${this.baseUrl}/${id}/reject`, {});
   }
+
+  revoke(id: string) {
+    return this.http.post(`${this.baseUrl}/${id}/revoke`, {});
+  }
+
+  getHistory(capabilityName?: string) {
+    const query = capabilityName ? `?capabilityName=${encodeURIComponent(capabilityName)}` : '';
+    return this.http.get<CapabilityRequestApi[]>(`${this.baseUrl}/history${query}`).pipe(
+      map((items) => (items ?? []).map(toItem)),
+    );
+  }
 }
 
 function toItem(api: CapabilityRequestApi): CapabilityRequestItem {

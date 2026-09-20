@@ -40,6 +40,18 @@ export class AdminStaff {
   readonly pendingRequests = signal<CapabilityRequestItem[]>([]);
   readonly resolvingRequestId = signal<string | null>(null);
 
+  readonly capabilityHistory = signal<CapabilityRequestItem[]>([]);
+  readonly capabilityHistoryFilter = signal('Ambassador');
+  readonly revokingId = signal<string | null>(null);
+  readonly capabilityFilterOptions: UiSelectOption[] = [
+    { label: 'Ambassador', value: 'Ambassador' },
+    { label: 'Staff', value: 'Staff' },
+    { label: 'Community Leader', value: 'Community Leader' },
+    { label: 'Center', value: 'Center' },
+    { label: 'Community Partner', value: 'Community Partner' },
+  ];
+
+
   readonly gpfLinks = signal<GpfPersonLinkItem[]>([]);
   readonly gpfLinkUserId = signal('');
   readonly gpfLinkCodUnico = signal('');
@@ -64,6 +76,7 @@ export class AdminStaff {
     this.loadPendingRequests();
     this.loadGpfLinks();
     this.loadPendingOrgRelations();
+    this.loadCapabilityHistory();
   }
 
   loadGovernanceData() {
@@ -309,6 +322,42 @@ export class AdminStaff {
         },
         error: (error) => {
           this.feedback.set(error?.error?.Message ?? 'No se pudo procesar la relación.');
+        },
+      });
+  }
+
+  updateCapabilityHistoryFilter(value: string) {
+    this.capabilityHistoryFilter.set(value);
+    this.loadCapabilityHistory();
+  }
+
+  loadCapabilityHistory() {
+    this.capabilityRequestService.getHistory(this.capabilityHistoryFilter())
+      .pipe(
+        catchError(() => of([] as CapabilityRequestItem[])),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(items => this.capabilityHistory.set(items));
+  }
+
+  revokeCapability(id: string) {
+    if (!confirm('¿Confirmas revocar esta capacidad? El rol de sistema asociado se retirará.')) {
+      return;
+    }
+
+    this.revokingId.set(id);
+    this.capabilityRequestService.revoke(id)
+      .pipe(
+        finalize(() => this.revokingId.set(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          this.feedback.set('Capacidad revocada correctamente.');
+          this.loadCapabilityHistory();
+        },
+        error: (error) => {
+          this.feedback.set(error?.error?.Message ?? 'No se pudo revocar la capacidad.');
         },
       });
   }

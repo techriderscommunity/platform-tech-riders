@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Engagement;
+using TechRiders.Api.Services;
+using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Controllers;
 
@@ -10,10 +12,12 @@ namespace TechRiders.Api.Controllers;
 public class EngagementController : BaseApiController
 {
     private readonly ILogger<EngagementController> _logger;
+    private readonly TechRidersDbContext _dbContext;
 
-    public EngagementController(ILogger<EngagementController> logger)
+    public EngagementController(ILogger<EngagementController> logger, TechRidersDbContext dbContext)
     {
         _logger = logger;
+        _dbContext = dbContext;
     }
 
     [HttpPost("contact")]
@@ -59,7 +63,7 @@ public class EngagementController : BaseApiController
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult SubmitJoin([FromBody] JoinRequest request)
+    public async Task<ActionResult> SubmitJoin([FromBody] JoinRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -73,6 +77,15 @@ public class EngagementController : BaseApiController
             request.RequestType,
             request.CommunityRole,
             request.Audience);
+
+        // Las solicitudes de Centro generan un registro pendiente real (visible en la Bandeja de
+        // Aprobaciones), en vez de quedar solo como log/lead.
+        if (Request.Path.Value?.EndsWith("solicitudes/centro", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            var organizationName = string.IsNullOrWhiteSpace(request.Organization) ? request.Name : request.Organization;
+            var contactInfo = $"Solicitante: {request.Name} <{request.Email}>. {request.Motivation}";
+            await OrganizationService.CreatePendingAsync(_dbContext, "CentroEducativo", organizationName, contactInfo, null, cancellationToken);
+        }
 
         return Accepted(new
         {

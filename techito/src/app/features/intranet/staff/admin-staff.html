@@ -145,6 +145,44 @@
     }
   </div>
 
+  <!-- Historial y revocación de capacidades (Ambassadors y otros roles de comunidad) -->
+  <div class="card">
+    <h2>Historial de capacidades (Ambassadors y otros roles)</h2>
+    <div class="action-bar">
+      <app-ui-select label="Rol" [options]="capabilityFilterOptions" [value]="capabilityHistoryFilter()" (valueChange)="updateCapabilityHistoryFilter($event)"></app-ui-select>
+    </div>
+    @if (!capabilityHistory().length) {
+      <p>No hay histórico para este rol.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Estado</th>
+              <th>Solicitado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of capabilityHistory(); track item.id) {
+            <tr>
+              <td><strong>{{item.userName}}</strong><br>{{item.userEmail}}</td>
+              <td><span class="badge" [class]="item.status">{{item.status}}</span></td>
+              <td>{{item.requestedAt | date:'short'}}</td>
+              <td>
+                @if (item.status === 'Activa') {
+                  <app-ui-button class="btn-sm delete" [disabled]="revokingId() === item.id" (click)="revokeCapability(item.id)">Revocar</app-ui-button>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
   <!-- Organizaciones -->
   <div class="card">
     <h2>Nueva organización</h2>

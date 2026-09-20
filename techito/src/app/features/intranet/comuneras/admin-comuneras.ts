@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, finalize, of } from 'rxjs';
 import { UiButton } from '@shared/ui/button/button';
 import { UiModal } from '@shared/ui/modal/modal';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
@@ -10,17 +13,24 @@ import {
   CommunityPartnerStatus,
 } from '../../comuneras/models/community-partner.models';
 import { CommunityPartnersStore } from '../../comuneras/services/community-partners.store';
+import { CommunityPartnerApplicationsService } from '@core/community-partners/community-partner-applications.service';
+import { CommunityPartnerApplicationAdminApi } from '@core/community-partners/community-partner-applications.models';
 
 @Component({
   selector: 'app-admin-comuneras',
   standalone: true,
-  imports: [RouterLink, UiButton, UiModal, UiSelect, UiTextField, UiTextarea],
+  imports: [RouterLink, UiButton, UiModal, UiSelect, UiTextField, UiTextarea, DatePipe],
   templateUrl: './admin-comuneras.html',
   styleUrl: './admin-comuneras.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminComuneras {
   private readonly store = inject(CommunityPartnersStore);
+  private readonly applicationsService = inject(CommunityPartnerApplicationsService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly pendingApplications = signal<CommunityPartnerApplicationAdminApi[]>([]);
+  readonly resolvingApplicationId = signal<string | null>(null);
 
   readonly feedback = signal<string | null>(null);
   readonly showEditModal = signal(false);
@@ -60,6 +70,41 @@ export class AdminComuneras {
   readonly pendingCount = computed(() =>
     this.items().filter(item => item.status === 'pending' || item.status === 'review').length,
   );
+
+  constructor() {
+    this.loadPendingApplications();
+  }
+
+  loadPendingApplications() {
+    this.applicationsService.getPending()
+      .pipe(
+        catchError(() => of([] as CommunityPartnerApplicationAdminApi[])),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(items => this.pendingApplications.set(items));
+  }
+
+  resolveApplication(item: CommunityPartnerApplicationAdminApi, action: 'approve' | 'reject') {
+    this.resolvingApplicationId.set(item.Id);
+    const request$ = action === 'approve' ? this.applicationsService.approve(item.Id) : this.applicationsService.reject(item.Id);
+
+    request$
+      .pipe(
+        finalize(() => this.resolvingApplicationId.set(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          this.pendingApplications.update(list => list.filter(a => a.Id !== item.Id));
+          this.feedback.set(action === 'approve'
+            ? `Comunera ${item.Name} aprobada: se ha creado la organización y comunidad asociadas.`
+            : `Solicitud de ${item.Name} rechazada.`);
+        },
+        error: (error) => {
+          this.feedback.set(error?.error?.Message ?? 'No se pudo procesar la solicitud.');
+        },
+      });
+  }
 
   openEdit(item: CommunityPartner): void {
     this.selected.set(item);

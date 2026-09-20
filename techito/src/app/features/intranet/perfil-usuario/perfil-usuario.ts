@@ -14,6 +14,8 @@ import { PreferencesService } from '@core/preferences/preferences.service';
 import { PreferenceDimension } from '@core/preferences/preferences.models';
 import { ConsentsService } from '@core/consents/consents.service';
 import { ConsentPurposeItem } from '@core/consents/consents.models';
+import { SkillsService } from '@core/skills/skills.service';
+import { SkillApi, SKILL_LEVELS, UserSkillApi } from '@core/skills/skills.models';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -29,6 +31,7 @@ export class PerfilUsuario {
   private readonly capabilityRequestService = inject(CapabilityRequestService);
   private readonly preferencesService = inject(PreferencesService);
   private readonly consentsService = inject(ConsentsService);
+  private readonly skillsService = inject(SkillsService);
 
   readonly audienceOptions: UiSelectOption[] = [
     { label: 'Estudiante Tech', value: 'student' },
@@ -69,6 +72,15 @@ export class PerfilUsuario {
   readonly consentUpdatingCode = signal<string | null>(null);
   readonly consentsFeedback = signal<string | null>(null);
 
+  readonly skillCatalog = signal<SkillApi[]>([]);
+  readonly mySkills = signal<UserSkillApi[]>([]);
+  readonly skillOptions = computed<UiSelectOption[]>(() => this.skillCatalog().map(s => ({ label: s.Name, value: s.Id })));
+  readonly skillLevelOptions: UiSelectOption[] = SKILL_LEVELS.map(l => ({ label: l.label, value: l.value }));
+  readonly selectedSkillId = signal('');
+  readonly selectedSkillLevel = signal<string>('Beginner');
+  readonly skillSaving = signal(false);
+  readonly skillsFeedback = signal<string | null>(null);
+
   readonly proximasActividades = signal([
     { titulo: 'Calendario de comunidad', detalle: 'Revisa sesiones y eventos próximos desde intranet.' },
     { titulo: 'Solicitud Ambassador', detalle: 'Puedes iniciar o continuar tu paso a rol activo cuando tenga sentido.' },
@@ -80,6 +92,7 @@ export class PerfilUsuario {
     this.selectedRoleRequest.set(this.requestableRoles()[0]?.role ?? '');
     this.loadPreferences();
     this.loadConsents();
+    this.loadSkills();
   }
 
   guardarCambios() {
@@ -266,6 +279,59 @@ export class PerfilUsuario {
       .pipe(
         tap(items => this.consentPurposes.set(items)),
         catchError(() => of(null)),
+      )
+      .subscribe();
+  }
+
+  private loadSkills() {
+    this.skillsService.getCatalog()
+      .pipe(catchError(() => of([] as SkillApi[])))
+      .subscribe(items => this.skillCatalog.set(items));
+
+    this.skillsService.getMine()
+      .pipe(catchError(() => of([] as UserSkillApi[])))
+      .subscribe(items => this.mySkills.set(items));
+  }
+
+  updateSelectedSkillId(value: string) {
+    this.selectedSkillId.set(value);
+  }
+
+  updateSelectedSkillLevel(value: string) {
+    this.selectedSkillLevel.set(value);
+  }
+
+  addSkill() {
+    const skillId = this.selectedSkillId();
+    if (!skillId) {
+      this.skillsFeedback.set('Selecciona una skill para añadir.');
+      return;
+    }
+
+    this.skillSaving.set(true);
+    this.skillsService.addOrUpdateMine(skillId, this.selectedSkillLevel(), false, false)
+      .pipe(
+        tap(() => {
+          this.skillsFeedback.set('Skill guardada.');
+          this.loadSkills();
+        }),
+        catchError(() => {
+          this.skillsFeedback.set('No se pudo guardar la skill.');
+          return of(null);
+        }),
+        finalize(() => this.skillSaving.set(false)),
+      )
+      .subscribe();
+  }
+
+  removeSkill(skillId: string) {
+    this.skillsService.removeMine(skillId)
+      .pipe(
+        tap(() => this.loadSkills()),
+        catchError(() => {
+          this.skillsFeedback.set('No se pudo eliminar la skill.');
+          return of(null);
+        }),
       )
       .subscribe();
   }

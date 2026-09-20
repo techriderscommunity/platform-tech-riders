@@ -41,6 +41,13 @@
   <div class="feedback error">{{ error() }}</div>
   }
 
+  @if (feedback()) {
+  <div class="feedback" role="status" aria-live="polite">
+    <span>{{ feedback() }}</span>
+    <app-ui-button type="button" class="btn-sm" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
   @if (!loading() && !error() && eventos().length === 0) {
   <div class="empty-state">
     <h2>No hay eventos registrados</h2>
@@ -72,8 +79,10 @@
       <div class="evento-actions">
         <app-ui-button type="button" variant="secondary" class="btn-sm view" (click)="verAsistentes(evento.id)">👁️ Asistentes</app-ui-button>
         <app-ui-button type="button" variant="secondary" class="btn-sm edit" (click)="editarEvento(evento.id)">✏️ Editar</app-ui-button>
+        <app-ui-button type="button" variant="secondary" class="btn-sm" [disabled]="actingId() === evento.id" (click)="asignarPonente(evento.id)">🎤 Asignar ponente</app-ui-button>
         @if (evento.estado === 'Pendiente') {
-        <app-ui-button type="button" variant="secondary" class="btn-sm delete" (click)="cancelarEvento(evento.id)">❌ Cancelar</app-ui-button>
+        <app-ui-button type="button" variant="secondary" class="btn-sm" [disabled]="actingId() === evento.id" (click)="publicarEvento(evento.id)">✅ Publicar</app-ui-button>
+        <app-ui-button type="button" variant="secondary" class="btn-sm delete" [disabled]="actingId() === evento.id" (click)="cancelarEvento(evento.id)">❌ Cancelar</app-ui-button>
         }
       </div>
     </article>

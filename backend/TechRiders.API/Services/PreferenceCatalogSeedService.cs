@@ -147,6 +147,18 @@ public static class PreferenceCatalogSeedService
         ("formacion-marketplace", "Formación y marketplace"),
     ];
 
+    private static readonly (string Code, string Name)[] AvailabilityInitiatives =
+    [
+        ("talks", "Talks"),
+        ("podcast", "Podcast"),
+        ("sesiones-formativas", "Sesiones formativas"),
+        ("mentorias", "Mentorías"),
+        ("conocimiento", "Conocimiento"),
+        ("eventos", "Eventos"),
+        ("fptour", "FPTour"),
+        ("otras-iniciativas", "Otras iniciativas"),
+    ];
+
     private static readonly (string Code, string Name)[] LegalBases =
     [
         ("consentimiento", "Consentimiento"),
@@ -166,6 +178,7 @@ public static class PreferenceCatalogSeedService
         await EnsureDimensionAsync(dbContext, "objective", "Objetivo", Objectives, cancellationToken);
         await EnsureDimensionAsync(dbContext, "channel", "Canal", Channels, cancellationToken);
         await EnsureDimensionAsync(dbContext, "frequency", "Frecuencia", Frequencies, cancellationToken);
+        await EnsureDimensionAsync(dbContext, "availability", "Disponibilidad para colaborar", AvailabilityInitiatives, cancellationToken);
 
         var existingPurposes = await dbContext.Set<ConsentPurpose>().Select(p => p.Code).ToListAsync(cancellationToken);
         foreach (var (code, name) in ConsentPurposes.Where(p => !existingPurposes.Contains(p.Code)))

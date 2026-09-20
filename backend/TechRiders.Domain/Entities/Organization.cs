@@ -12,6 +12,7 @@ public sealed class Organization : BaseEntity
     public string? Address { get; set; }
     public string? Province { get; set; }
     public string? Origin { get; set; }
+    public string? Notes { get; set; }
 
     public ICollection<PersonOrganization> PersonRelations { get; set; } = new List<PersonOrganization>();
     public OrganizationGpfLink? GpfLink { get; set; }

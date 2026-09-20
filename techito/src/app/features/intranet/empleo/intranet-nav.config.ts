@@ -41,8 +41,20 @@ export const INTRANET_WORKSPACES: Record<AppRole, IntranetWorkspace> = {
             route: '/intranet/administration/user-roles',
           },
           {
+            label: 'Usuarios',
+            route: '/intranet/administration/users',
+          },
+          {
             label: 'Organizaciones',
             route: '/intranet/administration/organizations',
+          },
+          {
+            label: 'Centros',
+            route: '/intranet/administration/centers',
+          },
+          {
+            label: 'Aprobaciones',
+            route: '/intranet/administration/approvals',
           },
           {
             label: 'Configuración',
@@ -61,6 +73,7 @@ export const INTRANET_WORKSPACES: Record<AppRole, IntranetWorkspace> = {
           { label: 'Comuñeras', route: '/intranet/admin/community-partners' },
           { label: 'Colaboradores', route: '/intranet/admin/collaborators' },
           { label: 'Embajadores', route: '/intranet/admin/ambassadors' },
+          { label: 'Asignaciones', route: '/intranet/admin/assignments' },
         ],
       },
     ],
@@ -85,6 +98,8 @@ export const INTRANET_WORKSPACES: Record<AppRole, IntranetWorkspace> = {
         icon: 'Seguimiento',
         items: [
           { label: 'Embajadores', route: '/intranet/staff/ambassadors' },
+          { label: 'Aprobaciones', route: '/intranet/administration/approvals' },
+          { label: 'Asignaciones', route: '/intranet/admin/assignments' },
           { label: 'Ofertas', route: '/intranet/staff/offers' },
           { label: 'Candidatos', route: '/intranet/staff/candidates' },
         ],

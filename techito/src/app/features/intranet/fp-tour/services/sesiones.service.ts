@@ -59,6 +59,18 @@ export class SesionesService {
   updateSesion(id: string, sesion: { titulo: string; centro: string; fecha: string; categoria: string; numAlumnos: number; }) {
     return this.http.put<void>(`${this.baseUrl}/${id}`, sesion);
   }
+
+  publish(id: string) {
+    return this.http.post(`${this.baseUrl}/${id}/publish`, {});
+  }
+
+  cancel(id: string) {
+    return this.http.post(`${this.baseUrl}/${id}/cancel`, {});
+  }
+
+  addSpeaker(id: string, userId: string, isMainSpeaker = true) {
+    return this.http.post(`${this.baseUrl}/${id}/speakers`, { UserId: userId, IsMainSpeaker: isMainSpeaker });
+  }
 }
 
 

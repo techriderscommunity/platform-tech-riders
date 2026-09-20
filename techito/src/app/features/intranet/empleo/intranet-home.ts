@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { AuthService } from '@core/auth/auth.service';
 import { catchError, of } from 'rxjs';
 import {
@@ -10,18 +11,25 @@ import {
 } from './models/intranet-home.models';
 import { resolveIntranetWorkspace } from './intranet-nav.config';
 import { IntranetHomeService } from './services/intranet-home.service';
+import { AdminDashboardService } from '../admin-dashboard/services/admin-dashboard.service';
 
 @Component({
   selector: 'app-intranet-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './intranet-home.html',
   styleUrl: './intranet-home.scss'
 })
 export class IntranetHome {
   private readonly authService = inject(AuthService);
   private readonly intranetHomeService = inject(IntranetHomeService);
+  private readonly adminDashboardService = inject(AdminDashboardService);
+
+  readonly pendingApprovals = signal<{ type: string; count: number }[]>([]);
+  readonly upcomingEvents = signal<{ id: string; title: string; startDateTime: string }[]>([]);
+  readonly upcomingSessions = signal<{ id: string; title: string; startDateTime: string }[]>([]);
+  readonly totalPendingApprovals = computed(() => this.pendingApprovals().reduce((sum, item) => sum + item.count, 0));
 
   readonly userName = computed(() => this.authService.user()?.name || 'Usuario');
   readonly workspace = computed(() => {
@@ -136,6 +144,23 @@ export class IntranetHome {
 
   constructor() {
     this.emitLandingTrace();
+    if (this.workspace().role === 'admin') {
+      this.loadDashboardExtras();
+    }
+  }
+
+  private loadDashboardExtras() {
+    this.adminDashboardService.getDashboard()
+      .pipe(
+        catchError(() => of(null)),
+        takeUntilDestroyed(),
+      )
+      .subscribe(dashboard => {
+        if (!dashboard) return;
+        this.pendingApprovals.set((dashboard.PendingApprovals ?? []).map(p => ({ type: p.Type, count: p.Count })));
+        this.upcomingEvents.set((dashboard.UpcomingEvents ?? []).map(e => ({ id: e.Id, title: e.Title, startDateTime: e.StartDateTime })));
+        this.upcomingSessions.set((dashboard.UpcomingSessions ?? []).map(s => ({ id: s.Id, title: s.Title, startDateTime: s.StartDateTime })));
+      });
   }
 
   private emitLandingTrace() {

@@ -89,6 +89,28 @@
 		</article>
 
 		<article class="perfil-card">
+			<h3>Mis skills</h3>
+			<p class="perfil-intro">Añade tus skills y nivel para facilitar tu asignación a sesiones, mentorías y otras iniciativas.</p>
+			<ul class="perfil-list">
+				@for (skill of mySkills(); track skill.SkillId) {
+					<li>
+						<strong>{{ skill.SkillName }}</strong>
+						<span>{{ skill.Level }}</span>
+						<app-ui-button type="button" class="btn-sm delete" (click)="removeSkill(skill.SkillId)">Eliminar</app-ui-button>
+					</li>
+				}
+			</ul>
+			<div class="perfil-actions">
+				<app-ui-select label="Skill" [options]="skillOptions()" [value]="selectedSkillId()" (valueChange)="updateSelectedSkillId($event)"></app-ui-select>
+				<app-ui-select label="Nivel" [options]="skillLevelOptions" [value]="selectedSkillLevel()" (valueChange)="updateSelectedSkillLevel($event)"></app-ui-select>
+				<app-ui-button type="button" [disabled]="skillSaving()" (click)="addSkill()">Añadir skill</app-ui-button>
+			</div>
+			@if (skillsFeedback()) {
+				<p class="status-message status-message-success">{{ skillsFeedback() }}</p>
+			}
+		</article>
+
+		<article class="perfil-card">
 			<h3>Mis consentimientos</h3>
 			<p class="perfil-intro">Autoriza o retira el tratamiento de tus datos por finalidad. Puedes cambiar de opinión en cualquier momento.</p>
 			<ul class="perfil-list">

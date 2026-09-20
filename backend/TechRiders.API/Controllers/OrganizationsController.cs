@@ -24,20 +24,19 @@ public sealed class OrganizationsController : BaseApiController
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrganizationResponse>))]
-    public async Task<IActionResult> List(CancellationToken cancellationToken)
+    public async Task<IActionResult> List([FromQuery] string? type, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
     {
-        var organizations = await OrganizationService.ListAsync(_dbContext, cancellationToken);
-        return Ok(organizations.Select(o => new OrganizationResponse
-        {
-            Id = o.Id,
-            OrganizationType = o.OrganizationType.ToString(),
-            Name = o.Name,
-            TaxId = o.TaxId,
-            Website = o.Website,
-            Address = o.Address,
-            Province = o.Province,
-            IsActive = o.IsActive,
-        }));
+        var organizations = await OrganizationService.ListAsync(_dbContext, type, onlyActive, cancellationToken);
+        return Ok(organizations.Select(ToOrganizationResponse));
+    }
+
+    [HttpGet("pending")]
+    [Authorize(Policy = "permission:community.manage")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrganizationResponse>))]
+    public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
+    {
+        var pending = await OrganizationService.GetPendingAsync(_dbContext, cancellationToken);
+        return Ok(pending.Select(ToOrganizationResponse));
     }
 
     [HttpPost]
@@ -53,12 +52,66 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var organization = await OrganizationService.CreateAsync(_dbContext, request.OrganizationType, request.Name, request.TaxId, request.Website, request.Address, request.Province, cancellationToken);
+            var organization = await OrganizationService.CreateAsync(_dbContext, request.OrganizationType, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
             return CreatedAtAction(nameof(List), null, new { organization.Id });
         }
         catch (ArgumentException ex)
         {
             return CreateErrorResponse(ex.Message);
+        }
+    }
+
+    [HttpPut("{id:guid}")]
+    [Authorize(Policy = "permission:community.manage")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateOrganizationRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        try
+        {
+            var organization = await OrganizationService.UpdateAsync(_dbContext, id, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
+            return Ok(ToOrganizationResponse(organization));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    [HttpPost("{id:guid}/activate")]
+    [Authorize(Policy = "permission:community.manage")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Activate(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var organization = await OrganizationService.ActivateAsync(_dbContext, id, cancellationToken);
+            return Ok(ToOrganizationResponse(organization));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    [HttpPost("{id:guid}/suspend")]
+    [Authorize(Policy = "permission:community.manage")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Suspend(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var organization = await OrganizationService.SuspendAsync(_dbContext, id, cancellationToken);
+            return Ok(ToOrganizationResponse(organization));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
         }
     }
 
@@ -149,6 +202,20 @@ public sealed class OrganizationsController : BaseApiController
         var raw = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         return Guid.TryParse(raw, out var id) ? id : null;
     }
+
+    private static OrganizationResponse ToOrganizationResponse(Domain.Entities.Organization organization) => new()
+    {
+        Id = organization.Id,
+        OrganizationType = organization.OrganizationType.ToString(),
+        Name = organization.Name,
+        TaxId = organization.TaxId,
+        Website = organization.Website,
+        Address = organization.Address,
+        Province = organization.Province,
+        Notes = organization.Notes,
+        Origin = organization.Origin,
+        IsActive = organization.IsActive,
+    };
 
     private static PersonOrganizationResponse ToResponse(Domain.Entities.PersonOrganization relation) => new()
     {

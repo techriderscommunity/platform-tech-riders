@@ -119,6 +119,57 @@ public sealed class CapabilityRequestsController : BaseApiController
         }
     }
 
+    [HttpPost("{id:guid}/revoke")]
+    [Authorize(Policy = "permission:role-requests.approve")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Revoke(Guid id, CancellationToken cancellationToken)
+    {
+        var validatorId = GetCurrentUserId();
+        if (validatorId is null)
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            await CapabilityRequestService.RevokeAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message);
+        }
+    }
+
+    [HttpGet("history")]
+    [Authorize(Policy = "permission:role-requests.approve")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CapabilityRequestResponse>))]
+    public async Task<IActionResult> GetHistory([FromQuery] string? capabilityName, [FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        Domain.Enums.CapabilityStatus? parsedStatus = null;
+        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<Domain.Enums.CapabilityStatus>(status, ignoreCase: true, out var parsed))
+        {
+            parsedStatus = parsed;
+        }
+
+        var history = await CapabilityRequestService.GetHistoryAsync(_dbContext, capabilityName, parsedStatus, cancellationToken);
+        var response = history.Select(uc => new CapabilityRequestResponse
+        {
+            Id = uc.Id,
+            UserId = uc.UserId,
+            UserName = uc.User is null ? null : $"{uc.User.Name} {uc.User.LastName}",
+            UserEmail = uc.User?.Email,
+            CapabilityName = uc.Capability.Name,
+            Status = uc.Status.ToString(),
+            RequestedAt = uc.RequestedAt,
+            ValidatedAt = uc.ValidatedAt,
+            ValidatedByUserId = uc.ValidatedByUserId,
+        });
+
+        return Ok(response);
+    }
+
     private Guid? GetCurrentUserId()
     {
         var raw = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

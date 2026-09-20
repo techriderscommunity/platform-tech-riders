@@ -9,5 +9,7 @@ public sealed class OrganizationResponse
     public string? Website { get; set; }
     public string? Address { get; set; }
     public string? Province { get; set; }
+    public string? Notes { get; set; }
+    public string? Origin { get; set; }
     public bool IsActive { get; set; }
 }

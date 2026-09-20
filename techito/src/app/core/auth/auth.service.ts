@@ -53,7 +53,9 @@ export type AppPermission =
   | 'platform.manage'
   | 'security.manage'
   | 'audit.manage'
-  | 'users.manage';
+  | 'users.manage'
+  | 'approvals.manage'
+  | 'assignments.manage';
 
 const PERMISSIONS_BY_ROLE: Record<AppRole, readonly AppPermission[]> = {
   member: [
@@ -79,6 +81,7 @@ const PERMISSIONS_BY_ROLE: Record<AppRole, readonly AppPermission[]> = {
   staff: [
     'role-requests.approve', 'sessions.fptour.manage', 'events.official.create', 'community.manage',
     'taxonomy.manage', 'content.manage', 'validations.manage', 'functional-config.manage',
+    'users.manage', 'center.info.manage', 'approvals.manage', 'assignments.manage',
   ],
   admin: [
     'platform.manage', 'security.manage', 'audit.manage', 'users.manage',

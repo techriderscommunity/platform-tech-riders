@@ -106,6 +106,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'admin/assignments',
+        canActivate: [permissionGuard('assignments.manage')],
+        loadComponent: () =>
+          import('./features/intranet/asignaciones/admin-asignaciones').then(
+            (m) => m.AdminAsignaciones,
+          ),
+      },
+      {
         path: 'admin/collaborators',
         canActivate: [permissionGuard('users.manage')],
         loadComponent: () =>
@@ -264,6 +272,30 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/intranet/staff/admin-staff').then(
             (m) => m.AdminStaff,
+          ),
+      },
+      {
+        path: 'administration/users',
+        canActivate: [permissionGuard('users.manage')],
+        loadComponent: () =>
+          import('./features/intranet/usuarios/admin-usuarios').then(
+            (m) => m.AdminUsuarios,
+          ),
+      },
+      {
+        path: 'administration/centers',
+        canActivate: [permissionGuard('center.info.manage')],
+        loadComponent: () =>
+          import('./features/intranet/centros/admin-centros').then(
+            (m) => m.AdminCentros,
+          ),
+      },
+      {
+        path: 'administration/approvals',
+        canActivate: [permissionGuard('approvals.manage')],
+        loadComponent: () =>
+          import('./features/intranet/aprobaciones/admin-aprobaciones').then(
+            (m) => m.AdminAprobaciones,
           ),
       },
       {

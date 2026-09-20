@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TechRiders.Api.Contracts.Requests.Events;
 using TechRiders.Api.Contracts.Responses.Events;
+using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.Event;
 using TechRiders.Application.DTOs.Responses.Event;
 using TechRiders.Application.Interfaces;
+using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Controllers;
 
@@ -18,13 +21,16 @@ namespace TechRiders.Api.Controllers;
 public class EventsController : BaseApiController
 {
     private readonly IEventService _eventService;
+    private readonly TechRidersDbContext _dbContext;
     private readonly ILogger<EventsController> _logger;
 
     public EventsController(
         IEventService eventService,
+        TechRidersDbContext dbContext,
         ILogger<EventsController> logger)
     {
         _eventService = eventService;
+        _dbContext = dbContext;
         _logger = logger;
     }
 
@@ -529,6 +535,68 @@ public class EventsController : BaseApiController
         {
             _logger.LogError(ex, "Error al eliminar evento {EventoId}", id);
             return StatusCode(500, "Error al eliminar el evento");
+        }
+    }
+
+    [HttpPost("{id:guid}/publish")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Publish(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await EventSessionOpsService.SetEventStatusAsync(_dbContext, id, EventSessionOpsService.PublishedStatusName, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    [HttpPost("{id:guid}/cancel")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Cancel(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await EventSessionOpsService.SetEventStatusAsync(_dbContext, id, EventSessionOpsService.CancelledStatusName, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    [HttpGet("{id:guid}/registrations")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EventRegistrationResponse>))]
+    public async Task<IActionResult> GetRegistrations(Guid id, CancellationToken cancellationToken)
+    {
+        var registrations = await EventSessionOpsService.GetEventRegistrationsAsync(_dbContext, id, cancellationToken);
+        return Ok(registrations.Select(r => new EventRegistrationResponse
+        {
+            Id = r.Id,
+            UserId = r.UserId,
+            UserName = r.User is null ? null : $"{r.User.Name} {r.User.LastName}",
+            UserEmail = r.User?.Email,
+            Status = r.RegistrationStatus.ToString(),
+            Attended = r.Attended,
+        }));
+    }
+
+    [HttpPut("registrations/{registrationId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateRegistration(Guid registrationId, [FromBody] UpdateRegistrationStatusRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await EventSessionOpsService.UpdateEventRegistrationStatusAsync(_dbContext, registrationId, request.Status, cancellationToken);
+            return Ok();
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
+        {
+            return CreateErrorResponse(ex.Message);
         }
     }
 }
