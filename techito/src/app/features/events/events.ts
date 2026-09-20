@@ -5,8 +5,8 @@ import { catchError, EMPTY, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { EventoResumen } from '@core/events/public-events.models';
 import { PublicEventsService } from '@core/events/public-events.service';
-import { PublicContentService } from '@core/content/public-content.service';
-import { GalleryGroupItem } from '@core/content/public-content.models';
+import { GalleryGroupItem } from '@shared/ui/public-content.types';
+import { EVENTS_GALLERY_GROUPS } from './events.content';
 import { UiResourceCardItem, UiResourceCards } from '@shared/ui/resource-cards/resource-cards';
 import { UiTextField } from '@shared/ui/text-field/text-field';
 import {
@@ -28,7 +28,6 @@ import { PublicEventsAgendaService } from './services/public-events.service';
 export class Events implements OnInit {
   private readonly publicEventsService = inject(PublicEventsService);
   private readonly publicEventsAgendaService = inject(PublicEventsAgendaService);
-  private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -102,21 +101,10 @@ export class Events implements OnInit {
     year: 'numeric',
   });
 
-  galerias: GalleryGroupItem[] = [];
+  galerias: GalleryGroupItem[] = EVENTS_GALLERY_GROUPS;
 
   ngOnInit(): void {
     this.showLumaCalendar.set(isPlatformBrowser(this.platformId));
-
-    this.publicContentService
-      .getPublicContent()
-      .pipe(
-        tap((content) => {
-          this.galerias = content.events.galleryGroups;
-        }),
-        catchError(() => EMPTY),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
 
     this.publicEventsService
       .getEventos(1, 60)

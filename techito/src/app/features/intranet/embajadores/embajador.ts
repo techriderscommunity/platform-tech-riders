@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
-import { PublicContentService } from '@core/content/public-content.service';
+import { AMBASSADOR_STATUS_OPTIONS, AMBASSADOR_AVAILABILITY_OPTIONS } from './embajadores.content';
 import { EmbajadoresService } from './services/embajadores.service';
 import { AmbassadorPortalApi, Embajador } from './models/embajadores.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
@@ -22,7 +22,6 @@ import { UiTextarea } from '@shared/ui/textarea/textarea';
 })
 export class EmbajadorComponent {
   private readonly authService = inject(AuthService);
-  private readonly publicContentService = inject(PublicContentService);
   private readonly embajadoresService = inject(EmbajadoresService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -37,31 +36,15 @@ export class EmbajadorComponent {
   readonly especialidades = signal('Cloud, desarrollo web, mentoring, empleabilidad');
   readonly disponibilidad = signal('Martes y jueves por la tarde; viernes por la mañana con aviso previo.');
 
-  estados: Array<{ label: string; value: string }> = [];
-  estadoOptions: UiSelectOption[] = [];
-  availabilityOptions: UiSelectOption[] = [];
+  estados: Array<{ label: string; value: string }> = AMBASSADOR_STATUS_OPTIONS;
+  estadoOptions: UiSelectOption[] = AMBASSADOR_STATUS_OPTIONS;
+  availabilityOptions: UiSelectOption[] = AMBASSADOR_AVAILABILITY_OPTIONS;
 
   readonly query = computed(() => ({
     estado: this.searchStatus()
   }));
 
   constructor() {
-    this.publicContentService
-      .getPublicContent()
-      .pipe(
-        tap((content) => {
-          this.estados = content.intranet.ambassadorStatusOptions.map((option) => ({
-            label: option.label,
-            value: option.value,
-          }));
-          this.estadoOptions = content.intranet.ambassadorStatusOptions;
-          this.availabilityOptions = content.intranet.ambassadorAvailabilityOptions;
-        }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-
     this.hydratePortalFromBackend();
 
     toObservable(this.query)

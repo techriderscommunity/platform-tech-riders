@@ -23,6 +23,9 @@ public class UnitOfWork : IUnitOfWork
     private IIntranetSettingRepository? _intranetSettings;
     private IIntranetUserCategoryRepository? _intranetUserCategories;
     private ICommunityPartnerApplicationRepository? _communityPartnerApplications;
+    private IOrganizationRepository? _organizations;
+    private IUserRepository? _users;
+    private ICommunityRepository? _communities;
     private IKnowledgeArticleRepository? _knowledgeArticles;
 
 
@@ -49,6 +52,12 @@ public class UnitOfWork : IUnitOfWork
 
     public ICommunityPartnerApplicationRepository CommunityPartnerApplications =>
         _communityPartnerApplications ??= new CommunityPartnerApplicationRepository(_context);
+
+    public IOrganizationRepository Organizations => _organizations ??= new OrganizationRepository(_context);
+
+    public IUserRepository Users => _users ??= new UserRepository(_context);
+
+    public ICommunityRepository Communities => _communities ??= new CommunityRepository(_context);
 
     public IKnowledgeArticleRepository KnowledgeArticles =>
         _knowledgeArticles ??= new KnowledgeArticleRepository(_context);

@@ -9,7 +9,7 @@ import { PodcastVideoDto } from '../models/podcast.models';
 @Injectable({ providedIn: 'root' })
 export class PodcastService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/events/podcast/videos`;
+  private readonly baseUrl = `${environment.apiUrl}/public/events/podcast-videos`;
 
   getLatestVideos(maxResults = 8): Observable<UiCarouselItem[]> {
     const params = new HttpParams().set('maxResults', String(maxResults));

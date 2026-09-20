@@ -79,4 +79,71 @@ public sealed class CommunityPartnerApplicationService : ICommunityPartnerApplic
         var normalized = value?.Trim();
         return string.IsNullOrWhiteSpace(normalized) ? null : normalized;
     }
+
+    public async Task<List<CommunityPartnerApplication>> GetPendingAsync(CancellationToken cancellationToken = default)
+    {
+        var pending = await unitOfWork.CommunityPartnerApplications.FindAsync(a => a.Status == PendingStatus, cancellationToken);
+        return pending.OrderBy(a => a.CreatedAt).ToList();
+    }
+
+    public async Task<CommunityPartnerApplication> ApproveAsync(Guid applicationId, Guid validatedByUserId, CancellationToken cancellationToken = default)
+    {
+        var application = await LoadPendingAsync(applicationId, cancellationToken);
+
+        var organization = new Organization
+        {
+            Id = Guid.NewGuid(),
+            OrganizationType = TechRiders.Domain.Enums.OrganizationType.EntidadColaboradora,
+            Name = application.Name,
+            Website = application.Website,
+            Notes = application.Motivation,
+            Origin = "ComuneraAprobada",
+            IsActive = true,
+        };
+        await unitOfWork.Organizations.AddAsync(organization, cancellationToken);
+
+        var community = new Community
+        {
+            Id = Guid.NewGuid(),
+            Name = application.Name,
+            Description = application.WhatYouDo,
+            Website = application.Website,
+            LogoUrl = application.LogoUrl,
+            LinkedIn = application.LinkedIn,
+            Instagram = application.Instagram,
+            X = application.X,
+            YouTube = application.YouTube,
+            Github = application.Github,
+        };
+        await unitOfWork.Communities.AddAsync(community, cancellationToken);
+
+        application.Status = "approved";
+        application.UpdatedAt = DateTime.UtcNow;
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return application;
+    }
+
+    public async Task<CommunityPartnerApplication> RejectAsync(Guid applicationId, Guid validatedByUserId, CancellationToken cancellationToken = default)
+    {
+        var application = await LoadPendingAsync(applicationId, cancellationToken);
+        application.Status = "rejected";
+        application.UpdatedAt = DateTime.UtcNow;
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return application;
+    }
+
+    private async Task<CommunityPartnerApplication> LoadPendingAsync(Guid applicationId, CancellationToken cancellationToken)
+    {
+        var application = await unitOfWork.CommunityPartnerApplications.GetByIdAsync(applicationId, cancellationToken)
+            ?? throw new InvalidOperationException("Solicitud de comunera no encontrada.");
+
+        if (application.Status != PendingStatus)
+        {
+            throw new InvalidOperationException("La solicitud ya fue resuelta.");
+        }
+
+        return application;
+    }
 }

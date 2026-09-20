@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Responses.Approvals;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -13,18 +12,18 @@ namespace TechRiders.Api.Controllers;
 [Authorize(Policy = "permission:approvals.manage")]
 public sealed class ApprovalsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IApprovalsService _approvalsService;
 
-    public ApprovalsController(TechRidersDbContext dbContext)
+    public ApprovalsController(IApprovalsService approvalsService)
     {
-        _dbContext = dbContext;
+        _approvalsService = approvalsService;
     }
 
     [HttpGet("pending")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ApprovalItemResponse>))]
     public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
     {
-        var items = await ApprovalsAggregationService.GetPendingAsync(_dbContext, cancellationToken);
+        var items = await _approvalsService.GetPendingAsync(cancellationToken);
         return Ok(items.Select(i => new ApprovalItemResponse
         {
             Id = i.Id,

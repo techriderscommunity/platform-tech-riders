@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Users;
 using TechRiders.Api.Contracts.Responses.Users;
-using TechRiders.Api.Services;
+using TechRiders.Application.Interfaces;
 using TechRiders.Domain.Entities;
-using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Controllers;
 
@@ -16,11 +15,11 @@ namespace TechRiders.Api.Controllers;
 [Authorize(Policy = "permission:users.manage")]
 public sealed class UsersController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IUserAdminService _userAdminService;
 
-    public UsersController(TechRidersDbContext dbContext)
+    public UsersController(IUserAdminService userAdminService)
     {
-        _dbContext = dbContext;
+        _userAdminService = userAdminService;
     }
 
     [HttpGet]
@@ -29,7 +28,7 @@ public sealed class UsersController : BaseApiController
         [FromQuery] string? search, [FromQuery] string? role, [FromQuery] string? membershipStatus,
         [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var (items, totalCount) = await UserAdminService.ListAsync(_dbContext, search, role, membershipStatus, page, pageSize, cancellationToken);
+        var (items, totalCount) = await _userAdminService.ListAsync(search, role, membershipStatus, page, pageSize, cancellationToken);
 
         return Ok(new UserListResponse
         {
@@ -45,7 +44,7 @@ public sealed class UsersController : BaseApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var user = await UserAdminService.GetByIdAsync(_dbContext, id, cancellationToken);
+        var user = await _userAdminService.GetByIdAsync(id, cancellationToken);
         return user is null ? NotFound() : Ok(ToDetail(user));
     }
 
@@ -61,7 +60,7 @@ public sealed class UsersController : BaseApiController
 
         try
         {
-            var user = await UserAdminService.CreateAsync(_dbContext, request.Nickname, request.Name, request.LastName, request.Email, request.Phone, request.Locality, request.About, cancellationToken);
+            var user = await _userAdminService.CreateAsync(request.Nickname, request.Name, request.LastName, request.Email, request.Phone, request.Locality, request.About, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, new { user.Id });
         }
         catch (InvalidOperationException ex)
@@ -82,7 +81,7 @@ public sealed class UsersController : BaseApiController
 
         try
         {
-            var user = await UserAdminService.UpdateAsync(_dbContext, id, request.Name, request.LastName, request.Email, request.Phone, request.Locality, request.About, cancellationToken);
+            var user = await _userAdminService.UpdateAsync(id, request.Name, request.LastName, request.Email, request.Phone, request.Locality, request.About, cancellationToken);
             return Ok(new { user.Id });
         }
         catch (InvalidOperationException ex)
@@ -97,7 +96,7 @@ public sealed class UsersController : BaseApiController
     {
         try
         {
-            await UserAdminService.ActivateAsync(_dbContext, id, cancellationToken);
+            await _userAdminService.ActivateAsync(id, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -112,7 +111,7 @@ public sealed class UsersController : BaseApiController
     {
         try
         {
-            await UserAdminService.DeactivateAsync(_dbContext, id, cancellationToken);
+            await _userAdminService.DeactivateAsync(id, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -127,7 +126,7 @@ public sealed class UsersController : BaseApiController
     {
         try
         {
-            await UserAdminService.RevokeRoleAsync(_dbContext, id, roleName, cancellationToken);
+            await _userAdminService.RevokeRoleAsync(id, roleName, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -140,7 +139,7 @@ public sealed class UsersController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserActivityResponse))]
     public async Task<IActionResult> GetActivity(Guid id, CancellationToken cancellationToken)
     {
-        var summary = await UserAdminService.GetActivityAsync(_dbContext, id, cancellationToken);
+        var summary = await _userAdminService.GetActivityAsync(id, cancellationToken);
         return Ok(new UserActivityResponse
         {
             EventsRegistered = summary.EventsRegistered,

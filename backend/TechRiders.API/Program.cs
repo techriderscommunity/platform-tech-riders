@@ -6,8 +6,10 @@ using System.Text;
 using TechRiders.Api.Authorization;
 using TechRiders.Api.Extensions;
 using TechRiders.Api.Services;
+using TechRiders.Application.Interfaces;
 using TechRiders.Infrastructure.Data;
 using TechRiders.Infrastructure.Extensions;
+using TechRiders.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -216,7 +218,7 @@ using (var scope = app.Services.CreateScope())
     await IdentityCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
     await PreferenceCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
     await RolePermissionCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
-    await DatabaseAuthService.EnsureDefaultAdminAsync(dbContext, configuration, logger);
+    await scope.ServiceProvider.GetRequiredService<IAuthService>().EnsureDefaultAdminAsync();
     await KnowledgeArticleSeedService.EnsureDefaultsAsync(dbContext, logger);
 }
 

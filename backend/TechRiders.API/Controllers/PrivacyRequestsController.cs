@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Privacy;
 using TechRiders.Api.Contracts.Responses.Privacy;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,11 +14,11 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class PrivacyRequestsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IPrivacyRequestService _privacyRequestService;
 
-    public PrivacyRequestsController(TechRidersDbContext dbContext)
+    public PrivacyRequestsController(IPrivacyRequestService privacyRequestService)
     {
-        _dbContext = dbContext;
+        _privacyRequestService = privacyRequestService;
     }
 
     [HttpPost]
@@ -40,7 +39,7 @@ public sealed class PrivacyRequestsController : BaseApiController
 
         try
         {
-            var created = await PrivacyRequestService.CreateAsync(_dbContext, userId.Value, request.RequestType, request.Channel, cancellationToken);
+            var created = await _privacyRequestService.CreateAsync(userId.Value, request.RequestType, request.Channel, cancellationToken);
             return CreatedAtAction(nameof(GetMine), null, new { created.Id });
         }
         catch (ArgumentException ex)
@@ -59,7 +58,7 @@ public sealed class PrivacyRequestsController : BaseApiController
             return Unauthorized();
         }
 
-        var requests = await PrivacyRequestService.GetMineAsync(_dbContext, userId.Value, cancellationToken);
+        var requests = await _privacyRequestService.GetMineAsync(userId.Value, cancellationToken);
         return Ok(requests.Select(ToResponse));
     }
 
@@ -68,7 +67,7 @@ public sealed class PrivacyRequestsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PrivacyRequestResponse>))]
     public async Task<IActionResult> List(CancellationToken cancellationToken)
     {
-        var requests = await PrivacyRequestService.ListAsync(_dbContext, cancellationToken);
+        var requests = await _privacyRequestService.ListAsync(cancellationToken);
         return Ok(requests.Select(ToResponse));
     }
 
@@ -86,7 +85,7 @@ public sealed class PrivacyRequestsController : BaseApiController
 
         try
         {
-            var resolved = await PrivacyRequestService.ResolveAsync(_dbContext, id, responsibleId.Value, request.Status, request.Resolution, cancellationToken);
+            var resolved = await _privacyRequestService.ResolveAsync(id, responsibleId.Value, request.Status, request.Resolution, cancellationToken);
             return Ok(ToResponse(resolved));
         }
         catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)

@@ -2,11 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Responses.Organizations;
-using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.CommunityPartner;
 using TechRiders.Application.DTOs.Responses.CommunityPartner;
 using TechRiders.Application.Interfaces;
-using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,16 +13,13 @@ namespace TechRiders.Api.Controllers;
 public sealed class CommunityPartnerApplicationsController : BaseApiController
 {
     private readonly ICommunityPartnerApplicationService applicationService;
-    private readonly TechRidersDbContext _dbContext;
     private readonly ILogger<CommunityPartnerApplicationsController> logger;
 
     public CommunityPartnerApplicationsController(
         ICommunityPartnerApplicationService applicationService,
-        TechRidersDbContext dbContext,
         ILogger<CommunityPartnerApplicationsController> logger)
     {
         this.applicationService = applicationService;
-        _dbContext = dbContext;
         this.logger = logger;
     }
 
@@ -68,7 +63,7 @@ public sealed class CommunityPartnerApplicationsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CommunityPartnerApplicationAdminResponse>))]
     public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
     {
-        var pending = await CommunityPartnerApplicationAdminService.GetPendingAsync(_dbContext, cancellationToken);
+        var pending = await applicationService.GetPendingAsync(cancellationToken);
         return Ok(pending.Select(ToAdminResponse));
     }
 
@@ -86,7 +81,7 @@ public sealed class CommunityPartnerApplicationsController : BaseApiController
 
         try
         {
-            var application = await CommunityPartnerApplicationAdminService.ApproveAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            var application = await applicationService.ApproveAsync(id, validatorId.Value, cancellationToken);
             return Ok(ToAdminResponse(application));
         }
         catch (InvalidOperationException ex)
@@ -109,7 +104,7 @@ public sealed class CommunityPartnerApplicationsController : BaseApiController
 
         try
         {
-            var application = await CommunityPartnerApplicationAdminService.RejectAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            var application = await applicationService.RejectAsync(id, validatorId.Value, cancellationToken);
             return Ok(ToAdminResponse(application));
         }
         catch (InvalidOperationException ex)

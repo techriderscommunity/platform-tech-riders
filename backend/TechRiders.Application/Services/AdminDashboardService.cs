@@ -8,15 +8,18 @@ public sealed class AdminDashboardService : IAdminDashboardService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IIntranetService _intranetService;
+    private readonly IApprovalsService _approvalsService;
 
-    public AdminDashboardService(IUnitOfWork unitOfWork, IIntranetService intranetService)
+    public AdminDashboardService(IUnitOfWork unitOfWork, IIntranetService intranetService, IApprovalsService approvalsService)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _intranetService = intranetService ?? throw new ArgumentNullException(nameof(intranetService));
+        _approvalsService = approvalsService ?? throw new ArgumentNullException(nameof(approvalsService));
     }
 
     public async Task<AdminDashboardResponse> GetDashboardAsync(CancellationToken cancellationToken = default)
     {
+        var now = DateTime.UtcNow;
         var allUserCategories = (await _unitOfWork.IntranetUserCategories.GetAllAsync(cancellationToken)).ToArray();
         var activeUserCategories = (await _unitOfWork.IntranetUserCategories.GetActiveAsync(cancellationToken)).ToArray();
         var auditLogs = (await _intranetService.GetAllAuditLogsAsync(cancellationToken))
@@ -40,6 +43,20 @@ public sealed class AdminDashboardService : IAdminDashboardService
             Applications = 0,
         };
 
+        var pendingCounts = await _approvalsService.GetPendingCountsByTypeAsync(cancellationToken);
+
+        var upcomingEvents = (await _unitOfWork.Events.FindAsync(e => e.IsActive && e.StartDateTime >= now, cancellationToken))
+            .OrderBy(e => e.StartDateTime)
+            .Take(5)
+            .Select(e => new AdminDashboardUpcomingItemResponse { Id = e.Id, Title = e.Name, StartDateTime = e.StartDateTime })
+            .ToArray();
+
+        var upcomingSessions = (await _unitOfWork.Sessions.FindAsync(s => s.IsActive && s.StartDateTime >= now, cancellationToken))
+            .OrderBy(s => s.StartDateTime)
+            .Take(5)
+            .Select(s => new AdminDashboardUpcomingItemResponse { Id = s.Id, Title = s.Title, StartDateTime = s.StartDateTime })
+            .ToArray();
+
         return new AdminDashboardResponse
         {
             Stats = stats,
@@ -58,6 +75,9 @@ public sealed class AdminDashboardService : IAdminDashboardService
                 Uploads = "No incidents",
                 Cpu = "Normal",
             },
+            PendingApprovals = pendingCounts.Select(kv => new AdminDashboardPendingApprovalResponse { Type = kv.Key, Count = kv.Value }).ToArray(),
+            UpcomingEvents = upcomingEvents,
+            UpcomingSessions = upcomingSessions,
         };
     }
 }

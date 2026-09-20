@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechRiders.Api.Contracts.Requests.Auth;
 using TechRiders.Api.Contracts.Responses.Auth;
+using TechRiders.Application.Interfaces;
 using TechRiders.Infrastructure.Data;
 using TechRiders.Infrastructure.Storage;
 using Xunit;
@@ -55,7 +56,8 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
 
         Assert.NotNull(user.PasswordHash);
         Assert.Contains(user.UserRoles, ur => string.Equals(ur.Role.Name, "Admin", StringComparison.OrdinalIgnoreCase));
-        Assert.True(TechRiders.Api.Services.DatabaseAuthService.VerifyPassword(password, user.PasswordHash!));
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        Assert.True(passwordHasher.VerifyPassword(password, user.PasswordHash!));
     }
 
     [Fact]

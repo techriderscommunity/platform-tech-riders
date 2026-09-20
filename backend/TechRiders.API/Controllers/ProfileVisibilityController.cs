@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Visibility;
 using TechRiders.Api.Contracts.Responses.Visibility;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,11 +14,11 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class ProfileVisibilityController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IProfileVisibilityService _profileVisibilityService;
 
-    public ProfileVisibilityController(TechRidersDbContext dbContext)
+    public ProfileVisibilityController(IProfileVisibilityService profileVisibilityService)
     {
-        _dbContext = dbContext;
+        _profileVisibilityService = profileVisibilityService;
     }
 
     [HttpGet("me")]
@@ -32,7 +31,7 @@ public sealed class ProfileVisibilityController : BaseApiController
             return Unauthorized();
         }
 
-        var entries = await ProfileVisibilityService.GetForUserAsync(_dbContext, userId.Value, cancellationToken);
+        var entries = await _profileVisibilityService.GetForUserAsync(userId.Value, cancellationToken);
         return Ok(entries.Select(e => new FieldVisibilityResponse { FieldKey = e.FieldKey, Visibility = e.Visibility.ToString() }));
     }
 
@@ -54,7 +53,7 @@ public sealed class ProfileVisibilityController : BaseApiController
 
         try
         {
-            var entry = await ProfileVisibilityService.SetAsync(_dbContext, userId.Value, request.FieldKey, request.Visibility, cancellationToken);
+            var entry = await _profileVisibilityService.SetAsync(userId.Value, request.FieldKey, request.Visibility, cancellationToken);
             return Ok(new FieldVisibilityResponse { FieldKey = entry.FieldKey, Visibility = entry.Visibility.ToString() });
         }
         catch (ArgumentException ex)

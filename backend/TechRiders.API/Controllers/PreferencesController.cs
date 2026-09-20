@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Preferences;
 using TechRiders.Api.Contracts.Responses.Preferences;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,18 +14,18 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class PreferencesController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IPreferenceService _preferenceService;
 
-    public PreferencesController(TechRidersDbContext dbContext)
+    public PreferencesController(IPreferenceService preferenceService)
     {
-        _dbContext = dbContext;
+        _preferenceService = preferenceService;
     }
 
     [HttpGet("catalog")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PreferenceDimensionResponse>))]
     public async Task<IActionResult> GetCatalog(CancellationToken cancellationToken)
     {
-        var dimensions = await PreferenceService.GetCatalogAsync(_dbContext, cancellationToken);
+        var dimensions = await _preferenceService.GetCatalogAsync(cancellationToken);
         return Ok(dimensions.Select(d => new PreferenceDimensionResponse
         {
             Id = d.Id,
@@ -52,7 +51,7 @@ public sealed class PreferencesController : BaseApiController
             return Unauthorized();
         }
 
-        var values = await PreferenceService.GetUserPreferenceValueIdsAsync(_dbContext, userId.Value, cancellationToken);
+        var values = await _preferenceService.GetUserPreferenceValueIdsAsync(userId.Value, cancellationToken);
         return Ok(values);
     }
 
@@ -71,7 +70,7 @@ public sealed class PreferencesController : BaseApiController
             return Unauthorized();
         }
 
-        await PreferenceService.SetUserPreferencesAsync(_dbContext, userId.Value, request.DimensionValueIds, cancellationToken);
+        await _preferenceService.SetUserPreferencesAsync(userId.Value, request.DimensionValueIds, cancellationToken);
         return Ok();
     }
 

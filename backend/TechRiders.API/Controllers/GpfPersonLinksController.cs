@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Gpf;
 using TechRiders.Api.Contracts.Responses.Gpf;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,11 +14,11 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class GpfPersonLinksController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IGpfPersonLinkService _gpfPersonLinkService;
 
-    public GpfPersonLinksController(TechRidersDbContext dbContext)
+    public GpfPersonLinksController(IGpfPersonLinkService gpfPersonLinkService)
     {
-        _dbContext = dbContext;
+        _gpfPersonLinkService = gpfPersonLinkService;
     }
 
     [HttpGet]
@@ -27,7 +26,7 @@ public sealed class GpfPersonLinksController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<GpfPersonLinkResponse>))]
     public async Task<IActionResult> List(CancellationToken cancellationToken)
     {
-        var links = await GpfPersonLinkService.ListAsync(_dbContext, cancellationToken);
+        var links = await _gpfPersonLinkService.ListAsync(cancellationToken);
         return Ok(links.Select(ToResponse));
     }
 
@@ -42,7 +41,7 @@ public sealed class GpfPersonLinksController : BaseApiController
             return Unauthorized();
         }
 
-        var link = await GpfPersonLinkService.GetActiveForUserAsync(_dbContext, userId.Value, cancellationToken);
+        var link = await _gpfPersonLinkService.GetActiveForUserAsync(userId.Value, cancellationToken);
         return link is null ? NoContent() : Ok(ToResponse(link));
     }
 
@@ -65,7 +64,7 @@ public sealed class GpfPersonLinksController : BaseApiController
 
         try
         {
-            var link = await GpfPersonLinkService.LinkAsync(_dbContext, request.UserId, request.CodUnico, validatorId.Value, cancellationToken);
+            var link = await _gpfPersonLinkService.LinkAsync(request.UserId, request.CodUnico, validatorId.Value, cancellationToken);
             return CreatedAtAction(nameof(GetMine), null, ToResponse(link));
         }
         catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
@@ -88,7 +87,7 @@ public sealed class GpfPersonLinksController : BaseApiController
 
         try
         {
-            await GpfPersonLinkService.UnlinkAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            await _gpfPersonLinkService.UnlinkAsync(id, validatorId.Value, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)

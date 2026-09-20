@@ -31,6 +31,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IIntranetService, IntranetService>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IKnowledgeArticleService, KnowledgeArticleService>();
+        services.AddScoped<IPublicStatsService, PublicStatsService>();
+        services.AddScoped<IPublicTeamService, PublicTeamService>();
 
         return services;
     }

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Responses.Assignments;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -13,18 +12,18 @@ namespace TechRiders.Api.Controllers;
 [Authorize(Policy = "permission:assignments.manage")]
 public sealed class AssignmentsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IAssignmentService _assignmentService;
 
-    public AssignmentsController(TechRidersDbContext dbContext)
+    public AssignmentsController(IAssignmentService assignmentService)
     {
-        _dbContext = dbContext;
+        _assignmentService = assignmentService;
     }
 
     [HttpGet("candidates")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AssignmentCandidateResponse>))]
     public async Task<IActionResult> GetCandidates([FromQuery] Guid? skillId, [FromQuery] Guid? availabilityValueId, CancellationToken cancellationToken)
     {
-        var candidates = await AssignmentSuggestionService.GetCandidatesAsync(_dbContext, skillId, availabilityValueId, cancellationToken);
+        var candidates = await _assignmentService.GetCandidatesAsync(skillId, availabilityValueId, cancellationToken);
         return Ok(candidates.Select(c => new AssignmentCandidateResponse
         {
             UserId = c.UserId,

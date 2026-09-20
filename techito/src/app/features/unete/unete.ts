@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, tap } from 'rxjs';
-import { PublicContentService } from '@core/content/public-content.service';
-import { MetricItem } from '@core/content/public-content.models';
+import { JoinStatsService } from './join-stats.service';
+import { JOIN_METRICS_META, JOIN_INTAKE_OPTIONS } from './unete.content';
+import { MetricItem } from '@shared/ui/public-content.types';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton  } from '@shared/ui/button/button';
@@ -23,10 +24,10 @@ import { UneteIntakeService } from './services/unete-intake.service';
 })
 export class Unete implements OnInit {
   private readonly uneteIntakeService = inject(UneteIntakeService);
-  private readonly publicContentService = inject(PublicContentService);
+  private readonly joinStatsService = inject(JoinStatsService);
   private readonly destroyRef = inject(DestroyRef);
 
-  intakeOptions: UiSelectOption[] = [];
+  intakeOptions: UiSelectOption[] = JOIN_INTAKE_OPTIONS;
 
   joinMetrics: MetricItem[] = [];
 
@@ -51,12 +52,15 @@ export class Unete implements OnInit {
   showJoinModal = signal(false);
 
   ngOnInit(): void {
-    this.publicContentService
-      .getPublicContent()
+    this.joinStatsService
+      .getStats()
       .pipe(
-        tap((content) => {
-          this.joinMetrics = content.join.metrics;
-          this.intakeOptions = content.join.intakeOptions;
+        tap((stats) => {
+          this.joinMetrics = JOIN_METRICS_META.map((meta) => ({
+            icon: meta.icon,
+            label: meta.label,
+            value: meta.staticValue ?? String(stats.activeAmbassadors),
+          }));
         }),
         catchError(() => EMPTY),
         takeUntilDestroyed(this.destroyRef)

@@ -3,30 +3,29 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Organizations;
 using TechRiders.Api.Contracts.Responses.Organizations;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
-/// <summary>Organizaciones (centro, empresa, comunidad, etc.) y su relación con personas (Requisitos Arquitectura §6).</summary>
+/// <summary>Organizaciones (centro, empresa, comunidad, etc.) y su relacion con personas (Requisitos Arquitectura §6).</summary>
 [ApiController]
 [Route("api/organizations")]
 [Produces("application/json")]
 [Authorize]
 public sealed class OrganizationsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IOrganizationService _organizationService;
 
-    public OrganizationsController(TechRidersDbContext dbContext)
+    public OrganizationsController(IOrganizationService organizationService)
     {
-        _dbContext = dbContext;
+        _organizationService = organizationService;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrganizationResponse>))]
     public async Task<IActionResult> List([FromQuery] string? type, [FromQuery] bool onlyActive = true, CancellationToken cancellationToken = default)
     {
-        var organizations = await OrganizationService.ListAsync(_dbContext, type, onlyActive, cancellationToken);
+        var organizations = await _organizationService.ListAsync(type, onlyActive, cancellationToken);
         return Ok(organizations.Select(ToOrganizationResponse));
     }
 
@@ -35,7 +34,7 @@ public sealed class OrganizationsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrganizationResponse>))]
     public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
     {
-        var pending = await OrganizationService.GetPendingAsync(_dbContext, cancellationToken);
+        var pending = await _organizationService.GetPendingAsync(cancellationToken);
         return Ok(pending.Select(ToOrganizationResponse));
     }
 
@@ -52,7 +51,7 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var organization = await OrganizationService.CreateAsync(_dbContext, request.OrganizationType, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
+            var organization = await _organizationService.CreateAsync(request.OrganizationType, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
             return CreatedAtAction(nameof(List), null, new { organization.Id });
         }
         catch (ArgumentException ex)
@@ -74,7 +73,7 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var organization = await OrganizationService.UpdateAsync(_dbContext, id, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
+            var organization = await _organizationService.UpdateAsync(id, request.Name, request.TaxId, request.Website, request.Address, request.Province, request.Notes, cancellationToken);
             return Ok(ToOrganizationResponse(organization));
         }
         catch (InvalidOperationException ex)
@@ -90,7 +89,7 @@ public sealed class OrganizationsController : BaseApiController
     {
         try
         {
-            var organization = await OrganizationService.ActivateAsync(_dbContext, id, cancellationToken);
+            var organization = await _organizationService.ActivateAsync(id, cancellationToken);
             return Ok(ToOrganizationResponse(organization));
         }
         catch (InvalidOperationException ex)
@@ -106,7 +105,7 @@ public sealed class OrganizationsController : BaseApiController
     {
         try
         {
-            var organization = await OrganizationService.SuspendAsync(_dbContext, id, cancellationToken);
+            var organization = await _organizationService.SuspendAsync(id, cancellationToken);
             return Ok(ToOrganizationResponse(organization));
         }
         catch (InvalidOperationException ex)
@@ -133,7 +132,7 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var relation = await OrganizationService.RequestRelationAsync(_dbContext, userId.Value, request.OrganizationId, request.RelationType, request.Position, cancellationToken);
+            var relation = await _organizationService.RequestRelationAsync(userId.Value, request.OrganizationId, request.RelationType, request.Position, cancellationToken);
             return CreatedAtAction(nameof(GetPendingRelations), null, new { relation.Id });
         }
         catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
@@ -147,7 +146,7 @@ public sealed class OrganizationsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PersonOrganizationResponse>))]
     public async Task<IActionResult> GetPendingRelations(CancellationToken cancellationToken)
     {
-        var pending = await OrganizationService.GetPendingRelationsAsync(_dbContext, cancellationToken);
+        var pending = await _organizationService.GetPendingRelationsAsync(cancellationToken);
         return Ok(pending.Select(ToResponse));
     }
 
@@ -165,7 +164,7 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var relation = await OrganizationService.ApproveRelationAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            var relation = await _organizationService.ApproveRelationAsync(id, validatorId.Value, cancellationToken);
             return Ok(ToResponse(relation));
         }
         catch (InvalidOperationException ex)
@@ -188,7 +187,7 @@ public sealed class OrganizationsController : BaseApiController
 
         try
         {
-            var relation = await OrganizationService.RejectRelationAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            var relation = await _organizationService.RejectRelationAsync(id, validatorId.Value, cancellationToken);
             return Ok(ToResponse(relation));
         }
         catch (InvalidOperationException ex)

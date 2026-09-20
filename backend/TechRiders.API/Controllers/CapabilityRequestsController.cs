@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Capability;
 using TechRiders.Api.Contracts.Responses.Capability;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,12 +14,12 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class CapabilityRequestsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly ICapabilityRequestService _capabilityRequestService;
     private readonly ILogger<CapabilityRequestsController> _logger;
 
-    public CapabilityRequestsController(TechRidersDbContext dbContext, ILogger<CapabilityRequestsController> logger)
+    public CapabilityRequestsController(ICapabilityRequestService capabilityRequestService, ILogger<CapabilityRequestsController> logger)
     {
-        _dbContext = dbContext;
+        _capabilityRequestService = capabilityRequestService;
         _logger = logger;
     }
 
@@ -42,7 +41,7 @@ public sealed class CapabilityRequestsController : BaseApiController
 
         try
         {
-            var created = await CapabilityRequestService.RequestAsync(_dbContext, userId.Value, request.CapabilityName, cancellationToken);
+            var created = await _capabilityRequestService.RequestAsync(userId.Value, request.CapabilityName, cancellationToken);
             return CreatedAtAction(nameof(GetPending), null, new { created.Id });
         }
         catch (InvalidOperationException ex)
@@ -56,7 +55,7 @@ public sealed class CapabilityRequestsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CapabilityRequestResponse>))]
     public async Task<IActionResult> GetPending(CancellationToken cancellationToken)
     {
-        var pending = await CapabilityRequestService.GetPendingAsync(_dbContext, cancellationToken);
+        var pending = await _capabilityRequestService.GetPendingAsync(cancellationToken);
         var response = pending.Select(uc => new CapabilityRequestResponse
         {
             Id = uc.Id,
@@ -87,7 +86,7 @@ public sealed class CapabilityRequestsController : BaseApiController
 
         try
         {
-            await CapabilityRequestService.ApproveAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            await _capabilityRequestService.ApproveAsync(id, validatorId.Value, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -110,7 +109,7 @@ public sealed class CapabilityRequestsController : BaseApiController
 
         try
         {
-            await CapabilityRequestService.RejectAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            await _capabilityRequestService.RejectAsync(id, validatorId.Value, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -133,7 +132,7 @@ public sealed class CapabilityRequestsController : BaseApiController
 
         try
         {
-            await CapabilityRequestService.RevokeAsync(_dbContext, id, validatorId.Value, cancellationToken);
+            await _capabilityRequestService.RevokeAsync(id, validatorId.Value, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -153,7 +152,7 @@ public sealed class CapabilityRequestsController : BaseApiController
             parsedStatus = parsed;
         }
 
-        var history = await CapabilityRequestService.GetHistoryAsync(_dbContext, capabilityName, parsedStatus, cancellationToken);
+        var history = await _capabilityRequestService.GetHistoryAsync(capabilityName, parsedStatus, cancellationToken);
         var response = history.Select(uc => new CapabilityRequestResponse
         {
             Id = uc.Id,

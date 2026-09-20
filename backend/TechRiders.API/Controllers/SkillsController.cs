@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Skills;
 using TechRiders.Api.Contracts.Responses.Skills;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,18 +14,18 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class SkillsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly ISkillsService _skillsService;
 
-    public SkillsController(TechRidersDbContext dbContext)
+    public SkillsController(ISkillsService skillsService)
     {
-        _dbContext = dbContext;
+        _skillsService = skillsService;
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SkillResponse>))]
     public async Task<IActionResult> GetCatalog(CancellationToken cancellationToken)
     {
-        var skills = await SkillsService.GetCatalogAsync(_dbContext, cancellationToken);
+        var skills = await _skillsService.GetCatalogAsync(cancellationToken);
         return Ok(skills.Select(s => new SkillResponse { Id = s.Id, Name = s.Name, Description = s.Description, ParentSkillId = s.ParentSkillId }));
     }
 
@@ -40,7 +39,7 @@ public sealed class SkillsController : BaseApiController
             return Unauthorized();
         }
 
-        var skills = await SkillsService.GetUserSkillsAsync(_dbContext, userId.Value, cancellationToken);
+        var skills = await _skillsService.GetUserSkillsAsync(userId.Value, cancellationToken);
         return Ok(skills.Select(ToResponse));
     }
 
@@ -62,7 +61,7 @@ public sealed class SkillsController : BaseApiController
 
         try
         {
-            var userSkill = await SkillsService.AddOrUpdateAsync(_dbContext, userId.Value, request.SkillId, request.Level, request.IsSpeakerSkill, request.IsMentorSkill, cancellationToken);
+            var userSkill = await _skillsService.AddOrUpdateAsync(userId.Value, request.SkillId, request.Level, request.IsSpeakerSkill, request.IsMentorSkill, cancellationToken);
             return Ok(new UserSkillResponse
             {
                 SkillId = userSkill.SkillId,
@@ -91,7 +90,7 @@ public sealed class SkillsController : BaseApiController
 
         try
         {
-            await SkillsService.RemoveAsync(_dbContext, userId.Value, skillId, cancellationToken);
+            await _skillsService.RemoveAsync(userId.Value, skillId, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)

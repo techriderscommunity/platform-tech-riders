@@ -35,6 +35,21 @@ public static class InfrastructureServiceCollectionExtensions
         services.Configure<KnowledgeStorageOptions>(configuration.GetSection(KnowledgeStorageOptions.SectionName));
         services.AddScoped<IKnowledgeContentBlobService, KnowledgeContentBlobService>();
 
+        services.AddScoped<IApprovalsService, Services.ApprovalsService>();
+        services.AddScoped<IAssignmentService, Services.AssignmentService>();
+        services.AddScoped<IConsentService, Services.ConsentService>();
+        services.AddScoped<IGpfPersonLinkService, Services.GpfPersonLinkService>();
+        services.AddScoped<IPreferenceService, Services.PreferenceService>();
+        services.AddScoped<IPrivacyRequestService, Services.PrivacyRequestService>();
+        services.AddScoped<IProfileVisibilityService, Services.ProfileVisibilityService>();
+        services.AddScoped<ISkillsService, Services.SkillsService>();
+        services.AddScoped<IOrganizationService, Services.OrganizationService>();
+        services.AddScoped<ICapabilityRequestService, Services.CapabilityRequestService>();
+        services.AddScoped<IEventSessionOpsService, Services.EventSessionOpsService>();
+        services.AddScoped<IPasswordHasher, Services.PasswordHasher>();
+        services.AddScoped<IAuthService, Services.AuthService>();
+        services.AddScoped<IUserAdminService, Services.UserAdminService>();
+
         return services;
     }
 }

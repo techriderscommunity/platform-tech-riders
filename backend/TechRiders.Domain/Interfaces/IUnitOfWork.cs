@@ -49,6 +49,21 @@ public interface IUnitOfWork : IDisposable
     ICommunityPartnerApplicationRepository CommunityPartnerApplications { get; }
 
     /// <summary>
+    /// Repositorio de Organizaciones
+    /// </summary>
+    IOrganizationRepository Organizations { get; }
+
+    /// <summary>
+    /// Repositorio de Usuarios
+    /// </summary>
+    IUserRepository Users { get; }
+
+    /// <summary>
+    /// Repositorio de Comunidades
+    /// </summary>
+    ICommunityRepository Communities { get; }
+
+    /// <summary>
     /// Repositorio de Artículos de conocimiento (tutoriales)
     /// </summary>
     IKnowledgeArticleRepository KnowledgeArticles { get; }

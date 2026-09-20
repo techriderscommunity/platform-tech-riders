@@ -9,7 +9,7 @@ import { KnowledgePlaylistKey, PlaylistVideoDto } from '../models/knowledge-play
 @Injectable({ providedIn: 'root' })
 export class KnowledgePlaylistsService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/events/podcast/videos`;
+  private readonly baseUrl = `${environment.apiUrl}/public/events/podcast-videos`;
 
   getVideosByPlaylist(playlist: KnowledgePlaylistKey, maxResults = 8): Observable<UiCarouselItem[]> {
     const params = new HttpParams()

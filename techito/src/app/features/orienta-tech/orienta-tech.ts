@@ -2,8 +2,15 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, EMPTY, tap } from 'rxjs';
-import { PublicContentService } from '@core/content/public-content.service';
-import { FeatureCardItem, MetricItem, ProgressCardItem } from '@core/content/public-content.models';
+import { OrientaTechStatsService } from './orienta-tech-stats.service';
+import {
+  ORIENTA_TECH_METRICS_META,
+  ORIENTA_TECH_CORE_FEATURES,
+  ORIENTA_TECH_PARTICIPATION_TRACKS,
+  ORIENTA_TECH_STUDY_SECTIONS,
+} from './orienta-tech.content';
+import { FeatureCardItem, MetricItem } from '@shared/ui/public-content.types';
+import { UiProgressCardItem } from '@shared/ui/progress-cards/progress-cards';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 import { UiFeatureCards } from '@shared/ui/feature-cards/feature-cards';
 import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
@@ -17,23 +24,24 @@ import { UiProgressCards } from '@shared/ui/progress-cards/progress-cards';
   styleUrl: './orienta-tech.scss'
 })
 export class OrientaTech implements OnInit {
-  private readonly publicContentService = inject(PublicContentService);
+  private readonly orientaTechStatsService = inject(OrientaTechStatsService);
   private readonly destroyRef = inject(DestroyRef);
 
   orientaMetrics: MetricItem[] = [];
-  coreFeatures: FeatureCardItem[] = [];
-  participationTracks: ProgressCardItem[] = [];
-  studySections: FeatureCardItem[] = [];
+  coreFeatures: FeatureCardItem[] = ORIENTA_TECH_CORE_FEATURES;
+  participationTracks: UiProgressCardItem[] = ORIENTA_TECH_PARTICIPATION_TRACKS;
+  studySections: FeatureCardItem[] = ORIENTA_TECH_STUDY_SECTIONS;
 
   ngOnInit(): void {
-    this.publicContentService
-      .getPublicContent()
+    this.orientaTechStatsService
+      .getStats()
       .pipe(
-        tap((content) => {
-          this.orientaMetrics = content.orientaTech.metrics;
-          this.coreFeatures = content.orientaTech.coreFeatures;
-          this.participationTracks = content.orientaTech.participationTracks;
-          this.studySections = content.orientaTech.studySections;
+        tap((stats) => {
+          this.orientaMetrics = ORIENTA_TECH_METRICS_META.map((meta) => ({
+            icon: meta.icon,
+            label: meta.label,
+            value: meta.staticValue ?? String(stats.activeSessions),
+          }));
         }),
         catchError(() => EMPTY),
         takeUntilDestroyed(this.destroyRef)

@@ -4,11 +4,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using TechRiders.Api.Contracts.Requests.Events;
 using TechRiders.Api.Contracts.Requests.Sessions;
 using TechRiders.Api.Contracts.Responses.Events;
-using TechRiders.Api.Services;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
 using TechRiders.Application.Interfaces;
-using TechRiders.Infrastructure.Data;
 
 namespace TechRiders.Api.Controllers;
 
@@ -22,16 +20,16 @@ namespace TechRiders.Api.Controllers;
 public class SessionsController : BaseApiController
 {
     private readonly ISessionService _sessionService;
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IEventSessionOpsService _eventSessionOpsService;
     private readonly ILogger<SessionsController> _logger;
 
     public SessionsController(
         ISessionService sessionService,
-        TechRidersDbContext dbContext,
+        IEventSessionOpsService eventSessionOpsService,
         ILogger<SessionsController> logger)
     {
         _sessionService = sessionService;
-        _dbContext = dbContext;
+        _eventSessionOpsService = eventSessionOpsService;
         _logger = logger;
     }
 
@@ -337,7 +335,7 @@ public class SessionsController : BaseApiController
     {
         try
         {
-            await EventSessionOpsService.SetSessionStatusAsync(_dbContext, id, EventSessionOpsService.PublishedStatusName, cancellationToken);
+            await _eventSessionOpsService.SetSessionStatusAsync(id, EventSessionStatusNames.Published, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -358,7 +356,7 @@ public class SessionsController : BaseApiController
     {
         try
         {
-            await EventSessionOpsService.AddSpeakerAsync(_dbContext, id, request.UserId, request.IsMainSpeaker, cancellationToken);
+            await _eventSessionOpsService.AddSpeakerAsync(id, request.UserId, request.IsMainSpeaker, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -374,7 +372,7 @@ public class SessionsController : BaseApiController
     {
         try
         {
-            await EventSessionOpsService.RemoveSpeakerAsync(_dbContext, id, userId, cancellationToken);
+            await _eventSessionOpsService.RemoveSpeakerAsync(id, userId, cancellationToken);
             return Ok();
         }
         catch (InvalidOperationException ex)
@@ -387,7 +385,7 @@ public class SessionsController : BaseApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> SyncSkills(Guid id, [FromBody] SyncSessionSkillsRequest request, CancellationToken cancellationToken)
     {
-        await EventSessionOpsService.SyncSkillsAsync(_dbContext, id, request.SkillIds, cancellationToken);
+        await _eventSessionOpsService.SyncSkillsAsync(id, request.SkillIds, cancellationToken);
         return Ok();
     }
 }

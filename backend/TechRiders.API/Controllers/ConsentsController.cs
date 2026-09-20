@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Consents;
 using TechRiders.Api.Contracts.Responses.Consents;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -15,18 +14,18 @@ namespace TechRiders.Api.Controllers;
 [Authorize]
 public sealed class ConsentsController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
+    private readonly IConsentService _consentService;
 
-    public ConsentsController(TechRidersDbContext dbContext)
+    public ConsentsController(IConsentService consentService)
     {
-        _dbContext = dbContext;
+        _consentService = consentService;
     }
 
     [HttpGet("purposes")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ConsentPurposeResponse>))]
     public async Task<IActionResult> GetPurposes(CancellationToken cancellationToken)
     {
-        var purposes = await ConsentService.GetPurposesAsync(_dbContext, cancellationToken);
+        var purposes = await _consentService.GetPurposesAsync(cancellationToken);
         return Ok(purposes.Select(p => new ConsentPurposeResponse { Id = p.Id, Code = p.Code, Name = p.Name, Description = p.Description }));
     }
 
@@ -40,7 +39,7 @@ public sealed class ConsentsController : BaseApiController
             return Unauthorized();
         }
 
-        var consents = await ConsentService.GetUserConsentsAsync(_dbContext, userId.Value, cancellationToken);
+        var consents = await _consentService.GetUserConsentsAsync(userId.Value, cancellationToken);
         return Ok(consents.Select(ToResponse));
     }
 
@@ -57,7 +56,7 @@ public sealed class ConsentsController : BaseApiController
 
         try
         {
-            var consent = await ConsentService.GrantAsync(_dbContext, userId.Value, request.PurposeCode, cancellationToken);
+            var consent = await _consentService.GrantAsync(userId.Value, request.PurposeCode, cancellationToken);
             return Ok(ToResponse(consent));
         }
         catch (InvalidOperationException ex)
@@ -79,7 +78,7 @@ public sealed class ConsentsController : BaseApiController
 
         try
         {
-            var consent = await ConsentService.WithdrawAsync(_dbContext, userId.Value, request.PurposeCode, cancellationToken);
+            var consent = await _consentService.WithdrawAsync(userId.Value, request.PurposeCode, cancellationToken);
             return Ok(ToResponse(consent));
         }
         catch (InvalidOperationException ex)
