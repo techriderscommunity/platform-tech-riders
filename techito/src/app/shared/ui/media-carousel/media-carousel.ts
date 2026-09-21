@@ -15,6 +15,7 @@ export interface UiCarouselItem {
   src: string;
   title: string;
   alt?: string;
+  fallbackSrc?: string;
   subtitle?: string;
   link?: string | readonly string[];
   socials?: Array<{
@@ -132,6 +133,13 @@ export class UiMediaCarousel implements AfterViewInit, OnDestroy {
     const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(src);
     this.videoSrcMap.set(src, safeUrl);
     return safeUrl;
+  }
+
+  onImageError(event: Event, fallbackSrc?: string): void {
+    if (!fallbackSrc) return;
+    const image = event.target as HTMLImageElement;
+    if (image.src.endsWith(fallbackSrc)) return;
+    image.src = fallbackSrc;
   }
 
   private startAutoplay(): void {

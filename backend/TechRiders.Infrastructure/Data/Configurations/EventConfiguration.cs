@@ -15,7 +15,7 @@ public sealed class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(x => x.Url).HasMaxLength(512);
         builder.Property(x => x.Location).HasMaxLength(300);
         builder.HasOne(x => x.EventType).WithMany(x => x.Events).HasForeignKey(x => x.EventTypeId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(x => x.Center).WithMany(x => x.Events).HasForeignKey(x => x.CenterId).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne(x => x.Organization).WithMany(x => x.Events).HasForeignKey(x => x.OrganizationId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -28,7 +28,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.Property(x => x.Title).HasMaxLength(180).IsRequired();
         builder.Property(x => x.Description).HasMaxLength(4000);
         builder.HasOne(x => x.Event).WithMany(x => x.Sessions).HasForeignKey(x => x.EventId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(x => x.Center).WithMany(x => x.Sessions).HasForeignKey(x => x.CenterId).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne(x => x.Organization).WithMany(x => x.Sessions).HasForeignKey(x => x.OrganizationId).OnDelete(DeleteBehavior.SetNull);
     }
 }
 

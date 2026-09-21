@@ -8,11 +8,11 @@ namespace TechRiders.Application.DTOs.Requests.FPTour;
 public class CreateFPTourRequest
 {
     /// <summary>
-    /// ID del centro educativo
+    /// ID de la organización educativa
     /// </summary>
     /// <example>3fa85f64-5717-4562-b3fc-2c963f66afa6</example>
     [Required(ErrorMessage = "El centro es obligatorio")]
-    public Guid CenterId { get; set; }
+    public Guid OrganizationId { get; set; }
 
     /// <summary>
     /// ID del ambassador asignado

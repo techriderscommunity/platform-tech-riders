@@ -74,21 +74,37 @@ public class UpdateAmbassadorRequest
     public string? Skill { get; set; }
 
     /// <summary>
-    /// URL de perfil de LinkedIn
+    /// Identificador de perfil de LinkedIn
     /// </summary>
-    [Url(ErrorMessage = "La URL de LinkedIn no es válida")]
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de LinkedIn")]
     [StringLength(300, ErrorMessage = "La URL no puede exceder 300 caracteres")]
     public string? LinkedIn { get; set; }
 
     /// <summary>
     /// Usuario o URL de Instagram
     /// </summary>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de Instagram")]
     [StringLength(300, ErrorMessage = "Instagram no puede exceder 300 caracteres")]
     public string? Instagram { get; set; }
 
     /// <summary>
+    /// Identificador de perfil de X
+    /// </summary>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de X")]
+    [StringLength(300, ErrorMessage = "X no puede exceder 300 caracteres")]
+    public string? X { get; set; }
+
+    /// <summary>
+    /// Identificador de canal o perfil de YouTube
+    /// </summary>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de YouTube")]
+    [StringLength(300, ErrorMessage = "YouTube no puede exceder 300 caracteres")]
+    public string? YouTube { get; set; }
+
+    /// <summary>
     /// Usuario o URL de GitHub
     /// </summary>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de GitHub")]
     [StringLength(300, ErrorMessage = "GitHub no puede exceder 300 caracteres")]
     public string? Github { get; set; }
 }

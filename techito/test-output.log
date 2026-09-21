@@ -1,0 +1,66 @@
+npm notice run techito@0.0.0 test:unit:ci
+npm notice run ng test --watch=false --browsers=ChromeHeadless
+Γ¥» Building...
+Γ£ö Building...
+Initial chunk files                                  | Names                                             |  Raw size
+chunk-OUWJR7VD.js                                    | -                                                 |   2.29 MB | 
+polyfills.js                                         | polyfills                                         |   1.06 MB | 
+chunk-YDSQPNZ5.js                                    | -                                                 | 250.59 kB | 
+chunk-LYBPNKBD.js                                    | -                                                 | 228.68 kB | 
+spec-app-features-login-login.spec.js                | spec-app-features-login-login.spec                | 206.65 kB | 
+chunk-WZXOZGSB.js                                    | -                                                 | 101.09 kB | 
+jasmine-cleanup-1.js                                 | jasmine-cleanup-1                                 |  71.38 kB | 
+styles.css                                           | styles                                            |  27.16 kB | 
+test_main.js                                         | test_main                                         |  22.14 kB | 
+spec-app-core-layout-header.spec.js                  | spec-app-core-layout-header.spec                  |  16.29 kB | 
+spec-app-features-knowledge-knowledge-detail.spec.js | spec-app-features-knowledge-knowledge-detail.spec |  16.24 kB | 
+chunk-HY724DGH.js                                    | -                                                 |  10.96 kB | 
+chunk-G6MLLG5Q.js                                    | -                                                 |   5.96 kB | 
+spec-app-core-auth-auth.service.spec.js              | spec-app-core-auth-auth.service.spec              |   4.31 kB | 
+spec-app-core-auth-auth.guard.spec.js                | spec-app-core-auth-auth.guard.spec                |   3.58 kB | 
+jasmine-cleanup-0.js                                 | jasmine-cleanup-0                                 | 446 bytes | 
+
+                                                     | Initial total                                     |   4.31 MB
+
+Application bundle generation complete. [14.202 seconds] - 2026-09-13T11:12:56.788Z
+
+[32m13 09 2026 13:12:57.840:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m13 09 2026 13:12:57.844:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m13 09 2026 13:12:57.894:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m13 09 2026 13:13:02.381:INFO [Chrome Headless 152.0.0.0 (Windows 10)]: [39mConnected on socket DHrgmQgOQH3ug7cEAAAB with id 83099943
+Chrome Headless 152.0.0.0 (Windows 10): Executed 0 of 17[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 1 of 17[32m SUCCESS[39m (0 secs / 0.043 secs)
+[1A[2K[31mChrome Headless 152.0.0.0 (Windows 10) auth guards roleGuard should redirect to role area on role mismatch FAILED[39m
+	TypeError: auth.getRoleHomeRoute is not a function
+	    at src/app/core/auth/auth.guard.ts:39:33
+	    at fn (src/app/core/auth/auth.guard.spec.ts:62:73)
+	    at runInInjectionContext (node_modules/@angular/core/fesm2022/_pending_tasks-chunk.mjs:1463:12)
+	    at _TestBedImpl.runInInjectionContext (node_modules/@angular/core/fesm2022/testing.mjs:1451:12)
+	    at _TestBedImpl.runInInjectionContext (node_modules/@angular/core/fesm2022/testing.mjs:1334:33)
+	    at UserContext.<anonymous> (src/app/core/auth/auth.guard.spec.ts:62:28)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:358:158)
+	    at _ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:956:33)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:358:46)
+	    at _ZoneImpl2.run (node_modules/zone.js/fesm2015/zone.js:127:35)
+Chrome Headless 152.0.0.0 (Windows 10): Executed 2 of 17[31m (1 FAILED)[39m (0 secs / 0.056 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 3 of 17[31m (1 FAILED)[39m (0 secs / 0.064 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 4 of 17[31m (1 FAILED)[39m (0 secs / 0.073 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 5 of 17[31m (1 FAILED)[39m (0 secs / 0.082 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 6 of 17[31m (1 FAILED)[39m (0 secs / 0.333 secs)
+[33m13 09 2026 13:13:05.618:WARN [web-server]: [39m404: /assets/logo-dark.png
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 7 of 17[31m (1 FAILED)[39m (0 secs / 0.367 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 8 of 17[31m (1 FAILED)[39m (0 secs / 0.396 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 9 of 17[31m (1 FAILED)[39m (0 secs / 0.423 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 10 of 17[31m (1 FAILED)[39m (0 secs / 0.432 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 11 of 17[31m (1 FAILED)[39m (0 secs / 0.443 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 12 of 17[31m (1 FAILED)[39m (0 secs / 0.449 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 13 of 17[31m (1 FAILED)[39m (0 secs / 0.453 secs)
+[33m13 09 2026 13:13:05.778:WARN [web-server]: [39m404: /assets/logo-dark.png
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 14 of 17[31m (1 FAILED)[39m (0 secs / 0.459 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 15 of 17[31m (1 FAILED)[39m (0 secs / 0.668 secs)
+[33m13 09 2026 13:13:06.001:WARN [web-server]: [39m404: /assets/google.svg
+[33m13 09 2026 13:13:06.005:WARN [web-server]: [39m404: /assets/microsoft.svg
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 16 of 17[31m (1 FAILED)[39m (0 secs / 0.701 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 17 of 17[31m (1 FAILED)[39m (0 secs / 0.735 secs)
+[1A[2KChrome Headless 152.0.0.0 (Windows 10): Executed 17 of 17[31m (1 FAILED)[39m (0.853 secs / 0.735 secs)
+[31mTOTAL: 1 FAILED, 16 SUCCESS[39m

@@ -18,7 +18,9 @@ public class EventRepository : Repository<Event>, IEventRepository
     public async Task<Event?> GetEventWithSessionsAsync(Guid eventId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(e => e.Sessions.Where(s => s.IsActive))
+            .Include(e => e.Sessions
+                .OrderByDescending(s => s.IsActive)
+                .ThenByDescending(s => s.StartDateTime))
             .FirstOrDefaultAsync(e => e.Id == eventId, cancellationToken);
     }
 
@@ -37,19 +39,22 @@ public class EventRepository : Repository<Event>, IEventRepository
 
     public async Task<IEnumerable<Event>> GetActiveEventsAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbSet
+        var today = DateTime.UtcNow.Date;
+        var events = await _dbSet
             .Where(e => e.IsActive)
-            .OrderBy(e => e.StartDate)
             .ToListAsync(cancellationToken);
+
+        return OrderByAgenda(events, today);
     }
 
     public async Task<IEnumerable<Event>> GetUpcomingEventsAsync(CancellationToken cancellationToken = default)
     {
-        var now = DateTime.UtcNow;
-        return await _dbSet
-            .Where(e => e.IsActive && e.StartDate >= now)
-            .OrderBy(e => e.StartDate)
+        var today = DateTime.UtcNow.Date;
+        var events = await _dbSet
+            .Where(e => e.IsActive)
             .ToListAsync(cancellationToken);
+
+        return OrderByAgenda(events, today);
     }
 
     public async Task<IEnumerable<Event>> SearchEventsAsync(
@@ -62,5 +67,12 @@ public class EventRepository : Repository<Event>, IEventRepository
                          (e.Description != null && e.Description.Contains(searchTerm))))
             .OrderBy(e => e.StartDate)
             .ToListAsync(cancellationToken);
+    }
+
+    private static IEnumerable<Event> OrderByAgenda(IEnumerable<Event> events, DateTime today)
+    {
+        return events
+            .OrderBy(e => e.StartDate.Date < today)
+            .ThenBy(e => e.StartDate.Date < today ? DateTime.MaxValue.AddTicks(-e.StartDate.Ticks) : e.StartDate);
     }
 }

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
-import { PublicContentService } from '@core/content/public-content.service';
+import { AMBASSADOR_STATUS_OPTIONS, AMBASSADOR_AVAILABILITY_OPTIONS } from './embajadores.content';
 import { EmbajadoresService } from './services/embajadores.service';
 import { AmbassadorPortalApi, Embajador } from './models/embajadores.models';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
@@ -22,7 +22,6 @@ import { UiTextarea } from '@shared/ui/textarea/textarea';
 })
 export class EmbajadorComponent {
   private readonly authService = inject(AuthService);
-  private readonly publicContentService = inject(PublicContentService);
   private readonly embajadoresService = inject(EmbajadoresService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -37,32 +36,16 @@ export class EmbajadorComponent {
   readonly especialidades = signal('Cloud, desarrollo web, mentoring, empleabilidad');
   readonly disponibilidad = signal('Martes y jueves por la tarde; viernes por la mañana con aviso previo.');
 
-  estados: Array<{ label: string; value: string }> = [];
-  estadoOptions: UiSelectOption[] = [];
-  availabilityOptions: UiSelectOption[] = [];
+  estados: Array<{ label: string; value: string }> = AMBASSADOR_STATUS_OPTIONS;
+  estadoOptions: UiSelectOption[] = AMBASSADOR_STATUS_OPTIONS;
+  availabilityOptions: UiSelectOption[] = AMBASSADOR_AVAILABILITY_OPTIONS;
 
   readonly query = computed(() => ({
     estado: this.searchStatus()
   }));
 
   constructor() {
-    this.publicContentService
-      .getPublicContent()
-      .pipe(
-        tap((content) => {
-          this.estados = content.intranet.ambassadorStatusOptions.map((option) => ({
-            label: option.label,
-            value: option.value,
-          }));
-          this.estadoOptions = content.intranet.ambassadorStatusOptions;
-          this.availabilityOptions = content.intranet.ambassadorAvailabilityOptions;
-        }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-
-    this.hydrateDraftFromLocalStorage();
+    this.hydratePortalFromBackend();
 
     toObservable(this.query)
       .pipe(
@@ -81,8 +64,7 @@ export class EmbajadorComponent {
       .subscribe(result => {
         this.embajadores.set(result.items);
         if (!this.selectedEmbajadorId() && result.items.length > 0) {
-          const matchedByEmail = this.tryFindEmbajadorByDraftEmail(result.items);
-          this.selectedEmbajadorId.set(matchedByEmail?.id ?? result.items[0].id);
+          this.selectedEmbajadorId.set(result.items[0].id);
         }
         this.loading.set(false);
       });
@@ -201,6 +183,11 @@ export class EmbajadorComponent {
   }
 
   guardarPortalAmbassador() {
+    if (!this.authService.user() && !this.ambassadorActual()?.email) {
+      this.success.set('Debes iniciar sesión para guardar el portal ambassador.');
+      return;
+    }
+
     const payload = {
       userKey: this.resolveUserKey(),
       email: this.resolveCurrentEmail(),
@@ -212,56 +199,17 @@ export class EmbajadorComponent {
     this.embajadoresService.updateAmbassadorPortalProfile(payload)
       .pipe(
         tap(() => {
-          this.persistPortalLocally();
-          this.success.set('Cambios guardados en backend y en caché local.');
+          this.success.set('Cambios guardados en backend.');
         }),
         catchError(() => {
-          this.persistPortalLocally();
-          this.success.set('Cambios guardados solo en caché local; el backend no respondió.');
+          this.success.set('No se pudieron guardar los cambios. Intenta de nuevo.');
           return of(null);
         })
       )
       .subscribe();
   }
 
-  private hydrateDraftFromLocalStorage() {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
-
-    const draft = localStorage.getItem('techriders.mvp.ambassadorDraft');
-    const portal = localStorage.getItem('techriders.mvp.ambassadorPortal');
-
-    if (draft) {
-      try {
-        const parsed = JSON.parse(draft) as { motivation?: string; audience?: string; organization?: string | null };
-        if (parsed.motivation) {
-          this.bio.set(parsed.motivation);
-        }
-        if (parsed.audience || parsed.organization) {
-          const especialidades = [parsed.audience, parsed.organization].filter(Boolean).join(' · ');
-          if (especialidades) {
-            this.especialidades.set(especialidades);
-          }
-        }
-      }
-      catch {
-        // Ignore malformed local MVP draft data.
-      }
-    }
-
-    if (portal) {
-      try {
-        const parsed = JSON.parse(portal) as { bio?: string; especialidades?: string; disponibilidad?: string };
-        if (parsed.bio) this.bio.set(parsed.bio);
-        if (parsed.especialidades) this.especialidades.set(parsed.especialidades);
-        if (parsed.disponibilidad) this.disponibilidad.set(parsed.disponibilidad);
-      }
-      catch {
-        // Ignore malformed local MVP portal data.
-      }
-    }
-
+  private hydratePortalFromBackend() {
     this.embajadoresService.getAmbassadorPortalProfile(this.resolveUserKey(), this.resolveCurrentEmail())
       .pipe(
         tap(profile => {
@@ -274,47 +222,17 @@ export class EmbajadorComponent {
       .subscribe();
   }
 
-  private tryFindEmbajadorByDraftEmail(items: Embajador[]): Embajador | undefined {
-    if (typeof localStorage === 'undefined') {
-      return undefined;
-    }
-
-    const draft = localStorage.getItem('techriders.mvp.ambassadorDraft');
-    if (!draft) {
-      return undefined;
-    }
-
-    try {
-      const parsed = JSON.parse(draft) as { email?: string };
-      if (!parsed.email) {
-        return undefined;
-      }
-      return items.find(item => item.email.toLowerCase() === parsed.email?.toLowerCase());
-    }
-    catch {
-      return undefined;
-    }
-  }
-
-
-  private persistPortalLocally() {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
-
-    localStorage.setItem('techriders.mvp.ambassadorPortal', JSON.stringify({
-      bio: this.bio(),
-      especialidades: this.especialidades(),
-      disponibilidad: this.disponibilidad(),
-    }));
-  }
-
   private resolveUserKey(): string {
     return this.authService.user()?.email || this.resolveCurrentEmail();
   }
 
   private resolveCurrentEmail(): string {
-    return this.ambassadorActual()?.email || this.authService.user()?.email || 'local-user@techriders.local';
+    const email = this.ambassadorActual()?.email || this.authService.user()?.email;
+    if (!email) {
+      throw new Error('Authenticated user email is required.');
+    }
+
+    return email;
   }
 }
 

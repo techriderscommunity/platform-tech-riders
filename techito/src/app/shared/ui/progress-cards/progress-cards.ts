@@ -5,7 +5,7 @@ export interface UiProgressCardItem {
   title: string;
   value?: string;
   detail: string;
-  progress: number;
+  progress?: number;
   status?: string;
   ctaLabel?: string;
   ctaLink?: string;

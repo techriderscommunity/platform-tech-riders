@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TechRiders.Api.Contracts.Requests.Events;
 using TechRiders.Api.Contracts.Requests.Sessions;
+using TechRiders.Api.Contracts.Responses.Events;
 using TechRiders.Application.DTOs.Requests.Session;
 using TechRiders.Application.DTOs.Responses.Sessions;
 using TechRiders.Application.Interfaces;
@@ -18,13 +20,16 @@ namespace TechRiders.Api.Controllers;
 public class SessionsController : BaseApiController
 {
     private readonly ISessionService _sessionService;
+    private readonly IEventSessionOpsService _eventSessionOpsService;
     private readonly ILogger<SessionsController> _logger;
 
     public SessionsController(
         ISessionService sessionService,
+        IEventSessionOpsService eventSessionOpsService,
         ILogger<SessionsController> logger)
     {
         _sessionService = sessionService;
+        _eventSessionOpsService = eventSessionOpsService;
         _logger = logger;
     }
 
@@ -322,5 +327,65 @@ public class SessionsController : BaseApiController
             _logger.LogError(ex, "Error al eliminar sesión {SessionId}", id);
             return StatusCode(500, "Error al eliminar la sesión");
         }
+    }
+
+    [HttpPost("{id:guid}/publish")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Publish(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _eventSessionOpsService.SetSessionStatusAsync(id, EventSessionStatusNames.Published, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    /// <summary>Aprobar reutiliza la misma transición de estado que publicar (no hay revisión separada en el modelo actual).</summary>
+    [HttpPost("{id:guid}/approve")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<IActionResult> Approve(Guid id, CancellationToken cancellationToken) => Publish(id, cancellationToken);
+
+    [HttpPost("{id:guid}/speakers")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> AddSpeaker(Guid id, [FromBody] AddSpeakerRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _eventSessionOpsService.AddSpeakerAsync(id, request.UserId, request.IsMainSpeaker, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id:guid}/speakers/{userId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RemoveSpeaker(Guid id, Guid userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _eventSessionOpsService.RemoveSpeakerAsync(id, userId, cancellationToken);
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return CreateErrorResponse(ex.Message, StatusCodes.Status404NotFound);
+        }
+    }
+
+    [HttpPut("{id:guid}/skills")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> SyncSkills(Guid id, [FromBody] SyncSessionSkillsRequest request, CancellationToken cancellationToken)
+    {
+        await _eventSessionOpsService.SyncSkillsAsync(id, request.SkillIds, cancellationToken);
+        return Ok();
     }
 }

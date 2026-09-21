@@ -1,24 +1,24 @@
 :host {
   display: block;
-  padding: calc(var(--nav-height) + var(--space-6)) var(--page-inline-padding) var(--page-block-padding);
-  background: var(--bg-canvas);
+  width: 100%;
+  height: auto;
 }
 
 .apply-page {
-  max-width: var(--container-narrow);
-  margin-inline: auto;
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-4);
+  width: 100%;
+  max-width: calc(var(--form-max-width) + (var(--page-inline-padding) * 2));
+  margin: 0 auto;
+  padding: var(--space-6) var(--page-inline-padding) var(--page-block-padding);
+  background: transparent;
+  overflow: visible;
 }
 
 .apply-header {
   display: grid;
-  gap: var(--space-3);
-}
-
-.btn-back {
-  color: var(--tr-blue);
-  font-weight: var(--font-weight-semibold);
+  gap: var(--space-2);
+  width: 100%;
 }
 
 .apply-form,
@@ -26,26 +26,85 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   background: var(--bg-elevated);
-  padding: var(--space-6);
+  padding: clamp(var(--space-3), 2vw, var(--space-4));
+  box-shadow: var(--shadow-sm);
 }
 
 .apply-form {
   display: grid;
-  gap: var(--space-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--surface-gap);
+  width: 100%;
+  align-items: start;
+}
+
+.form-column {
+  display: grid;
+  align-content: start;
+  gap: var(--surface-gap);
+  min-width: 0;
 }
 
 .form-block {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  min-width: 0;
 
   h2 {
     margin: 0;
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
   }
+}
+
+.form-actions,
+.form-error {
+  grid-column: 1 / -1;
+}
+
+.apply-success {
+  display: grid;
+  gap: var(--space-3);
 }
 
 .form-error {
   margin: 0;
   color: var(--accent-error);
   font-weight: var(--font-weight-semibold);
+}
+
+.form-actions {
+  padding-top: var(--space-1);
+}
+
+.social-preview {
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+}
+
+@media (max-width: 640px) {
+  .apply-page {
+    gap: var(--space-3);
+    padding-block: var(--space-4) var(--page-block-padding);
+  }
+
+  .apply-form {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .form-column {
+    gap: var(--space-4);
+  }
+
+  .form-actions,
+  .form-error {
+    grid-column: auto;
+  }
+
+  .apply-form,
+  .apply-success {
+    padding: var(--space-3);
+  }
 }

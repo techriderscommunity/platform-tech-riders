@@ -14,7 +14,7 @@ export class ColaboradoresService {
       map((items) => (items ?? []).map((item): ColaboradorItem => ({
         id: item.id,
         nombre: item.name,
-        especialidad: item.roles.filter(role => role !== 'colaborador').join(', ') || 'Colaborador',
+        especialidad: item.roles.filter(role => role !== 'community-leader').join(', ') || 'Community Leader',
         proyectos: 0,
         pagos_pendientes: 0,
         estado: item.active ? 'activo' : 'inactivo',

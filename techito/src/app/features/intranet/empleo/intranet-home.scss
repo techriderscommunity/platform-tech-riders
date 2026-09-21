@@ -4,63 +4,6 @@
   color: #dbe9ff;
 }
 
-.home-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.7rem;
-}
-
-.search-wrap {
-  flex: 1;
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  border: 1px solid #1a3f6f;
-  background: #081d36;
-  border-radius: 10px;
-  padding: 0 0.7rem;
-
-  span {
-    color: #7ea8dd;
-  }
-
-  input {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    color: #dbe9ff;
-    min-width: 0;
-    outline: 0;
-    font: inherit;
-  }
-
-  kbd {
-    border: 1px solid #234a7e;
-    border-radius: 6px;
-    padding: 0.1rem 0.36rem;
-    color: #8db2de;
-    font-size: 0.72rem;
-    background: #0e2b4d;
-  }
-}
-
-.topbar-actions {
-  display: flex;
-  gap: 0.45rem;
-
-  button {
-    border: 1px solid #1a3f6f;
-    background: #081d36;
-    color: #cfe3ff;
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    cursor: default;
-  }
-}
-
 .hero-card {
   border: 1px solid #1a3f6f;
   border-radius: 14px;
@@ -143,31 +86,10 @@
   border-color: rgba(62, 210, 224, 0.34);
 }
 
-.hero-visual {
-  border: 1px solid #173866;
-  min-height: 138px;
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, rgba(67, 107, 255, 0.08), transparent 40%),
-    radial-gradient(circle at 70% 50%, rgba(111, 74, 255, 0.22), transparent 55%),
-    #07182d;
-}
-
 .dashboard-grid {
   display: grid;
   gap: 0.85rem;
   grid-template-columns: 1fr;
-}
-
-.main-column,
-.side-column {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.main-column > .panel,
-.side-column > .panel {
-  height: 100%;
 }
 
 .panel {
@@ -228,6 +150,11 @@
   display: grid;
   gap: 0.6rem;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.empty-state {
+  margin: 0;
+  color: #9ec2e8;
 }
 
 .module-card {
@@ -541,31 +468,6 @@
 
 @media (min-width: 1060px) {
   .hero-card {
-    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-    align-items: stretch;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(290px, 1fr);
-  }
-
-  .main-column {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: minmax(260px, auto);
-    align-items: stretch;
-  }
-
-  .main-column .table-panel:first-child,
-  .main-column .table-panel:nth-child(3) {
-    grid-column: 1 / 2;
-  }
-
-  .main-column .table-panel:nth-child(2),
-  .main-column .activity-panel {
-    grid-column: 2 / 3;
-  }
-
-  .side-column {
     align-items: stretch;
   }
 }

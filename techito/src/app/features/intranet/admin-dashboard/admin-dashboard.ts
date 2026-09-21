@@ -21,7 +21,7 @@ export class AdminDashboard {
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-  readonly stats = signal({ totalUsuarios: 0, activos: 0, superadmins: 0, eventos: 0, sesiones: 0, embajadores: 0, ofertas: 0, candidaturas: 0 });
+  readonly stats = signal({ totalUsuarios: 0, activos: 0, admins: 0, eventos: 0, sesiones: 0, embajadores: 0, ofertas: 0, candidaturas: 0 });
   readonly ultimasAcciones = signal<Array<{ accion: string; detalle: string; fecha: string }>>([]);
   readonly systemeHealth = signal({ servers: '', database: '', uploads: '', cpu: '' });
 
@@ -29,7 +29,7 @@ export class AdminDashboard {
     const stats = this.stats();
     return [
       { icon: '👥', value: String(stats.totalUsuarios), label: 'Usuarios totales' },
-      { icon: '⭐', value: String(stats.superadmins), label: 'Superadmins' },
+      { icon: '⭐', value: String(stats.admins), label: 'Admins' },
       { icon: '📅', value: String(stats.eventos), label: 'Eventos' },
       { icon: '🧩', value: String(stats.sesiones), label: 'Sesiones' },
     ];
@@ -57,7 +57,7 @@ export class AdminDashboard {
           this.stats.set({
             totalUsuarios: Number(nextStats.TotalUsers ?? 0),
             activos: Number(nextStats.ActiveUsers ?? 0),
-            superadmins: Number(nextStats.SuperAdmins ?? 0),
+            admins: Number(nextStats.Admins ?? 0),
             eventos: Number(nextStats.Events ?? 0),
             sesiones: Number(nextStats.Sessions ?? 0),
             embajadores: Number(nextStats.Ambassadors ?? 0),

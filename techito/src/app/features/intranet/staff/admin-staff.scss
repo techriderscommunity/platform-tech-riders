@@ -109,7 +109,7 @@
     color: var(--badge-warning-text);
   }
 
-  &.coordinador {
+  &.community-leader {
     background: var(--badge-info-bg);
     color: var(--badge-info-text);
   }
@@ -117,11 +117,6 @@
   &.staff {
     background: var(--badge-success-bg);
     color: var(--badge-success-text);
-  }
-
-  &.superadmin {
-    background: var(--badge-error-bg);
-    color: var(--badge-error-text);
   }
 }
 

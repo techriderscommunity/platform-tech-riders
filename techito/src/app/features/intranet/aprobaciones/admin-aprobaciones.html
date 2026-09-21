@@ -1,0 +1,53 @@
+<div class="admin-aprobaciones">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver</a>
+    <h1>Bandeja de Aprobaciones</h1>
+    <p>Revisa y resuelve en un único lugar todos los elementos pendientes: usuarios, ambassadors, centros, comuneras, eventos y sesiones.</p>
+  </div>
+
+  <div class="action-bar">
+    <app-ui-select label="Tipo" [options]="typeOptions" [value]="typeFilter()" (valueChange)="updateTypeFilter($event)"></app-ui-select>
+    <app-ui-button class="btn-secondary" (click)="load()">↻ Recargar</app-ui-button>
+  </div>
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+    <app-ui-button class="btn-sm" type="button" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
+  @if (loading()) {
+  <p>Cargando bandeja...</p>
+  } @else if (!filteredItems().length) {
+  <p>No hay elementos pendientes.</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Detalle</th>
+          <th>Solicitado por</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredItems(); track item.id) {
+        <tr>
+          <td><span class="badge info">{{typeLabels[item.type] ?? item.type}}</span></td>
+          <td>{{item.title}}</td>
+          <td>{{item.requestedBy || '—'}}</td>
+          <td>{{item.requestedAt | date:'short'}}</td>
+          <td>
+            <app-ui-button class="btn-sm" [disabled]="resolvingId() === item.id" (click)="resolve(item, 'approve')">✅ Aprobar</app-ui-button>
+            <app-ui-button class="btn-sm delete" [disabled]="resolvingId() === item.id" (click)="resolve(item, 'reject')">❌ Rechazar</app-ui-button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

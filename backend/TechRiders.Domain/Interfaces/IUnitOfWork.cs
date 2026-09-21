@@ -22,11 +22,6 @@ public interface IUnitOfWork : IDisposable
     IAmbassadorRepository Ambassadors { get; }
 
     /// <summary>
-    /// Repositorio de Centros
-    /// </summary>
-    ICenterRepository Centers { get; }
-
-    /// <summary>
     /// Repositorio de Tours FP
     /// </summary>
     IFPTourRepository FPTours { get; }
@@ -35,21 +30,6 @@ public interface IUnitOfWork : IDisposable
     /// Repositorio de Categorías
     /// </summary>
     ICategoryRepository Categories { get; }
-
-    /// <summary>
-    /// Repositorio de Ofertas de Empleo
-    /// </summary>
-    IOfertaRepository Ofertas { get; }
-
-    /// <summary>
-    /// Repositorio de Candidaturas
-    /// </summary>
-    ICandidaturaRepository Candidaturas { get; }
-
-    /// <summary>
-    /// Repositorio de Tutoriales
-    /// </summary>
-    ITutorialRepository Tutoriales { get; }
 
     /// <summary>
     /// Repositorio de Audit Logs de Intranet
@@ -65,6 +45,28 @@ public interface IUnitOfWork : IDisposable
     /// Repositorio de Categorías de Usuario de Intranet
     /// </summary>
     IIntranetUserCategoryRepository IntranetUserCategories { get; }
+
+    ICommunityPartnerApplicationRepository CommunityPartnerApplications { get; }
+
+    /// <summary>
+    /// Repositorio de Organizaciones
+    /// </summary>
+    IOrganizationRepository Organizations { get; }
+
+    /// <summary>
+    /// Repositorio de Usuarios
+    /// </summary>
+    IUserRepository Users { get; }
+
+    /// <summary>
+    /// Repositorio de Comunidades
+    /// </summary>
+    ICommunityRepository Communities { get; }
+
+    /// <summary>
+    /// Repositorio de Artículos de conocimiento (tutoriales)
+    /// </summary>
+    IKnowledgeArticleRepository KnowledgeArticles { get; }
 
     /// <summary>
     /// Guarda todos los cambios pendientes en una única transacción

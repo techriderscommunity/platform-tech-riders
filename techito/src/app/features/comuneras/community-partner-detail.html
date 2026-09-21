@@ -4,7 +4,7 @@
   @if (partner(); as item) {
   <article class="partner-detail-card">
     <header class="detail-header">
-      <img [src]="item.logoUrl" [alt]="'Logo de ' + item.name" loading="lazy" />
+      <img [src]="item.logoUrl" [alt]="'Logo de ' + item.name" loading="lazy" (error)="onLogoError($event)" />
       <div>
         <h1>{{ item.name }}</h1>
         <p>{{ item.cityOrScope }}</p>
@@ -42,11 +42,8 @@
         @if (item.youtube) {
         <a [href]="item.youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
         }
-        @if (item.discord) {
-        <a [href]="item.discord" target="_blank" rel="noopener noreferrer">Discord</a>
-        }
-        @if (item.telegram) {
-        <a [href]="item.telegram" target="_blank" rel="noopener noreferrer">Telegram</a>
+        @if (item.github) {
+        <a [href]="item.github" target="_blank" rel="noopener noreferrer">GitHub</a>
         }
       </div>
     </section>

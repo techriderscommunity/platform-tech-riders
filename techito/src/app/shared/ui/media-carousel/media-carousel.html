@@ -37,7 +37,7 @@
           allowfullscreen
         ></iframe>
         } @else {
-        <img [src]="item.src" [alt]="item.alt || item.title" loading="lazy" />
+        <img [src]="item.src" [alt]="item.alt || item.title" loading="lazy" (error)="onImageError($event, item.fallbackSrc)" />
         }
 
         @if (showCaptions) {
@@ -59,7 +59,7 @@
         allowfullscreen
       ></iframe>
       } @else {
-      <img [src]="item.src" [alt]="item.alt || item.title" loading="lazy" />
+      <img [src]="item.src" [alt]="item.alt || item.title" loading="lazy" (error)="onImageError($event, item.fallbackSrc)" />
       }
 
       @if (showCaptions) {

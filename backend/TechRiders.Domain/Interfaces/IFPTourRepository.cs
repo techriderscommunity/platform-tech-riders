@@ -21,7 +21,7 @@ public interface IFPTourRepository : IRepository<FPTour>
     /// <summary>
     /// Obtiene tours por centro
     /// </summary>
-    Task<IEnumerable<FPTour>> GetFPToursByCenterAsync(Guid centerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<FPTour>> GetFPToursByOrganizationAsync(Guid organizationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtiene tours por ambassador

@@ -1,107 +1,222 @@
-import { AppRole } from '@core/auth/auth.service';
+import type { AppRole } from '@core/auth/auth.service';
 
 export interface IntranetNavItem {
   label: string;
-  route: string | null;
-  roles: AppRole[];
+  route: string;
   exact?: boolean;
 }
 
 export interface IntranetNavSection {
   title: string;
   icon: string;
-  items: IntranetNavItem[];
+  items: readonly IntranetNavItem[];
 }
 
-export const INTRANET_NAV_SECTIONS: IntranetNavSection[] = [
-  {
-    title: 'Inicio',
-    icon: '🏠',
-    items: [
-      { label: 'Panel principal', route: '/intranet', roles: ['admin', 'superadmin', 'staff', 'coordinador', 'empresa', 'junior', 'embajador', 'colaborador', 'centro'], exact: true },
+export interface IntranetWorkspace {
+  role: AppRole;
+  label: string;
+  homeRoute: string;
+  sections: readonly IntranetNavSection[];
+}
+
+const HOME_SECTION: IntranetNavSection = {
+  title: 'Inicio',
+  icon: 'Inicio',
+  items: [{ label: 'Panel principal', route: '/intranet', exact: true }],
+};
+
+export const INTRANET_WORKSPACES: Record<AppRole, IntranetWorkspace> = {
+  admin: {
+    role: 'admin',
+    label: 'Administrador',
+    homeRoute: '/intranet',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Gobierno',
+        icon: 'Gobierno',
+        items: [
+          {
+            label: 'Usuarios y roles',
+            route: '/intranet/administration/user-roles',
+          },
+          {
+            label: 'Usuarios',
+            route: '/intranet/administration/users',
+          },
+          {
+            label: 'Organizaciones',
+            route: '/intranet/administration/organizations',
+          },
+          {
+            label: 'Centros',
+            route: '/intranet/administration/centers',
+          },
+          {
+            label: 'Aprobaciones',
+            route: '/intranet/administration/approvals',
+          },
+          {
+            label: 'Configuración',
+            route: '/intranet/administration/configuration',
+          },
+          { label: 'Auditoría', route: '/intranet/administration/audit' },
+        ],
+      },
+      {
+        title: 'Operativa',
+        icon: 'Operativa',
+        items: [
+          { label: 'FP Tour', route: '/intranet/admin/fp-tour' },
+          { label: 'Eventos', route: '/intranet/events/management' },
+          { label: 'Sesiones', route: '/intranet/admin/sessions' },
+          { label: 'Comuñeras', route: '/intranet/admin/community-partners' },
+          { label: 'Colaboradores', route: '/intranet/admin/collaborators' },
+          { label: 'Embajadores', route: '/intranet/admin/ambassadors' },
+          { label: 'Asignaciones', route: '/intranet/admin/assignments' },
+        ],
+      },
     ],
   },
-  {
-    title: 'Mi área',
-    icon: '🧭',
-    items: [
-      { label: 'Mi perfil', route: '/intranet/member/profile', roles: ['admin', 'superadmin', 'staff', 'coordinador', 'empresa', 'junior', 'embajador', 'colaborador', 'centro', 'member'] },
-      { label: 'Portal embajadores', route: '/intranet/ambassador/portal', roles: ['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'] },
-      { label: 'Panel empresa', route: '/intranet/company', roles: ['empresa'] },
-      { label: 'Panel junior', route: '/intranet/junior', roles: ['junior'] },
+  staff: {
+    role: 'staff',
+    label: 'Staff',
+    homeRoute: '/intranet/staff',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Coordinación',
+        icon: 'Coordinación',
+        items: [
+          { label: 'Gobierno de staff', route: '/intranet/staff' },
+          { label: 'FP Tour', route: '/intranet/staff/fp-tour' },
+          { label: 'Sesiones', route: '/intranet/staff/sessions' },
+        ],
+      },
+      {
+        title: 'Seguimiento',
+        icon: 'Seguimiento',
+        items: [
+          { label: 'Embajadores', route: '/intranet/staff/ambassadors' },
+          { label: 'Aprobaciones', route: '/intranet/administration/approvals' },
+          { label: 'Asignaciones', route: '/intranet/admin/assignments' },
+          { label: 'Ofertas', route: '/intranet/staff/offers' },
+          { label: 'Candidatos', route: '/intranet/staff/candidates' },
+        ],
+      },
     ],
   },
-  {
-    title: 'FP Tour',
-    icon: '🎓',
-    items: [
-      { label: 'Centros', route: '/intranet/fp-tour/centers', roles: ['superadmin', 'staff', 'coordinador', 'centro'] },
-      { label: 'Mis sesiones', route: '/intranet/fp-tour/my-sessions', roles: ['superadmin', 'staff', 'coordinador', 'junior', 'embajador', 'colaborador', 'centro'] },
-      { label: 'Gestión FP Tour', route: '/intranet/fp-tour/management', roles: ['superadmin', 'staff', 'coordinador'] },
-      { label: 'Admin FP Tour', route: '/intranet/admin/fp-tour', roles: ['admin', 'superadmin'] },
+  'community-leader': {
+    role: 'community-leader',
+    label: 'Responsable de comunidad',
+    homeRoute: '/intranet/staff',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Comunidad',
+        icon: 'Comunidad',
+        items: [
+          { label: 'Gestión de comunidad', route: '/intranet/staff' },
+          { label: 'Eventos', route: '/intranet/events/management' },
+          { label: 'Ofertas', route: '/intranet/staff/offers' },
+          { label: 'Candidatos', route: '/intranet/staff/candidates' },
+        ],
+      },
     ],
   },
-  {
-    title: 'Eventos',
-    icon: '🎤',
-    items: [
-      { label: 'Mis eventos', route: '/intranet/events/mine', roles: ['superadmin', 'staff', 'coordinador', 'embajador', 'colaborador'] },
-      { label: 'Gestión eventos', route: '/intranet/events/management', roles: ['superadmin', 'staff', 'coordinador'] },
+  ambassador: {
+    role: 'ambassador',
+    label: 'Embajador',
+    homeRoute: '/intranet/ambassador/portal',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Mi actividad',
+        icon: 'Actividad',
+        items: [
+          {
+            label: 'Portal de embajadores',
+            route: '/intranet/ambassador/portal',
+          },
+          { label: 'Mis sesiones', route: '/intranet/sessions/mine' },
+          { label: 'Mis eventos', route: '/intranet/events/mine' },
+        ],
+      },
     ],
   },
-  {
-    title: 'Sesiones',
-    icon: '📚',
-    items: [
-      { label: 'Mis sesiones', route: '/intranet/sessions/mine', roles: ['superadmin', 'staff', 'coordinador', 'junior', 'embajador', 'colaborador', 'centro'] },
-      { label: 'Gestión sesiones', route: '/intranet/sessions/management', roles: ['superadmin', 'staff', 'coordinador'] },
-      { label: 'Admin sesiones', route: '/intranet/admin/sessions', roles: ['admin', 'superadmin'] },
+  center: {
+    role: 'center',
+    label: 'Centro educativo',
+    homeRoute: '/intranet/center',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Mi centro',
+        icon: 'Centro',
+        items: [
+          { label: 'Resumen', route: '/intranet/center' },
+          { label: 'Organización', route: '/intranet/fp-tour/organizations' },
+          { label: 'Mis sesiones', route: '/intranet/fp-tour/my-sessions' },
+        ],
+      },
     ],
   },
-  {
-    title: 'Calendario',
-    icon: '📅',
-    items: [
-      { label: 'Vista unificada', route: '/intranet/calendar', roles: ['superadmin', 'staff', 'coordinador', 'admin', 'empresa', 'junior', 'embajador', 'colaborador', 'centro'] },
+  'community-partner': {
+    role: 'community-partner',
+    label: 'Entidad colaboradora',
+    homeRoute: '/intranet/community-partner',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Mi entidad',
+        icon: 'Entidad',
+        items: [{ label: 'Resumen', route: '/intranet/community-partner' }],
+      },
     ],
   },
-  {
-    title: 'Empleo',
-    icon: '💼',
-    items: [
-      { label: 'Gestionar ofertas', route: '/intranet/company/manage-offers', roles: ['empresa'] },
-      { label: 'Ver candidatos', route: '/intranet/company/view-candidates', roles: ['empresa'] },
-      { label: 'Editar perfil junior', route: '/intranet/junior/edit-profile', roles: ['junior'] },
-      { label: 'Mis ofertas', route: '/intranet/junior/my-offers', roles: ['junior'] },
-      { label: 'Mis cursos', route: '/intranet/junior/my-courses', roles: ['junior'] },
-      { label: 'Mi perfil candidato', route: '/intranet/junior/profile', roles: ['junior'] },
+  member: {
+    role: 'member',
+    label: 'Miembro',
+    homeRoute: '/intranet/junior',
+    sections: [
+      HOME_SECTION,
+      {
+        title: 'Mi perfil',
+        icon: 'Perfil',
+        items: [
+          {
+            label: 'Perfil profesional',
+            route: '/intranet/junior/edit-profile',
+          },
+          { label: 'Panel de talento', route: '/intranet/junior' },
+        ],
+      },
+      {
+        title: 'Mi actividad',
+        icon: 'Actividad',
+        items: [
+          { label: 'Mis sesiones', route: '/intranet/sessions/mine' },
+          { label: 'Calendario', route: '/intranet/calendar' },
+        ],
+      },
     ],
   },
-  {
-    title: 'Administración',
-    icon: '⚙️',
-    items: [
-      { label: 'Dashboard admin', route: '/intranet/admin', roles: ['admin', 'superadmin'] },
-      { label: 'Comuñeras', route: '/intranet/admin/community-partners', roles: ['admin', 'superadmin'] },
-      { label: 'Colaboradores', route: '/intranet/admin/collaborators', roles: ['admin', 'superadmin'] },
-      { label: 'Embajadores', route: '/intranet/admin/ambassadors', roles: ['admin', 'superadmin'] },
-      { label: 'Usuarios y roles', route: '/intranet/administration/user-roles', roles: ['superadmin'] },
-      { label: 'Centros (gobierno)', route: '/intranet/administration/centers', roles: ['superadmin'] },
-      { label: 'Configuración', route: '/intranet/administration/configuration', roles: ['superadmin'] },
-      { label: 'Auditoría', route: '/intranet/administration/audit', roles: ['superadmin'] },
-    ],
-  },
-  {
-    title: 'Gobierno staff',
-    icon: '🛡️',
-    items: [
-      { label: 'Staff principal', route: '/intranet/staff', roles: ['superadmin', 'staff', 'coordinador'] },
-      { label: 'Staff FP Tour', route: '/intranet/staff/fp-tour', roles: ['superadmin'] },
-      { label: 'Staff sesiones', route: '/intranet/staff/sessions', roles: ['superadmin'] },
-      { label: 'Staff embajadores', route: '/intranet/staff/ambassadors', roles: ['superadmin'] },
-      { label: 'Staff colaboradores', route: '/intranet/staff/collaborators', roles: ['superadmin'] },
-      { label: 'Staff ofertas', route: '/intranet/staff/offers', roles: ['superadmin'] },
-      { label: 'Staff candidatos', route: '/intranet/staff/candidates', roles: ['superadmin'] },
-    ],
-  },
+};
+
+const WORKSPACE_PRIORITY: readonly AppRole[] = [
+  'admin',
+  'staff',
+  'community-leader',
+  'ambassador',
+  'center',
+  'community-partner',
+  'member',
 ];
+
+export function resolveIntranetWorkspace(
+  roles: readonly AppRole[],
+): IntranetWorkspace {
+  const activeRole =
+    WORKSPACE_PRIORITY.find((role) => roles.includes(role)) ?? 'member';
+  return INTRANET_WORKSPACES[activeRole];
+}

@@ -1,0 +1,62 @@
+.admin-usuarios {
+  padding: var(--page-block-padding) var(--page-inline-padding);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.page-header {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-muted);
+
+  .btn-back {
+    color: var(--tr-blue);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: var(--space-4);
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  p {
+    color: var(--text-secondary);
+  }
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat {
+  p {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--tr-blue);
+    margin: 0;
+  }
+}
+
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.feedback-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+}

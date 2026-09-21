@@ -1,0 +1,80 @@
+<div class="admin-usuarios">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver</a>
+    <h1>Usuarios</h1>
+    <p>Alta, consulta, edición y activación/desactivación de usuarios de la comunidad.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat card">
+      <span>Total</span>
+      <p>{{totalCount()}}</p>
+    </div>
+    <div class="stat card">
+      <span>Activos</span>
+      <p>{{activeCount()}}</p>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <app-ui-text-field label="Buscar" placeholder="Nombre, email o nickname" [value]="searchTerm()" (valueChange)="updateSearchTerm($event)"></app-ui-text-field>
+    <app-ui-select label="Estado" [options]="membershipStatusOptions" [value]="membershipFilter()" (valueChange)="updateMembershipFilter($event)"></app-ui-select>
+    <app-ui-button class="btn-primary" (click)="load()">Buscar</app-ui-button>
+    <app-ui-button class="btn-secondary" (click)="toggleCreateForm()">➕ Alta de usuario</app-ui-button>
+  </div>
+
+  @if (showCreateForm()) {
+  <div class="card">
+    <h2>Nuevo usuario</h2>
+    <div class="action-bar">
+      <app-ui-text-field label="Nickname" [value]="newNickname()" (valueChange)="updateNewNickname($event)"></app-ui-text-field>
+      <app-ui-text-field label="Nombre" [value]="newName()" (valueChange)="updateNewName($event)"></app-ui-text-field>
+      <app-ui-text-field label="Apellidos" [value]="newLastName()" (valueChange)="updateNewLastName($event)"></app-ui-text-field>
+      <app-ui-text-field label="Email" type="email" [value]="newEmail()" (valueChange)="updateNewEmail($event)"></app-ui-text-field>
+      <app-ui-button class="btn-primary" [disabled]="creating()" (click)="createUser()">Crear</app-ui-button>
+    </div>
+  </div>
+  }
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+    <app-ui-button class="btn-sm" type="button" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
+  @if (loading()) {
+  <p>Cargando usuarios...</p>
+  } @else if (!items().length) {
+  <p>No hay usuarios que coincidan con el filtro.</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Persona</th>
+          <th>Roles</th>
+          <th>Estado</th>
+          <th>Última actividad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.id) {
+        <tr>
+          <td><strong>{{item.name}} {{item.lastName}}</strong><br>{{item.email}}</td>
+          <td>{{item.roles.join(', ')}}</td>
+          <td><span class="badge" [class]="item.membershipStatus">{{item.membershipStatus}}</span></td>
+          <td>{{item.lastActivityDate ? (item.lastActivityDate | date:'short') : 'Sin actividad'}}</td>
+          <td>
+            <app-ui-button class="btn-sm" [disabled]="savingId() === item.id" (click)="toggleActivation(item)">
+              {{item.membershipStatus === 'Activa' ? 'Suspender' : 'Activar'}}
+            </app-ui-button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

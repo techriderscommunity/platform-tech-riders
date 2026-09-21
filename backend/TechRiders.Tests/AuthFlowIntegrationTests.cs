@@ -7,7 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechRiders.Api.Contracts.Requests.Auth;
 using TechRiders.Api.Contracts.Responses.Auth;
+using TechRiders.Application.Interfaces;
+using TechRiders.Domain.Entities;
 using TechRiders.Infrastructure.Data;
+using TechRiders.Infrastructure.Repositories;
+using TechRiders.Infrastructure.Storage;
 using Xunit;
 
 namespace TechRiders.Tests;
@@ -22,7 +26,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
     }
 
     [Fact]
-    public async Task Local_admin_seed_should_create_admin_role_and_allow_login_with_test_credentials()
+    public async Task Database_admin_seed_should_create_admin_role_and_allow_login_with_test_credentials()
     {
         using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
         {
@@ -40,7 +44,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
 
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
 
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LocalLoginResponse>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
         Assert.NotNull(loginResult);
         Assert.False(string.IsNullOrWhiteSpace(loginResult!.Token));
         Assert.Equal("admin", loginResult.User.Role);
@@ -54,7 +58,8 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
 
         Assert.NotNull(user.PasswordHash);
         Assert.Contains(user.UserRoles, ur => string.Equals(ur.Role.Name, "Admin", StringComparison.OrdinalIgnoreCase));
-        Assert.True(TechRiders.Api.Services.LocalAuthService.VerifyPassword(password, user.PasswordHash!));
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        Assert.True(passwordHasher.VerifyPassword(password, user.PasswordHash!));
     }
 
     [Fact]
@@ -91,7 +96,7 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
         });
 
         Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LocalLoginResponse>();
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
         Assert.NotNull(loginResult);
         Assert.False(string.IsNullOrWhiteSpace(loginResult!.Token));
 
@@ -128,15 +133,118 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
         });
         Assert.Equal(HttpStatusCode.OK, newPasswordLoginResponse.StatusCode);
     }
+
+    [Fact]
+    public async Task Public_staff_query_should_include_admin_users_in_staff_zone()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TechRidersDbContext>();
+        var repository = new UserRepository(dbContext);
+
+        var adminRole = await dbContext.Set<Role>().FirstOrDefaultAsync(r => r.Name == "Admin")
+            ?? new Role { Id = Guid.NewGuid(), Name = "Admin", Description = "Admin role" };
+
+        if (adminRole.Id == Guid.Empty)
+        {
+            adminRole.Id = Guid.NewGuid();
+        }
+
+        if (!dbContext.Set<Role>().Any(r => r.Id == adminRole.Id))
+        {
+            dbContext.Set<Role>().Add(adminRole);
+        }
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Nickname = "sergio-admin",
+            Name = "Sergio",
+            LastName = "Hierro",
+            Email = "sergio.staff.test@techriders.test",
+            PasswordHash = "hash",
+            IsActive = true,
+            IsWorking = true,
+            CreatedAt = DateTime.UtcNow,
+            UserRoles = new List<UserRole>()
+        };
+
+        if (!await dbContext.Users.AnyAsync(u => u.Email == user.Email))
+        {
+            dbContext.Users.Add(user);
+        }
+
+        var userRole = new UserRole { UserId = user.Id, RoleId = adminRole.Id };
+        dbContext.Set<UserRole>().Add(userRole);
+        await dbContext.SaveChangesAsync();
+
+        var staffUsers = await repository.GetActiveByCapabilityNameAsync("Staff");
+
+        Assert.Contains(staffUsers, u => u.Email == user.Email);
+    }
+
+    [Fact]
+    public void Storage_client_should_prefer_connection_string_when_configured()
+    {
+        var settings = new KnowledgeStorageOptions
+        {
+            ConnectionString = "DefaultEndpointsProtocol=https;AccountName=demo;AccountKey=ZmFrZV9hY2NvdW50X2tleQ==;EndpointSuffix=core.windows.net",
+            AccountUrl = "https://storagetetxito.blob.core.windows.net",
+            KnowledgeContainer = "knowledge"
+        };
+
+        var client = KnowledgeContentBlobService.CreateContainerClient(settings);
+
+        Assert.Equal("https://demo.blob.core.windows.net/knowledge", client.Uri.ToString());
+    }
+
+    [Fact]
+    public void Storage_client_should_use_environment_connection_string_when_option_is_missing()
+    {
+        var originalValue = Environment.GetEnvironmentVariable("Storage__ConnectionString");
+
+        try
+        {
+            Environment.SetEnvironmentVariable("Storage__ConnectionString",
+                "DefaultEndpointsProtocol=https;AccountName=demo;AccountKey=ZmFrZV9hY2NvdW50X2tleQ==;EndpointSuffix=core.windows.net");
+
+            var settings = new KnowledgeStorageOptions
+            {
+                AccountUrl = "https://storagetetxito.blob.core.windows.net",
+                KnowledgeContainer = "knowledge"
+            };
+
+            var client = KnowledgeContentBlobService.CreateContainerClient(settings);
+
+            Assert.Equal("https://demo.blob.core.windows.net/knowledge", client.Uri.ToString());
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("Storage__ConnectionString", originalValue);
+        }
+    }
+
+    [Fact]
+    public void Storage_blob_resolution_should_fallback_to_legacy_articles_path()
+    {
+        var candidates = KnowledgeContentBlobService.ResolveCandidatePaths("knowledge/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md");
+
+        Assert.Contains("knowledge/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md", candidates);
+        Assert.Contains("articles/ecotaskapp-aplicacion-web-de-gestion-de-tareas-ecologicas-con-angular.md", candidates);
+    }
 }
 
 public sealed class AuthApiFactory : WebApplicationFactory<Program>
 {
     private static readonly string DatabaseName = $"TechRidersAuthFlowTests_{Guid.NewGuid():N}";
 
+    public AuthApiFactory()
+    {
+        Environment.SetEnvironmentVariable("Auth__SigningKey", "auth-flow-tests-signing-key-with-enough-length");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Testing");
 
         var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={DatabaseName};Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True";
 
@@ -145,7 +253,8 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = connectionString,
-                ["Database:UseInMemory"] = "false"
+                ["Auth:SigningKey"] = "auth-flow-tests-signing-key-with-enough-length",
+                ["Auth:DefaultAdminPassword"] = "TechAdmin"
             });
         });
 
@@ -172,12 +281,8 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TechRidersDbContext>();
 
-            if (dbContext.Database.CanConnect())
-            {
-                dbContext.Database.EnsureDeleted();
-            }
-
-            dbContext.Database.Migrate();
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
         });
     }
 }

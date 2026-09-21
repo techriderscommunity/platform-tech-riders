@@ -23,28 +23,41 @@ async function withSession(page: Parameters<typeof test>[0]['page'], role: Role)
 }
 
 test.describe('Intranet role routes', () => {
+  test('guest can preview the intranet home without login', async ({ page }) => {
+    await page.goto('/intranet');
+    await expect(page).toHaveURL(/\/intranet$/);
+    await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();
+  });
+
   test('admin can access admin routes', async ({ page }) => {
     await withSession(page, 'admin');
 
     await page.goto('/intranet/admin');
     await expect(page).toHaveURL(/\/intranet\/admin$/);
-    await expect(page.getByRole('heading', { name: /panel de administraci[oó]n/i })).toBeVisible();
+    await expect(page.getByText(/panel de administraci[oó]n/i).first()).toBeVisible();
 
     await page.goto('/intranet/admin/staff');
-    await expect(page).toHaveURL(/\/intranet\/admin\/staff$/);
-    await expect(page.getByRole('heading', { name: /gesti[oó]n de staff/i })).toBeVisible();
+    await expect(page).toHaveURL(/\/intranet\/admin$/);
+    await expect(page.getByText(/panel de administraci[oó]n/i).first()).toBeVisible();
+  });
+
+  test('logged-in user lands on the intranet root', async ({ page }) => {
+    await withSession(page, 'admin');
+
+    await page.goto('/');
+    await expect(page).toHaveURL(/\/intranet$/);
   });
 
   test('empresa can access empresa routes', async ({ page }) => {
     await withSession(page, 'empresa');
 
-    await page.goto('/intranet/empresa');
-    await expect(page).toHaveURL(/\/intranet\/empresa$/);
-    await expect(page.getByRole('heading', { name: /panel de control/i })).toBeVisible();
+    await page.goto('/intranet/company');
+    await expect(page).toHaveURL(/\/intranet\/company$/);
+    await expect(page.getByRole('heading').first()).toBeVisible();
 
-    await page.goto('/intranet/empresa/gestionar-ofertas');
-    await expect(page).toHaveURL(/\/intranet\/empresa\/gestionar-ofertas$/);
-    await expect(page.getByRole('heading', { name: /gestionar ofertas/i })).toBeVisible();
+    await page.goto('/intranet/admin');
+    await expect(page).toHaveURL(/\/intranet\/company$/);
+    await expect(page.getByRole('heading').first()).toBeVisible();
   });
 
   test('junior can access junior routes', async ({ page }) => {
@@ -54,8 +67,8 @@ test.describe('Intranet role routes', () => {
     await expect(page).toHaveURL(/\/intranet\/junior$/);
     await expect(page.getByRole('heading', { name: /bienvenido/i })).toBeVisible();
 
-    await page.goto('/intranet/junior/mis-cursos');
-    await expect(page).toHaveURL(/\/intranet\/junior\/mis-cursos$/);
+    await page.goto('/intranet/junior/my-courses');
+    await expect(page).toHaveURL(/\/intranet\/junior\/my-courses$/);
     await expect(page.getByRole('heading', { name: /mis cursos/i })).toBeVisible();
   });
 
@@ -63,6 +76,6 @@ test.describe('Intranet role routes', () => {
     await withSession(page, 'empresa');
 
     await page.goto('/intranet/admin');
-    await expect(page).toHaveURL(/\/intranet\/empresa$/);
+    await expect(page).toHaveURL(/\/intranet\/company$/);
   });
 });

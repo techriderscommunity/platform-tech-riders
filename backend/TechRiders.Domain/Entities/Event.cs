@@ -30,8 +30,8 @@ public sealed class Event : BaseEntity
     public Guid? StatusId { get; set; }
     public Status? Status { get; set; }
 
-    public Guid? CenterId { get; set; }
-    public Center? Center { get; set; }
+    public Guid? OrganizationId { get; set; }
+    public Organization? Organization { get; set; }
 
     public ICollection<Session> Sessions { get; set; } = new List<Session>();
     public ICollection<EventCategory> Categories { get; set; } = new List<EventCategory>();

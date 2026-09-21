@@ -11,6 +11,7 @@ describe('auth guards', () => {
     user: jasmine.createSpy('user'),
     hasRole: jasmine.createSpy('hasRole'),
     getDefaultRoute: jasmine.createSpy('getDefaultRoute'),
+    getRoleHomeRoute: jasmine.createSpy('getRoleHomeRoute'),
   };
 
   beforeEach(() => {
@@ -18,6 +19,7 @@ describe('auth guards', () => {
     authMock.user.calls.reset();
     authMock.hasRole.calls.reset();
     authMock.getDefaultRoute.calls.reset();
+    authMock.getRoleHomeRoute.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -57,20 +59,20 @@ describe('auth guards', () => {
   it('roleGuard should redirect to role area on role mismatch', () => {
     authMock.isAuthenticated.and.returnValue(true);
     authMock.hasRole.and.returnValue(false);
-    authMock.getDefaultRoute.and.returnValue('/intranet/empresa');
+    authMock.getRoleHomeRoute.and.returnValue('/intranet/member');
 
     const result = TestBed.runInInjectionContext(() => roleGuard('admin')({} as any, {} as any)) as UrlTree;
 
-    expect(router.serializeUrl(result)).toBe('/intranet/empresa');
+    expect(router.serializeUrl(result)).toBe('/intranet/member');
   });
 
   it('roleGuard should redirect anonymous users to login', () => {
     authMock.isAuthenticated.and.returnValue(false);
     authMock.user.and.returnValue(null);
 
-    const result = TestBed.runInInjectionContext(() => roleGuard('junior')({} as any, { url: '/intranet/junior' } as any)) as UrlTree;
+    const result = TestBed.runInInjectionContext(() => roleGuard('member')({} as any, { url: '/intranet/member' } as any)) as UrlTree;
 
-    expect(router.serializeUrl(result)).toBe('/?login=1&returnUrl=%2Fintranet%2Fjunior');
+    expect(router.serializeUrl(result)).toBe('/?login=1&returnUrl=%2Fintranet%2Fmember');
   });
 });
 

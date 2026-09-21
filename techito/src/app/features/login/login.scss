@@ -6,37 +6,27 @@
 	max-width: none;
 }
 
-.login-divider {
-	margin: var(--space-8) 0 var(--space-4) 0;
-	font-size: 0.95rem;
+.login-mode-tabs {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-2);
+	margin-bottom: var(--space-4);
+}
+
+.login-mode-tabs button {
+	border: 1px solid var(--border-default);
+	border-radius: var(--radius-md);
+	background: var(--bg-secondary);
 	color: var(--text-secondary);
+	padding: var(--space-2) var(--space-3);
 	font-weight: var(--font-weight-semibold);
-	position: relative;
-	text-align: center;
+	cursor: pointer;
 }
 
-.login-divider::before,
-.login-divider::after {
-	content: '';
-	position: absolute;
-	top: 50%;
-	width: 35%;
-	height: 1px;
-	background: var(--border-light);
-}
-
-.login-divider::before {
-	left: 0;
-}
-
-.login-divider::after {
-	right: 0;
-}
-
-.login-social {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
+.login-mode-tabs button.active {
+	border-color: var(--tr-blue);
+	background: var(--tr-blue-alpha-16);
+	color: var(--text-primary);
 }
 
 .login-error {
@@ -49,53 +39,10 @@
 	font-size: var(--font-size-sm);
 }
 
-.social-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-0-7);
-	width: 100%;
-	background: var(--modal-control-bg);
-	color: var(--text-primary);
-	font-weight: var(--font-weight-semibold);
-	font-size: 1rem;
-	border: 1px solid var(--border-light);
-	border-radius: var(--radius-lg);
-	padding: var(--space-0-7) var(--space-1-2);
-	min-height: var(--touch-target-min);
-	cursor: pointer;
-	box-shadow: var(--shadow-sm);
-	transition: all var(--transition-base);
-}
-
-.social-btn img {
-	width: 20px;
-	height: 20px;
-}
-
-.social-btn.google {
-	border-color: var(--brand-google);
-}
-
-.social-btn.microsoft {
-	border-color: var(--primary-light);
-}
-
-.social-btn:hover {
-	background: var(--modal-control-hover-bg);
-	border-color: var(--primary-light);
-	transform: translateY(-1px);
-	box-shadow: var(--shadow-md);
-}
-
-.social-btn:focus-visible {
-	outline: 2px solid var(--primary-light);
-	outline-offset: 2px;
-}
-
-.social-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-	transform: none;
+.login-helper {
+	margin: var(--space-4) 0 0;
+	color: var(--text-secondary);
+	font-size: var(--font-size-sm);
+	line-height: 1.5;
 }
 

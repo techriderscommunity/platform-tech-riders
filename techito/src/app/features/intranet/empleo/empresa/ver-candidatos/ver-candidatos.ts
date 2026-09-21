@@ -44,7 +44,7 @@ export class VerCandidatos {
         }),
         switchMap(ofertaId => {
           if (!ofertaId) {
-            if (this.authService.hasRole('superadmin')) {
+            if (this.authService.hasRole('admin')) {
               return this.empresaService.getCandidatosGovernance().pipe(
                 catchError(() => {
                   this.error.set('No se pudieron cargar las candidaturas globales.');
@@ -72,7 +72,7 @@ export class VerCandidatos {
   }
 
   cambiarEstado(id: string, nuevoEstado: string) {
-    if (this.authService.hasRole('superadmin')) {
+    if (this.authService.hasRole('admin')) {
       this.empresaService.updateCandidaturaEstado(id, nuevoEstado)
         .pipe(
           catchError(() => {

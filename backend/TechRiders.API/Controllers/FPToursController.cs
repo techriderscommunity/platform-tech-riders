@@ -37,12 +37,12 @@ public class FPToursController : BaseApiController
         return Ok(tour);
     }
 
-    [HttpGet("center/{centerId:guid}")]
-    [SwaggerOperation(Summary = "Get tours by center")]
+    [HttpGet("organization/{organizationId:guid}")]
+    [SwaggerOperation(Summary = "Get tours by organization")]
     [ProducesResponseType(typeof(IEnumerable<FPTourResponse>), 200)]
-    public async Task<ActionResult<IEnumerable<FPTourResponse>>> GetByCenter(Guid centerId, CancellationToken ct)
+    public async Task<ActionResult<IEnumerable<FPTourResponse>>> GetByOrganization(Guid organizationId, CancellationToken ct)
     {
-        return Ok(await _tourService.GetFPToursByCenterAsync(centerId, ct));
+        return Ok(await _tourService.GetFPToursByOrganizationAsync(organizationId, ct));
     }
 
     [HttpGet("ambassador/{ambassadorId:guid}")]

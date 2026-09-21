@@ -22,7 +22,7 @@ public interface IFPTourService
     /// <summary>
     /// Obtiene tours por centro
     /// </summary>
-    Task<IEnumerable<FPTourResponse>> GetFPToursByCenterAsync(Guid centerId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<FPTourResponse>> GetFPToursByOrganizationAsync(Guid organizationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtiene tours por ambassador

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using TechRiders.Application.DTOs.Requests.Ambassador;
 using TechRiders.Application.DTOs.Responses.Ambassador;
 using TechRiders.Application.Interfaces;
+using TechRiders.Application.Social;
 using TechRiders.Domain.Entities;
 using TechRiders.Domain.Interfaces;
 
@@ -103,9 +104,11 @@ public class AmbassadorService : IAmbassadorService
             Locality = request.Locality,
             IsWorking = request.IsWorking,
             About = request.About,
-            LinkedIn = request.LinkedIn,
-            Instagram = request.Instagram,
-            Github = request.Github,
+            LinkedIn = SocialProfileIdentifier.Normalize(request.LinkedIn),
+            Instagram = SocialProfileIdentifier.Normalize(request.Instagram),
+            X = SocialProfileIdentifier.Normalize(request.X),
+            YouTube = SocialProfileIdentifier.Normalize(request.YouTube),
+            Github = SocialProfileIdentifier.Normalize(request.Github),
             IsActive = true
         };
 
@@ -164,9 +167,11 @@ public class AmbassadorService : IAmbassadorService
         if (request.Locality != null) ambassador.Locality = request.Locality;
         if (request.IsWorking.HasValue) ambassador.IsWorking = request.IsWorking.Value;
         if (request.About != null) ambassador.About = request.About;
-        if (request.LinkedIn != null) ambassador.LinkedIn = request.LinkedIn;
-        if (request.Instagram != null) ambassador.Instagram = request.Instagram;
-        if (request.Github != null) ambassador.Github = request.Github;
+        if (request.LinkedIn != null) ambassador.LinkedIn = SocialProfileIdentifier.Normalize(request.LinkedIn);
+        if (request.Instagram != null) ambassador.Instagram = SocialProfileIdentifier.Normalize(request.Instagram);
+        if (request.X != null) ambassador.X = SocialProfileIdentifier.Normalize(request.X);
+        if (request.YouTube != null) ambassador.YouTube = SocialProfileIdentifier.Normalize(request.YouTube);
+        if (request.Github != null) ambassador.Github = SocialProfileIdentifier.Normalize(request.Github);
 
         await _unitOfWork.Ambassadors.EnsureAmbassadorRoleAsync(ambassador, cancellationToken);
 
@@ -272,9 +277,11 @@ public class AmbassadorService : IAmbassadorService
                 OtherCategory = activeCategory?.Description,
                 About = user.About,
                 Skill = null,
-                LinkedIn = user.LinkedIn,
-                Instagram = user.Instagram,
-                Github = user.Github,
+                LinkedIn = SocialProfileUrls.Build(SocialProfileUrls.LinkedIn, user.LinkedIn),
+                Instagram = SocialProfileUrls.Build(SocialProfileUrls.Instagram, user.Instagram),
+                X = SocialProfileUrls.Build(SocialProfileUrls.X, user.X),
+                YouTube = SocialProfileUrls.Build(SocialProfileUrls.YouTube, user.YouTube),
+                Github = SocialProfileUrls.Build(SocialProfileUrls.GitHub, user.Github),
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
                 IsActive = user.IsActive

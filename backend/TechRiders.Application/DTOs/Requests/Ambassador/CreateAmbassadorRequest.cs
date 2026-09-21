@@ -88,24 +88,42 @@ public class CreateAmbassadorRequest
     public string? Skill { get; set; }
 
     /// <summary>
-    /// URL de perfil de LinkedIn
+    /// Identificador de perfil de LinkedIn, por ejemplo juangarcia
     /// </summary>
-    /// <example>https://linkedin.com/in/juangarcia</example>
-    [Url(ErrorMessage = "La URL de LinkedIn no es válida")]
+    /// <example>juangarcia</example>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de LinkedIn")]
     [StringLength(300, ErrorMessage = "La URL no puede exceder 300 caracteres")]
     public string? LinkedIn { get; set; }
 
     /// <summary>
-    /// Usuario o URL de Instagram
+    /// Identificador de perfil de Instagram
     /// </summary>
     /// <example>@juantech</example>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de Instagram")]
     [StringLength(300, ErrorMessage = "Instagram no puede exceder 300 caracteres")]
     public string? Instagram { get; set; }
+
+    /// <summary>
+    /// Identificador de perfil de X
+    /// </summary>
+    /// <example>juangarcia</example>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de X")]
+    [StringLength(300, ErrorMessage = "X no puede exceder 300 caracteres")]
+    public string? X { get; set; }
+
+    /// <summary>
+    /// Identificador de canal o perfil de YouTube
+    /// </summary>
+    /// <example>juangarcia</example>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de YouTube")]
+    [StringLength(300, ErrorMessage = "YouTube no puede exceder 300 caracteres")]
+    public string? YouTube { get; set; }
 
     /// <summary>
     /// Usuario o URL de GitHub
     /// </summary>
     /// <example>juangarcia</example>
+    [RegularExpression(@"^[^:/?#\s]+$", ErrorMessage = "Introduce solo el identificador de GitHub")]
     [StringLength(300, ErrorMessage = "GitHub no puede exceder 300 caracteres")]
     public string? Github { get; set; }
 }

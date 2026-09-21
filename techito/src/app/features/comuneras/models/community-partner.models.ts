@@ -21,8 +21,7 @@ export interface CommunityPartner {
   instagram?: string;
   x?: string;
   youtube?: string;
-  discord?: string;
-  telegram?: string;
+  github?: string;
   topics: string[];
   scope: CommunityPartnerScope;
   contactName: string;
@@ -49,8 +48,7 @@ export interface CommunityPartnerApplication {
   instagram?: string;
   x?: string;
   youtube?: string;
-  discord?: string;
-  telegram?: string;
+  github?: string;
   motivation: string;
   collaborationIdeas: string;
 }

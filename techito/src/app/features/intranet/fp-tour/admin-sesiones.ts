@@ -21,17 +21,19 @@ export class AdminSesiones {
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly feedback = signal<string | null>(null);
   readonly eventos = signal<Sesion[]>([]);
+  readonly actingId = signal<string | null>(null);
 
   readonly eventosProgramados = computed(() => this.eventos().filter(s => s.estado === 'Pendiente').length);
   readonly totalAsistentes = computed(() => this.eventos().reduce((sum, s) => sum + s.numAlumnos, 0));
   readonly context = computed(() => {
     const url = this.router.url;
 
-    if (url.includes('/intranet/fp-tour/centers')) {
+    if (url.includes('/intranet/fp-tour/organizations')) {
       return {
-        title: 'FP Tour · Centros',
-        subtitle: 'Solicitudes por centro con prioridad en pendientes y gestion de estados.',
+        title: 'FP Tour · Organizaciones',
+        subtitle: 'Solicitudes por organización con prioridad en pendientes y gestión de estados.',
         createLabel: '➕ Solicitar sesion',
       };
     }
@@ -90,8 +92,67 @@ export class AdminSesiones {
     // TODO: conectar vista detallada de asistentes.
   }
 
-  cancelarEvento(_: string) {
-    // TODO: conectar cancelacion real de evento.
+  publicarEvento(id: string) {
+    this.actingId.set(id);
+    this.sesionesService.publish(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.eventos.update(items => items.map(e => e.id === id ? { ...e, estado: 'Realizada' } : e));
+          this.feedback.set('Sesión publicada correctamente.');
+          this.actingId.set(null);
+        },
+        error: () => {
+          this.feedback.set('No se pudo publicar la sesión.');
+          this.actingId.set(null);
+        },
+      });
+  }
+
+  asignarPonente(id: string) {
+    const userId = prompt('Introduce el Id (GUID) del usuario a asignar como ponente:');
+    if (!userId) {
+      return;
+    }
+
+    this.actingId.set(id);
+    this.sesionesService.addSpeaker(id, userId.trim(), true)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.feedback.set('Ponente asignado correctamente.');
+          this.actingId.set(null);
+        },
+        error: (error) => {
+          this.feedback.set(error?.error?.Message ?? 'No se pudo asignar el ponente.');
+          this.actingId.set(null);
+        },
+      });
+  }
+
+  cancelarEvento(id: string) {
+    if (!confirm('¿Confirmas cancelar esta sesión?')) {
+      return;
+    }
+
+    this.actingId.set(id);
+    this.sesionesService.cancel(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.eventos.update(items => items.map(e => e.id === id ? { ...e, estado: 'Cancelada' } : e));
+          this.feedback.set('Sesión cancelada correctamente.');
+          this.actingId.set(null);
+        },
+        error: () => {
+          this.feedback.set('No se pudo cancelar la sesión.');
+          this.actingId.set(null);
+        },
+      });
+  }
+
+  limpiarFeedback() {
+    this.feedback.set(null);
   }
 }
 

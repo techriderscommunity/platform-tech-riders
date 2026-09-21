@@ -8,5 +8,5 @@ public sealed class RegisterResponse
 
     public string Message { get; set; } = string.Empty;
 
-    public LocalUserProfile User { get; set; } = new();
+    public UserProfileResponse User { get; set; } = new();
 }

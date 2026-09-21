@@ -4,8 +4,8 @@ namespace TechRiders.Domain.Entities;
 
 public sealed class FPTour : BaseEntity
 {
-    public Guid CenterId { get; set; }
-    public Center Center { get; set; } = default!;
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = default!;
 
     public Guid? AmbassadorUserId { get; set; }
     public User? Ambassador { get; set; }
