@@ -48,6 +48,27 @@
 	gap: var(--space-4);
 }
 
+.perfil-photo-block {
+	display: grid;
+	gap: var(--space-3);
+	justify-items: start;
+}
+
+.perfil-photo {
+	width: 112px;
+	height: 112px;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 2px solid var(--border-default);
+}
+
+.perfil-photo-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-2);
+	align-items: center;
+}
+
 .perfil-card-highlight {
 	background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elevated) 82%, var(--color-primary) 18%), var(--bg-elevated));
 }

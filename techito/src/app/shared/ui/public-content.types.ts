@@ -53,6 +53,7 @@ export interface TeamMemberItem {
   name: string;
   role?: string;
   photo?: string;
+  photoFallback?: string;
   photoAlt?: string;
   socials: SocialLinkItem[];
 }

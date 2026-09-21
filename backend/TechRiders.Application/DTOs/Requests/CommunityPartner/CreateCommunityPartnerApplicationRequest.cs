@@ -10,9 +10,6 @@ public sealed class CreateCommunityPartnerApplicationRequest
     [Required, Url, StringLength(300)]
     public required string Website { get; init; }
 
-    [Url, StringLength(300)]
-    public string? LogoUrl { get; init; }
-
     [Required, EmailAddress, StringLength(200)]
     public required string ContactEmail { get; init; }
 

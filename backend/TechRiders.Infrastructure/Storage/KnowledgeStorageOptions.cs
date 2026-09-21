@@ -22,4 +22,7 @@ public sealed class KnowledgeStorageOptions
     /// Container donde se suben a mano los .md y las imágenes migradas ("knowledge").
     /// </summary>
     public required string KnowledgeContainer { get; set; }
+
+    /// <summary>Container privado para fotos de usuarios y logos de Comuneras.</summary>
+    public string ProfileContainer { get; set; } = "profiles";
 }

@@ -59,9 +59,17 @@ public sealed class PublicStatsService : IPublicStatsService
 
     public async Task<AboutStatsResponse> GetAboutStatsAsync(CancellationToken cancellationToken = default)
     {
+        var staff = await _unitOfWork.Users.GetActiveByCapabilityNameAsync("Staff", cancellationToken);
+        var communityLeaders = await _unitOfWork.Users.GetActiveByCapabilityNameAsync("Community Leader", cancellationToken);
+        var ambassadors = await _unitOfWork.Users.GetActiveByCapabilityNameAsync("Ambassador", cancellationToken);
+        var members = await _unitOfWork.Users.GetActiveMembersAsync(cancellationToken);
+
         return new AboutStatsResponse
         {
-            ActiveAmbassadors = await _unitOfWork.Ambassadors.CountActiveAmbassadorsAsync(cancellationToken),
+            ActiveStaff = staff.Count,
+            ActiveCommunityLeaders = communityLeaders.Count,
+            ActiveAmbassadors = ambassadors.Count,
+            ActiveMembers = members.Count,
         };
     }
 

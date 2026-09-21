@@ -219,6 +219,8 @@ using (var scope = app.Services.CreateScope())
     await PreferenceCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
     await RolePermissionCatalogSeedService.EnsureDefaultsAsync(dbContext, logger);
     await scope.ServiceProvider.GetRequiredService<IAuthService>().EnsureDefaultAdminAsync();
+    await CommunitySeedService.EnsureDefaultsAsync(dbContext, logger);
+    await EventSeedService.EnsureDefaultsAsync(dbContext, logger);
     await KnowledgeArticleSeedService.EnsureDefaultsAsync(dbContext, logger);
 }
 

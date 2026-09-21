@@ -17,8 +17,10 @@ export const ABOUT_ZONE_META: Readonly<Record<string, { title: string; descripti
   member: { title: 'Member', description: 'Personas que se unen y participan en sesiones, actividades y comunidad.' },
 };
 
-/** Segunda metrica es puramente editorial (no es un count real). La primera se rellena con el dato dinamico. */
-export const ABOUT_METRICS_META: ReadonlyArray<{ icon: string; label: string; staticValue?: string }> = [
-  { icon: 'people', label: 'Comunidad' },
-  { icon: 'wrench', label: 'Soporte', staticValue: '24/7' },
+/** Contadores reales de personas por tipo de usuario. */
+export const ABOUT_METRICS_META: ReadonlyArray<{ icon: string; label: string; key: keyof import('./about-stats.service').AboutStats }> = [
+  { icon: 'briefcase', label: 'Staff', key: 'activeStaff' },
+  { icon: 'compass', label: 'Community Leaders', key: 'activeCommunityLeaders' },
+  { icon: 'users', label: 'Ambassadors', key: 'activeAmbassadors' },
+  { icon: 'user', label: 'Members', key: 'activeMembers' },
 ];

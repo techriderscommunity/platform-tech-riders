@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UiButton } from '@shared/ui/button/button';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiTextField } from '@shared/ui/text-field/text-field';
@@ -19,13 +19,13 @@ import { CommunityPartnerScope } from './models/community-partner.models';
 export class CommunityPartnerApply {
   private readonly applicationsService = inject(CommunityPartnerApplicationsService);
   private readonly analytics = inject(CommunityPartnerAnalyticsService);
+  private readonly router = inject(Router);
 
   readonly saving = signal(false);
   readonly submitted = signal(false);
   readonly error = signal<string | null>(null);
 
   readonly name = signal('');
-  readonly logoUrl = signal('');
   readonly website = signal('');
   readonly contactEmail = signal('');
   readonly contactName = signal('');
@@ -55,6 +55,17 @@ export class CommunityPartnerApply {
   readonly xPreview = computed(() => this.buildSocialUrl(this.socialProfileUrls.x, this.x()));
   readonly youtubePreview = computed(() => this.buildSocialUrl(this.socialProfileUrls.youtube, this.youtube()));
   readonly githubPreview = computed(() => this.buildSocialUrl(this.socialProfileUrls.github, this.github()));
+
+  constructor() {
+    this.router.navigate(['/'], {
+      queryParams: {
+        login: '1',
+        authMode: 'register',
+        returnUrl: '/intranet/community-partner',
+      },
+      replaceUrl: true,
+    });
+  }
 
   readonly scopeOptions: UiSelectOption[] = [
     { label: 'Local', value: 'local' },
@@ -94,7 +105,6 @@ export class CommunityPartnerApply {
 
     this.applicationsService.create({
         name: this.name().trim(),
-        logoUrl: this.logoUrl().trim() || undefined,
         website: this.website().trim(),
         contactEmail: this.contactEmail().trim(),
         contactName: this.contactName().trim(),

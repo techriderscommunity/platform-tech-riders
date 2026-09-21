@@ -106,6 +106,14 @@ export interface LoginResponse {
   user: UserProfile;
 }
 
+export interface RegisterPayload {
+  nickname: string;
+  name: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly baseUrl = environment.apiUrl;
@@ -121,6 +129,14 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<unknown>(`${this.baseUrl}/auth/login`, { email, password })
+      .pipe(
+        map((response) => this.normalizeLoginResponse(response)),
+        tap((response) => this.persistSession(response)),
+      );
+  }
+
+  register(payload: RegisterPayload): Observable<LoginResponse> {
+    return this.http.post<unknown>(`${this.baseUrl}/auth/register`, payload)
       .pipe(
         map((response) => this.normalizeLoginResponse(response)),
         tap((response) => this.persistSession(response)),

@@ -1763,6 +1763,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("ExpectedAttendees")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -2051,6 +2054,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("SpeakerTopics")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("uniqueidentifier");

@@ -9,4 +9,6 @@ export interface EventApiDto {
   startDate?: string;
   Location?: string | null;
   location?: string | null;
+  Url?: string | null;
+  url?: string | null;
 }

@@ -7,9 +7,8 @@ namespace TechRiders.Application.Services;
 
 public sealed class PublicTeamService : IPublicTeamService
 {
-    // Mapeo zona -> Capability real del catalogo seedeado (IdentityCatalogSeedService: Staff, Community Leader, Ambassador, Center, Community Partner).
-    // TODO(gap): "member" no tiene Capability equivalente (Member es automatico, sin solicitud/capability propia);
-    // definir con producto de donde debe salir ese grupo.
+    private const int RandomSampleSize = 8;
+
     private static readonly IReadOnlyDictionary<string, string> ZoneToCapabilityName = new Dictionary<string, string>
     {
         ["staff"] = "Staff",
@@ -31,6 +30,15 @@ public sealed class PublicTeamService : IPublicTeamService
         foreach (var (zoneKey, capabilityName) in ZoneToCapabilityName)
         {
             var users = await _unitOfWork.Users.GetActiveByCapabilityNameAsync(capabilityName, cancellationToken);
+            if (zoneKey == "ambassador")
+            {
+                users = users.OrderBy(_ => Guid.NewGuid()).Take(RandomSampleSize).ToArray();
+            }
+            else
+            {
+                users = users.OrderBy(user => user.LastName).ThenBy(user => user.Name).ToArray();
+            }
+
             zones.Add(new PublicTeamZoneResponse
             {
                 Key = zoneKey,
@@ -38,13 +46,26 @@ public sealed class PublicTeamService : IPublicTeamService
             });
         }
 
+        var members = await _unitOfWork.Users.GetActiveMembersAsync(cancellationToken);
+        zones.Add(new PublicTeamZoneResponse
+        {
+            Key = "member",
+            Members = members
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(RandomSampleSize)
+                .Select(ToMember)
+                .ToArray(),
+        });
+
         return zones;
     }
 
     private static PublicTeamMemberResponse ToMember(User user) => new()
     {
+        Id = user.Id,
         Name = user.Name,
         LastName = user.LastName,
+        About = user.About,
         LinkedIn = user.LinkedIn,
         Instagram = user.Instagram,
         X = user.X,

@@ -54,6 +54,10 @@ export class Comuneras {
     this.store.trackCardClick(id, name);
   }
 
+  onLogoError(event: Event): void {
+    (event.target as HTMLImageElement).src = '/assets/avatar-comuneras.png';
+  }
+
   onScopeFilterChange(value: string): void {
     if (value === 'all' || value === 'local' || value === 'national' || value === 'international') {
       this.scopeFilter.set(value);

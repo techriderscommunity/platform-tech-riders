@@ -35,7 +35,6 @@ public sealed class CommunityPartnerApplicationService : ICommunityPartnerApplic
             Id = Guid.NewGuid(),
             Name = name,
             Website = website,
-            LogoUrl = NormalizeOptional(request.LogoUrl),
             ContactEmail = contactEmail,
             ContactName = NormalizeRequired(request.ContactName, nameof(request.ContactName)),
             WhoYouAre = NormalizeRequired(request.WhoYouAre, nameof(request.WhoYouAre)),

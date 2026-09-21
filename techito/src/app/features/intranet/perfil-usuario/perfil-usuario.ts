@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
@@ -16,6 +16,8 @@ import { ConsentsService } from '@core/consents/consents.service';
 import { ConsentPurposeItem } from '@core/consents/consents.models';
 import { SkillsService } from '@core/skills/skills.service';
 import { SkillApi, SKILL_LEVELS, UserSkillApi } from '@core/skills/skills.models';
+import { ProfileMediaService } from '@core/media/profile-media.service';
+import { getDefaultAvatar } from '@shared/utils/default-avatar';
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -25,13 +27,14 @@ import { SkillApi, SKILL_LEVELS, UserSkillApi } from '@core/skills/skills.models
   templateUrl: './perfil-usuario.html',
   styleUrl: './perfil-usuario.scss'
 })
-export class PerfilUsuario {
+export class PerfilUsuario implements OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly memberProfileService = inject(MemberProfileService);
   private readonly capabilityRequestService = inject(CapabilityRequestService);
   private readonly preferencesService = inject(PreferencesService);
   private readonly consentsService = inject(ConsentsService);
   private readonly skillsService = inject(SkillsService);
+  private readonly profileMediaService = inject(ProfileMediaService);
 
   readonly audienceOptions: UiSelectOption[] = [
     { label: 'Estudiante Tech', value: 'student' },
@@ -49,6 +52,10 @@ export class PerfilUsuario {
   readonly audience = signal('student');
   readonly communityRole = signal('member');
   readonly organizacion = signal('');
+  readonly photoUrl = signal(getDefaultAvatar(this.authService.user()?.roles));
+  readonly photoBusy = signal(false);
+  readonly photoFeedback = signal<string | null>(null);
+  private photoObjectUrl: string | null = null;
 
   readonly currentUserName = computed(() => this.authService.user()?.name || this.nombre() || 'Miembro Tech Riders');
   readonly currentRoles = computed(() => this.authService.user()?.roles ?? []);
@@ -93,6 +100,70 @@ export class PerfilUsuario {
     this.loadPreferences();
     this.loadConsents();
     this.loadSkills();
+    this.loadPhoto();
+  }
+
+  ngOnDestroy(): void {
+    if (this.photoObjectUrl) URL.revokeObjectURL(this.photoObjectUrl);
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      this.photoFeedback.set('Usa una imagen JPEG, PNG o WebP de hasta 5 MB.');
+      return;
+    }
+
+    this.photoBusy.set(true);
+    this.photoFeedback.set(null);
+    this.profileMediaService.replaceMyPhoto(file).pipe(
+      tap(() => {
+        this.photoFeedback.set('Foto actualizada.');
+        this.loadPhoto();
+      }),
+      catchError(() => {
+        this.photoFeedback.set('No se pudo actualizar la foto.');
+        return of(null);
+      }),
+      finalize(() => this.photoBusy.set(false)),
+    ).subscribe();
+  }
+
+  deletePhoto(): void {
+    this.photoBusy.set(true);
+    this.photoFeedback.set(null);
+    this.profileMediaService.deleteMyPhoto().pipe(
+      tap(() => {
+        this.photoUrl.set(this.defaultAvatar);
+        this.photoFeedback.set('Foto eliminada.');
+      }),
+      catchError(() => {
+        this.photoFeedback.set('No se pudo eliminar la foto.');
+        return of(null);
+      }),
+      finalize(() => this.photoBusy.set(false)),
+    ).subscribe();
+  }
+
+  private loadPhoto(): void {
+    this.profileMediaService.getMyPhoto().pipe(
+      tap((blob) => {
+        if (this.photoObjectUrl) URL.revokeObjectURL(this.photoObjectUrl);
+        this.photoObjectUrl = URL.createObjectURL(blob);
+        this.photoUrl.set(this.photoObjectUrl);
+      }),
+      catchError(() => {
+        this.photoUrl.set(this.defaultAvatar);
+        return of(null);
+      }),
+    ).subscribe();
+  }
+
+  private get defaultAvatar(): string {
+    return getDefaultAvatar(this.authService.user()?.roles);
   }
 
   guardarCambios() {

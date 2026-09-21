@@ -34,6 +34,7 @@ public static class InfrastructureServiceCollectionExtensions
 
         services.Configure<KnowledgeStorageOptions>(configuration.GetSection(KnowledgeStorageOptions.SectionName));
         services.AddScoped<IKnowledgeContentBlobService, KnowledgeContentBlobService>();
+        services.AddScoped<IProfileMediaService, ProfileMediaService>();
 
         services.AddScoped<IApprovalsService, Services.ApprovalsService>();
         services.AddScoped<IAssignmentService, Services.AssignmentService>();

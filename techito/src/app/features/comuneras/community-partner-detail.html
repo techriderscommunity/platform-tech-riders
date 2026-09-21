@@ -4,7 +4,7 @@
   @if (partner(); as item) {
   <article class="partner-detail-card">
     <header class="detail-header">
-      <img [src]="item.logoUrl" [alt]="'Logo de ' + item.name" loading="lazy" />
+      <img [src]="item.logoUrl" [alt]="'Logo de ' + item.name" loading="lazy" (error)="onLogoError($event)" />
       <div>
         <h1>{{ item.name }}</h1>
         <p>{{ item.cityOrScope }}</p>

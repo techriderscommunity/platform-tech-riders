@@ -2,10 +2,10 @@ import { HomePastEventPhotoItem, HomeProfileCardItem } from '@shared/ui/public-c
 
 /** Metadata estatica (icono/label) emparejada en orden con HomeStats del backend (ambassadors, events, sessions, centers). */
 export const HOME_STATS_META: ReadonlyArray<{ icon: string; label: string }> = [
-  { icon: 'users', label: 'Ambassadors activos' },
-  { icon: 'calendar', label: 'Eventos' },
-  { icon: 'book', label: 'Sesiones' },
-  { icon: 'map', label: 'Centros' },
+  { icon: '👥', label: 'Ambassadors activos' },
+  { icon: '📅', label: 'Eventos' },
+  { icon: '📚', label: 'Sesiones' },
+  { icon: '🗺️', label: 'Centros' },
 ];
 
 export const HOME_PROFILE_PANEL_CARDS: HomeProfileCardItem[] = [

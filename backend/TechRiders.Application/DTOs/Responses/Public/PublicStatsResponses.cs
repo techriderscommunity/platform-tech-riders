@@ -33,8 +33,11 @@ public sealed class OrientaTechStatsResponse
     public required int ActiveSessions { get; init; }
 }
 
-/// <summary>Count dinamico real de ambassadors activos (comunidad).</summary>
+/// <summary>Contadores dinamicos del equipo publico por tipo de usuario.</summary>
 public sealed class AboutStatsResponse
 {
+    public required int ActiveStaff { get; init; }
+    public required int ActiveCommunityLeaders { get; init; }
     public required int ActiveAmbassadors { get; init; }
+    public required int ActiveMembers { get; init; }
 }

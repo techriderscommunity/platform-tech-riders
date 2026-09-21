@@ -14,6 +14,8 @@ public sealed class User : BaseEntity
     public bool IsWorking { get; set; }
     public DateTimeOffset? LastActivityDate { get; set; }
     public string? About { get; set; }
+    /// <summary>Temas de charla que la persona puede impartir como Ambassador.</summary>
+    public string? SpeakerTopics { get; set; }
     public string? LinkedIn { get; set; }
     public string? Instagram { get; set; }
     public string? X { get; set; }

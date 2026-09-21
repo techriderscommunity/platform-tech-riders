@@ -8,7 +8,7 @@
         nuestra pasión por ayudar a crecer a otras personas.
       </p>
       <span>¿Tienes una comunidad?</span>
-      <app-ui-button type="button" variant="secondary" routerLink="/community-partners/apply">Quiero ser Comuñera</app-ui-button>
+      <app-ui-button type="button" variant="secondary" routerLink="/login" [queryParams]="{ authMode: 'register', returnUrl: '/intranet/community-partner' }">Quiero ser Comuñera</app-ui-button>
 
     <ul class="topic-chips" aria-label="Temáticas del ecosistema">
       @for (topic of topicSummary(); track topic) {
@@ -37,7 +37,7 @@
     @for (partner of filteredPartners(); track partner.id) {
     <article class="comunera-card">
       <header class="card-header">
-        <img [src]="partner.logoUrl" [alt]="'Logo de ' + partner.name" loading="lazy" />
+        <img [src]="partner.logoUrl" [alt]="'Logo de ' + partner.name" loading="lazy" (error)="onLogoError($event)" />
         <div>
           <h2>{{ partner.name }}</h2>
           <p>{{ partner.cityOrScope }}</p>

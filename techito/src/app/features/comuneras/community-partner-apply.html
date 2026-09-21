@@ -20,7 +20,6 @@
       <section class="form-block">
         <h2>Datos básicos</h2>
         <app-ui-text-field label="Nombre comunidad" [required]="true" [value]="name()" (valueChange)="name.set($event)"></app-ui-text-field>
-        <app-ui-text-field label="Logo (URL)" [value]="logoUrl()" (valueChange)="logoUrl.set($event)"></app-ui-text-field>
         <app-ui-text-field label="Web" [required]="true" [value]="website()" (valueChange)="website.set($event)"></app-ui-text-field>
         <app-ui-text-field label="Email contacto" type="email" [required]="true" [value]="contactEmail()" (valueChange)="contactEmail.set($event)"></app-ui-text-field>
         <app-ui-text-field label="Persona contacto" [required]="true" [value]="contactName()" (valueChange)="contactName.set($event)"></app-ui-text-field>

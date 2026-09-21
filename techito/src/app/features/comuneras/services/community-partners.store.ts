@@ -1,4 +1,7 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
+import { Injectable, computed, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of } from 'rxjs';
+import { environment } from '@env/environment';
 import {
   CommunityPartner,
   CommunityPartnerApplication,
@@ -190,7 +193,8 @@ const COMMUNITY_PARTNERS_STORAGE_KEY = 'techriders.community-partners.v2';
 
 @Injectable({ providedIn: 'root' })
 export class CommunityPartnersStore {
-  private readonly partnersState = signal<CommunityPartner[]>(this.loadInitialState());
+  private readonly http = inject(HttpClient);
+  private readonly partnersState = signal<CommunityPartner[]>([]);
 
   readonly allPartners = computed(() => this.partnersState());
   readonly approvedPartners = computed(() =>
@@ -198,9 +202,31 @@ export class CommunityPartnersStore {
   );
 
   constructor(private readonly analytics: CommunityPartnerAnalyticsService) {
-    effect(() => {
-      this.persistState(this.partnersState());
-    });
+    this.http.get<Array<{ Id: string; Name: string; Description?: string | null; Website?: string | null; LogoUrl?: string | null; LinkedIn?: string | null; Instagram?: string | null; X?: string | null; YouTube?: string | null; Github?: string | null }>>(`${environment.apiUrl}/public/communities`)
+      .pipe(catchError(() => of([])))
+      .subscribe(communities => {
+        this.partnersState.set(communities.map(community => ({
+          id: community.Id,
+          name: community.Name,
+          logoUrl: community.LogoUrl?.trim() || '/assets/avatar-comuneras.png',
+          shortDescription: community.Description ?? 'Comunidad compañera de Tech Riders.',
+          description: community.Description ?? '',
+          mission: community.Description ?? '',
+          cityOrScope: 'Comunidad compañera',
+          website: community.Website ?? undefined,
+          linkedin: community.LinkedIn ?? undefined,
+          instagram: community.Instagram ?? undefined,
+          x: community.X ?? undefined,
+          youtube: community.YouTube ?? undefined,
+          github: community.Github ?? undefined,
+          topics: [],
+          scope: 'national',
+          contactName: '',
+          contactEmail: '',
+          collaborations: [],
+          status: 'approved',
+        })));
+      });
   }
 
   findById(id: string): CommunityPartner | undefined {

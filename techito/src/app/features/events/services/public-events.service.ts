@@ -26,6 +26,7 @@ export class PublicEventsAgendaService {
     const summary = this.getString(event.Description ?? event.description, 'Sin descripcion disponible.');
     const place = this.getString(event.Location ?? event.location, 'Por confirmar');
     const startDate = this.getString(event.StartDate ?? event.startDate, '');
+    const url = this.getString(event.Url ?? event.url, '/events');
     const combinedText = `${title} ${summary} ${place}`.toLowerCase();
 
     return {
@@ -36,7 +37,7 @@ export class PublicEventsAgendaService {
       topic: this.inferTopic(combinedText),
       date: this.toIsoDate(startDate),
       place,
-      url: '/events',
+      url,
     };
   }
 

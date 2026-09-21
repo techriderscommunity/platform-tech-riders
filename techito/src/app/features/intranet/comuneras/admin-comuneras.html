@@ -148,6 +148,11 @@
         [required]="true"
         (valueChange)="editMission.set($event)"
       ></app-ui-textarea>
+      <div class="logo-editor">
+        <label>Logo de la Comuñera</label>
+        <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onLogoSelected($event)" [disabled]="logoBusy()" />
+        <app-ui-button type="button" variant="secondary" [disabled]="logoBusy()" (click)="deleteLogo()">Eliminar logo</app-ui-button>
+      </div>
       <div class="modal-actions">
         <app-ui-button type="button" variant="secondary" (click)="closeEdit()">Cancelar</app-ui-button>
         <app-ui-button type="submit">Guardar</app-ui-button>

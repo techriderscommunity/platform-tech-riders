@@ -8,7 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TechRiders.Api.Contracts.Requests.Auth;
 using TechRiders.Api.Contracts.Responses.Auth;
 using TechRiders.Application.Interfaces;
+using TechRiders.Domain.Entities;
 using TechRiders.Infrastructure.Data;
+using TechRiders.Infrastructure.Repositories;
 using TechRiders.Infrastructure.Storage;
 using Xunit;
 
@@ -130,6 +132,54 @@ public sealed class AuthFlowIntegrationTests : IClassFixture<AuthApiFactory>
             Password = newPassword
         });
         Assert.Equal(HttpStatusCode.OK, newPasswordLoginResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Public_staff_query_should_include_admin_users_in_staff_zone()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TechRidersDbContext>();
+        var repository = new UserRepository(dbContext);
+
+        var adminRole = await dbContext.Set<Role>().FirstOrDefaultAsync(r => r.Name == "Admin")
+            ?? new Role { Id = Guid.NewGuid(), Name = "Admin", Description = "Admin role" };
+
+        if (adminRole.Id == Guid.Empty)
+        {
+            adminRole.Id = Guid.NewGuid();
+        }
+
+        if (!dbContext.Set<Role>().Any(r => r.Id == adminRole.Id))
+        {
+            dbContext.Set<Role>().Add(adminRole);
+        }
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Nickname = "sergio-admin",
+            Name = "Sergio",
+            LastName = "Hierro",
+            Email = "sergio.staff.test@techriders.test",
+            PasswordHash = "hash",
+            IsActive = true,
+            IsWorking = true,
+            CreatedAt = DateTime.UtcNow,
+            UserRoles = new List<UserRole>()
+        };
+
+        if (!await dbContext.Users.AnyAsync(u => u.Email == user.Email))
+        {
+            dbContext.Users.Add(user);
+        }
+
+        var userRole = new UserRole { UserId = user.Id, RoleId = adminRole.Id };
+        dbContext.Set<UserRole>().Add(userRole);
+        await dbContext.SaveChangesAsync();
+
+        var staffUsers = await repository.GetActiveByCapabilityNameAsync("Staff");
+
+        Assert.Contains(staffUsers, u => u.Email == user.Email);
     }
 
     [Fact]

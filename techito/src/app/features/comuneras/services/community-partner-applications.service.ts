@@ -6,7 +6,6 @@ import { CommunityPartnerScope } from '../models/community-partner.models';
 
 export interface CreateCommunityPartnerApplicationRequest {
   readonly name: string;
-  readonly logoUrl?: string;
   readonly website: string;
   readonly contactEmail: string;
   readonly contactName: string;

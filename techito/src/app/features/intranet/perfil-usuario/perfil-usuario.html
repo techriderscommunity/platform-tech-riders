@@ -7,6 +7,17 @@
 
 	<div class="perfil-grid">
 		<article class="perfil-card perfil-card-highlight">
+			<div class="perfil-photo-block">
+				<img class="perfil-photo" [src]="photoUrl()" [alt]="currentUserName()" />
+				<div class="perfil-photo-actions">
+					<label class="perfil-link-action">
+						Cambiar foto
+						<input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoSelected($event)" hidden />
+					</label>
+					<app-ui-button type="button" [disabled]="photoBusy()" (click)="deletePhoto()">Eliminar foto</app-ui-button>
+				</div>
+				@if (photoFeedback()) { <p class="status-message status-message-success">{{ photoFeedback() }}</p> }
+			</div>
 			<h3>{{ currentUserName() }}</h3>
 			<p><strong>Email:</strong> {{ email() || 'pendiente' }}</p>
 			<p><strong>Roles actuales:</strong> {{ currentRoles().join(', ') || communityRole() }}</p>

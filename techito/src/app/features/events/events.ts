@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
@@ -21,7 +20,7 @@ import { PublicEventsAgendaService } from './services/public-events.service';
   selector: 'app-events',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, UiResourceCards, UiTextField],
+  imports: [UiResourceCards, UiTextField],
   templateUrl: './events.html',
   styleUrl: './events.scss'
 })
@@ -40,18 +39,21 @@ export class Events implements OnInit {
       title: 'EmpleaTech',
       description: 'Conecta talento, empresas y oportunidades para dar el siguiente paso profesional.',
       accent: 'coral',
+      href: 'https://empleatech.es/',
     },
     {
       eyebrow: 'Inteligencia artificial',
       title: 'Copilot Dev Days',
       description: 'Descubre nuevas formas de crear software con GitHub Copilot y herramientas de IA.',
       accent: 'cyan',
+      href: 'https://githubcopilotdevdaysmadrid.techriders.es/',
     },
     {
       eyebrow: 'Comunidad',
       title: 'TechRiders League',
       description: 'Aprende, compite y comparte retos técnicos con la comunidad TechRiders.',
       accent: 'gold',
+      href: '#calendario-publico',
     },
   ] as const;
 

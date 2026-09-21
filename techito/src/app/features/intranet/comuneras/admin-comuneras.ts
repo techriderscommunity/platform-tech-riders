@@ -15,6 +15,7 @@ import {
 import { CommunityPartnersStore } from '../../comuneras/services/community-partners.store';
 import { CommunityPartnerApplicationsService } from '@core/community-partners/community-partner-applications.service';
 import { CommunityPartnerApplicationAdminApi } from '@core/community-partners/community-partner-applications.models';
+import { ProfileMediaService } from '@core/media/profile-media.service';
 
 @Component({
   selector: 'app-admin-comuneras',
@@ -28,6 +29,7 @@ export class AdminComuneras {
   private readonly store = inject(CommunityPartnersStore);
   private readonly applicationsService = inject(CommunityPartnerApplicationsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly profileMediaService = inject(ProfileMediaService);
 
   readonly pendingApplications = signal<CommunityPartnerApplicationAdminApi[]>([]);
   readonly resolvingApplicationId = signal<string | null>(null);
@@ -39,6 +41,7 @@ export class AdminComuneras {
   readonly editMission = signal('');
   readonly searchTerm = signal('');
   readonly statusFilter = signal<'all' | CommunityPartnerStatus>('all');
+  readonly logoBusy = signal(false);
 
   readonly items = this.store.allPartners;
   readonly filteredItems = computed(() => {
@@ -145,6 +148,35 @@ export class AdminComuneras {
 
     this.feedback.set(`Comuñera ${selected.name} actualizada.`);
     this.closeEdit();
+  }
+
+  onLogoSelected(event: Event): void {
+    const selected = this.selected();
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!selected || !file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      this.feedback.set('Usa JPEG, PNG o WebP de hasta 5 MB.');
+      return;
+    }
+    this.logoBusy.set(true);
+    this.profileMediaService.replaceCommunityLogo(selected.id, file).pipe(
+      finalize(() => this.logoBusy.set(false)),
+    ).subscribe({
+      next: () => this.feedback.set(`Logo de ${selected.name} actualizado.`),
+      error: () => this.feedback.set('No se pudo actualizar el logo.'),
+    });
+  }
+
+  deleteLogo(): void {
+    const selected = this.selected();
+    if (!selected) return;
+    this.logoBusy.set(true);
+    this.profileMediaService.deleteCommunityLogo(selected.id).pipe(
+      finalize(() => this.logoBusy.set(false)),
+    ).subscribe({
+      next: () => this.feedback.set(`Logo de ${selected.name} eliminado.`),
+      error: () => this.feedback.set('No se pudo eliminar el logo.'),
+    });
   }
 
   statusClass(status: CommunityPartnerStatus): string {

@@ -9,7 +9,7 @@
       <div class="events-featured-banner" aria-labelledby="events-featured-title">
         <div class="events-featured-grid">
           @for (event of featuredEvents; track event.title) {
-          <a class="events-featured-card" [class]="'events-featured-card--' + event.accent" href="#calendario-publico">
+          <a class="events-featured-card" [class]="'events-featured-card--' + event.accent" [href]="event.href" [attr.target]="event.href.startsWith('http') ? '_blank' : null" [attr.rel]="event.href.startsWith('http') ? 'noopener noreferrer' : null">
             <span class="events-featured-eyebrow">{{ event.eyebrow }}</span>
             <h3>{{ event.title }}</h3>
             <p>{{ event.description }}</p>

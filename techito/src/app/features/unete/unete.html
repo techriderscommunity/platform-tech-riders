@@ -7,7 +7,7 @@
       conocimiento, experiencias y oportunidades para crecer juntos en el mundo de la tecnología.
     </p>
     <div class="join-hero-actions">
-      <app-ui-button class="join-btn join-btn-primary" type="button" (click)="abrirSolicitud('member')">Quiero formar parte</app-ui-button>
+      <app-ui-button class="join-btn join-btn-primary" type="button" (click)="abrirAcceso()">Quiero formar parte</app-ui-button>
     </div>
 
     <div class="join-hero-trustline" aria-label="Comunidad activa">
@@ -40,9 +40,9 @@
     <article><strong>4.</strong><h3>Ayuda a crecer</h3><p>Cuando te apetezca, comparte experiencia y colabora.</p></article>
   </div>
   <div class="join-grid join-grid-3">
-    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></span><h3>Miembro</h3><p>Descubre áreas tech y aprende de profesionales en activo.</p><app-ui-button class="join-card-action" type="button" (click)="abrirSolicitud('member')">Quiero aprender</app-ui-button></article>
-    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M22 10v6"/><path d="M2 10v6"/><path d="M12 4v8"/><path d="M4 10h16"/><path d="M7 20h10"/></svg></span><h3>Centro</h3><p>Conecta el aula con la realidad del sector tecnológico.</p><app-ui-button class="join-card-action" type="button" (click)="abrirSolicitud('session')">Quiero conectar mi aula</app-ui-button></article>
-    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></span><h3>Ambassador</h3><p>Comparte experiencias y participa en iniciativas con impacto real.</p><app-ui-button class="join-card-action" type="button" (click)="abrirSolicitud('ambassador')">Quiero participar</app-ui-button></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></span><h3>Miembro</h3><p>Descubre áreas tech y aprende de profesionales en activo.</p><app-ui-button class="join-card-action" type="button" (click)="abrirAcceso()">Quiero aprender</app-ui-button></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M22 10v6"/><path d="M2 10v6"/><path d="M12 4v8"/><path d="M4 10h16"/><path d="M7 20h10"/></svg></span><h3>Centro</h3><p>Conecta el aula con la realidad del sector tecnológico.</p><app-ui-button class="join-card-action" type="button" (click)="abrirAcceso()">Quiero conectar mi aula</app-ui-button></article>
+    <article class="join-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></span><h3>Ambassador</h3><p>Comparte experiencias y participa en iniciativas con impacto real.</p><app-ui-button class="join-card-action" type="button" (click)="abrirAcceso()">Quiero participar</app-ui-button></article>
   </div>
 </section>
 
@@ -69,51 +69,11 @@
       Sea cual sea tu motivo, aquí hay un sitio para ti.
     </p>
     <div class="cta-actions">
-      <app-ui-button class="join-btn join-btn-primary" type="button" (click)="abrirSolicitud('member')">Únete a Tech Riders</app-ui-button>
+      <app-ui-button class="join-btn join-btn-primary" type="button" (click)="abrirAcceso()">Únete a Tech Riders</app-ui-button>
       <a routerLink="/about-us" class="join-btn join-btn-ghost">Quiero saber más</a>
     </div>
     <p class="cta-claim">Porque nadie debería recorrer solo su camino en tecnología.</p>
   </div>
 </section>
 
-@if (showJoinModal()) {
-  <app-ui-modal (close)="cerrarSolicitud()">
-    <span modal-title>Únete ahora</span>
-
-    <form class="solicitud-form modal-form" (submit)="onSubmit($event)">
-      <p class="modal-intro">Déjanos tus datos básicos y te contactamos para orientarte dentro de la comunidad.</p>
-
-      <app-ui-select label="Tipo de solicitud" [options]="intakeOptions" [value]="formulario().requestType" (valueChange)="seleccionarFlujoDesdeSelect($event)"></app-ui-select>
-
-      <app-ui-text-field label="Nombre completo" type="text" name="nombre" autocomplete="name" [value]="formulario().nombre" (valueChange)="updateNombre($event)" placeholder="¿Cómo te llamas?" [required]="true"></app-ui-text-field>
-
-      <app-ui-text-field label="Email" type="email" name="email" autocomplete="email" [value]="formulario().email" (valueChange)="updateEmail($event)" placeholder="Tu email para contactarte" [required]="true"></app-ui-text-field>
-
-      <app-ui-textarea
-        label="¿Cómo quieres participar?"
-        name="motivacion"
-        [value]="formulario().motivacion"
-        (valueChange)="updateMotivacion($event)"
-        placeholder="Cuéntanos en una frase qué buscas o qué te apetece aportar"
-        [rows]="4"
-        [required]="true"
-      ></app-ui-textarea>
-
-      @if (error()) {
-        <div class="error-message" role="alert">{{ error() }}</div>
-      }
-
-      @if (enviado()) {
-        <div class="toaster toaster-exito" role="status">
-          {{ successMessage() }}
-        </div>
-      }
-
-      <div class="modal-actions">
-        <app-ui-button type="button" variant="secondary" [disabled]="loading()" (click)="cerrarSolicitud()">Cancelar</app-ui-button>
-        <app-ui-button type="submit" [disabled]="loading()">{{ loading() ? 'Enviando...' : 'Enviar solicitud' }}</app-ui-button>
-      </div>
-    </form>
-  </app-ui-modal>
-}
 
