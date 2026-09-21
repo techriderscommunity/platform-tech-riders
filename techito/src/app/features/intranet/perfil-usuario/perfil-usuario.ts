@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, signal, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { catchError, finalize, of, tap } from 'rxjs';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiButton } from '@shared/ui/button/button';
+import { UiFileInput } from '@shared/ui/file-input/file-input';
+import { UiCheckbox } from '@shared/ui/checkbox/checkbox';
 import { MemberProfileApi, MemberProfileService } from './services/member-profile.service';
 import { CapabilityRequestService } from '@core/capability/capability-request.service';
 import { REQUESTABLE_CAPABILITIES } from '@core/capability/capability-request.models';
@@ -23,7 +24,7 @@ import { getDefaultAvatar } from '@shared/utils/default-avatar';
   selector: 'app-perfil-usuario',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, UiTextField, UiSelect, UiTextarea, UiButton],
+  imports: [FormsModule, UiTextField, UiSelect, UiTextarea, UiButton, UiFileInput, UiCheckbox],
   templateUrl: './perfil-usuario.html',
   styleUrl: './perfil-usuario.scss'
 })
@@ -107,10 +108,7 @@ export class PerfilUsuario implements OnDestroy {
     if (this.photoObjectUrl) URL.revokeObjectURL(this.photoObjectUrl);
   }
 
-  onPhotoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
+  onPhotoSelected(file: File | null): void {
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
       this.photoFeedback.set('Usa una imagen JPEG, PNG o WebP de hasta 5 MB.');

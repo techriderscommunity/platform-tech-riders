@@ -8,6 +8,7 @@ import { UiModal } from '@shared/ui/modal/modal';
 import { UiSelect, UiSelectOption } from '@shared/ui/select/select';
 import { UiTextField } from '@shared/ui/text-field/text-field';
 import { UiTextarea } from '@shared/ui/textarea/textarea';
+import { UiFileInput } from '@shared/ui/file-input/file-input';
 import {
   CommunityPartner,
   CommunityPartnerStatus,
@@ -20,7 +21,7 @@ import { ProfileMediaService } from '@core/media/profile-media.service';
 @Component({
   selector: 'app-admin-comuneras',
   standalone: true,
-  imports: [RouterLink, UiButton, UiModal, UiSelect, UiTextField, UiTextarea, DatePipe],
+  imports: [RouterLink, UiButton, UiModal, UiSelect, UiTextField, UiTextarea, UiFileInput, DatePipe],
   templateUrl: './admin-comuneras.html',
   styleUrl: './admin-comuneras.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -150,9 +151,8 @@ export class AdminComuneras {
     this.closeEdit();
   }
 
-  onLogoSelected(event: Event): void {
+  onLogoSelected(file: File | null): void {
     const selected = this.selected();
-    const file = (event.target as HTMLInputElement).files?.[0];
     if (!selected || !file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
       this.feedback.set('Usa JPEG, PNG o WebP de hasta 5 MB.');

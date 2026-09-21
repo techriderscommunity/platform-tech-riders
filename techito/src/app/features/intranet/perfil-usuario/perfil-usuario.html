@@ -10,10 +10,7 @@
 			<div class="perfil-photo-block">
 				<img class="perfil-photo" [src]="photoUrl()" [alt]="currentUserName()" />
 				<div class="perfil-photo-actions">
-					<label class="perfil-link-action">
-						Cambiar foto
-						<input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoSelected($event)" hidden />
-					</label>
+					<app-ui-file-input label="Cambiar foto" accept="image/jpeg,image/png,image/webp" (fileSelected)="onPhotoSelected($event)"></app-ui-file-input>
 					<app-ui-button type="button" [disabled]="photoBusy()" (click)="deletePhoto()">Eliminar foto</app-ui-button>
 				</div>
 				@if (photoFeedback()) { <p class="status-message status-message-success">{{ photoFeedback() }}</p> }
@@ -36,7 +33,7 @@
 
 				<div class="perfil-actions">
 					<app-ui-button type="button" (click)="guardarCambios()">Guardar perfil</app-ui-button>
-					<a routerLink="/join" class="perfil-link-action">Solicitar ser Ambassador</a>
+					<app-ui-button type="button" variant="secondary" (click)="solicitarRol()">Solicitar ser Ambassador</app-ui-button>
 				</div>
 
 				@if (success()) {
@@ -83,10 +80,7 @@
 					<h4>{{ dimension.name }}</h4>
 					<div class="perfil-preference-values">
 						@for (value of dimension.values; track value.id) {
-							<label class="perfil-preference-chip">
-								<input type="checkbox" [checked]="isPreferenceSelected(value.id)" (change)="togglePreference(value.id, $any($event.target).checked)" />
-								{{ value.name }}
-							</label>
+							<app-ui-checkbox [label]="value.name" [checked]="isPreferenceSelected(value.id)" (checkedChange)="togglePreference(value.id, $event)"></app-ui-checkbox>
 						}
 					</div>
 				</div>
@@ -127,10 +121,7 @@
 			<ul class="perfil-list">
 				@for (purpose of consentPurposes(); track purpose.code) {
 					<li>
-						<label class="perfil-preference-chip">
-							<input type="checkbox" [checked]="purpose.granted" [disabled]="consentUpdatingCode() === purpose.code" (change)="toggleConsent(purpose.code, $any($event.target).checked)" />
-							<strong>{{ purpose.name }}</strong>
-						</label>
+						<app-ui-checkbox [label]="purpose.name" [checked]="purpose.granted" [disabled]="consentUpdatingCode() === purpose.code" (checkedChange)="toggleConsent(purpose.code, $event)"></app-ui-checkbox>
 						<span>{{ purpose.status }}</span>
 					</li>
 				}
