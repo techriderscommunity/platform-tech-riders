@@ -50,4 +50,8 @@ export class CommunityPartnerDetail {
 
     return new Date(date).toLocaleDateString('es-ES');
   }
+
+  onLogoError(event: Event): void {
+    (event.target as HTMLImageElement).src = '/assets/avatar-comuneras.png';
+  }
 }

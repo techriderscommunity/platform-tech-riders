@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs/operators';
 import { Header } from './core/layout/header';
@@ -14,7 +14,6 @@ import { Login } from './features/login/login';
 })
 export class App {
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly navigationDone = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -25,7 +24,7 @@ export class App {
   protected readonly title = signal('techito');
   protected readonly showLoginModal = computed(() => {
     this.navigationDone();
-    return this.route.snapshot.queryParamMap.get('login') === '1';
+    return this.router.parseUrl(this.router.url).queryParams['login'] === '1';
   });
 }
 

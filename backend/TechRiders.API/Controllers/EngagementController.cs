@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Engagement;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -10,10 +11,12 @@ namespace TechRiders.Api.Controllers;
 public class EngagementController : BaseApiController
 {
     private readonly ILogger<EngagementController> _logger;
+    private readonly IOrganizationService _organizationService;
 
-    public EngagementController(ILogger<EngagementController> logger)
+    public EngagementController(ILogger<EngagementController> logger, IOrganizationService organizationService)
     {
         _logger = logger;
+        _organizationService = organizationService;
     }
 
     [HttpPost("contact")]
@@ -55,7 +58,6 @@ public class EngagementController : BaseApiController
     [HttpPost("sessions/request")]
     [HttpPost("ambassadors/apply")]
     [HttpPost("solicitudes/candidato")]
-    [HttpPost("solicitudes/centro")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -78,6 +80,28 @@ public class EngagementController : BaseApiController
         {
             success = true,
             message = "Join request received and queued for review.",
+        });
+    }
+
+    [HttpPost("solicitudes/centro")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> SubmitCenterApplication([FromBody] JoinRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var organizationName = string.IsNullOrWhiteSpace(request.Organization) ? request.Name : request.Organization;
+        var contactInfo = $"Solicitante: {request.Name} <{request.Email}>. {request.Motivation}";
+        await _organizationService.CreatePendingAsync("CentroEducativo", organizationName, contactInfo, null, cancellationToken);
+
+        return Accepted(new
+        {
+            success = true,
+            message = "Center application received and queued for review.",
         });
     }
 }

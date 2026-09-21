@@ -38,6 +38,11 @@ public class EventResponse
     public string? Location { get; set; }
 
     /// <summary>
+    /// URL oficial del evento o registro
+    /// </summary>
+    public string? Url { get; set; }
+
+    /// <summary>
     /// Capacidad máxima de asistentes
     /// </summary>
     public int? MaxCapacity { get; set; }

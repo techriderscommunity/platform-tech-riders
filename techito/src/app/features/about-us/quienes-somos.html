@@ -1,0 +1,101 @@
+<section class="qs-page">
+  <header class="qs-hero">
+    <span class="section-label">Comunidad</span>
+    <h1 class="section-heading">Quiénes Somos en Tech Riders</h1>
+    <p class="section-subheading">
+      Personas que impulsan iniciativas, conectan talento y sostienen el aprendizaje continuo de la comunidad.
+    </p>
+    <app-ui-metrics-strip [items]="communityMetrics"></app-ui-metrics-strip>
+  </header>
+
+  <section class="history">
+    <div class="history-inner">
+      <div class="history-img">
+        <img src="assets/Tetxito/osito.png" alt="Techito, mascota de Tech Riders" loading="lazy" />
+      </div>
+      <div class="history-text">
+        <span class="section-label">Nuestra Historia</span>
+        <p>
+          Tech Riders nace de una idea muy sencilla: acercar la realidad profesional a las aulas
+          y ayudar a que el alumnado llegue mejor preparado al mundo laboral.
+        </p>
+        <p>
+          Todo comenzó en <strong>2013</strong> en <strong>Tajamar (Madrid)</strong>, donde se creó el
+          <strong>Microsoft Student Tech Club</strong>, un espacio en el que estudiantes y profesionales
+          de la tecnología se reunían para aprender, compartir conocimiento y descubrir las últimas
+          tendencias del sector.
+        </p>
+        <p>
+          Durante años, la comunidad fue creciendo gracias a la participación de alumnado, docentes
+          y profesionales que dedicaban parte de su tiempo a compartir experiencias reales y acercar
+          al mundo académico lo que estaba ocurriendo dentro de las empresas.
+        </p>
+      </div>
+      <div class="history-text">
+        <p>
+          Sin embargo, el verano de 2021 comenzó una nueva etapa. Nació
+          <strong>Techito</strong> y con él <strong>Tech Riders</strong>, una iniciativa impulsada por antiguos alumnos,
+          profesionales y apasionados de la tecnología que querían dar un paso más allá. La visión era clara:
+          construir una comunidad abierta donde aprender tecnología fuese tan importante como crear
+          conexiones, compartir experiencias reales y ayudar a otras personas a crecer profesionalmente.
+        </p>
+        <p>
+          Aquella evolución fue el origen de <strong>Tech Riders tal y como lo conocemos hoy</strong>.
+          Una comunidad que mantiene sus raíces en Tajamar Tech, pero que amplía su alcance mucho más allá
+          de un centro educativo.
+        </p>
+        <p>
+          <strong>Tech Riders no pertenece a Tajamar</strong>, aunque está impulsado y apoyado por
+          <strong>Tajamar Tech</strong>, compartiendo una misma misión: acercar el mundo profesional
+          al alumnado y fomentar el aprendizaje continuo dentro de la comunidad tecnológica.
+        </p>
+        <p>
+          Tech Riders es una comunidad abierta, diversa e inclusiva donde estudiantes,
+          profesionales, empresas y centros de formación colaboran para compartir conocimiento,
+          oportunidades y experiencias.
+        </p>
+        <p>Porque Tech Riders no es una marca, ni una empresa, ni una organización cerrada.</p>
+        <blockquote>
+          <strong>Tech Riders somos todos.</strong>
+        </blockquote>
+        <p>Y lo mejor de nuestra historia es que todavía se sigue escribiendo.</p>
+        <p>
+          <strong>Cualquiera puede convertirse en un Tech Rider.</strong> 🏍️💙
+        </p>
+      </div>
+    </div>
+  </section>
+
+  @for (zone of teamZones; track zone.key) {
+    <section class="qs-block" [attr.aria-labelledby]="'qs-' + zone.key + '-title'">
+      <div class="qs-block-head">
+        <h2 [id]="'qs-' + zone.key + '-title'">{{ zone.title }}</h2>
+        <p>{{ zone.description }}</p>
+      </div>
+      <app-ui-media-carousel
+        [ariaLabel]="'Miembros de ' + zone.title"
+        [items]="toCarouselItems(zone.members)"
+        [autoplay]="zone.members.length > 4"
+        [autoplayDelayMs]="3800"
+        [showCaptions]="true"
+        [fixedColumnsDesktop]="4"
+      ></app-ui-media-carousel>
+    </section>
+  }
+
+  <section class="qs-block comuneras-block" aria-labelledby="comuneras-title">
+    <div class="qs-block-head">
+      <h2 id="comuneras-title">Comuñeras</h2>
+      <p>{{ comunerasSubtitle }}</p>
+    </div>
+
+    <app-ui-media-carousel
+      ariaLabel="Comunidades Comuñeras"
+      [items]="comunerasCarouselItems()"
+      [autoplay]="comunerasCarouselItems().length > 3"
+      [autoplayDelayMs]="4200"
+      [showCaptions]="true"
+      [fixedColumnsDesktop]="4"
+    ></app-ui-media-carousel>
+  </section>
+</section>

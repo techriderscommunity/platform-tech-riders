@@ -1,0 +1,65 @@
+.workspace {
+  display: grid;
+  gap: 1.25rem;
+  color: #dbe9ff;
+
+  header {
+    border: 1px solid #173866;
+    border-radius: 8px;
+    background: #07182d;
+    padding: 1.25rem;
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    color: #f3f8ff;
+    font-size: 1.8rem;
+  }
+
+  header p:last-child {
+    margin-top: 0.45rem;
+    color: #9ec2e8;
+  }
+}
+
+.eyebrow {
+  color: #8fb1da;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.action-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  a {
+    border: 1px solid #214a7a;
+    border-radius: 8px;
+    background: #07182d;
+    padding: 1rem;
+    color: #dbe9ff;
+    text-decoration: none;
+  }
+
+  h2 {
+    color: #f0f7ff;
+    font-size: 1rem;
+  }
+
+  p {
+    margin-top: 0.35rem;
+    color: #9ec2e8;
+    font-size: 0.9rem;
+  }
+
+  a:hover {
+    border-color: #2fbbff;
+  }
+}

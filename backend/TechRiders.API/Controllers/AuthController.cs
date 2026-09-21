@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechRiders.Api.Contracts.Requests.Auth;
 using TechRiders.Api.Contracts.Responses.Auth;
-using TechRiders.Api.Services;
-using TechRiders.Infrastructure.Data;
+using TechRiders.Application.Interfaces;
 
 namespace TechRiders.Api.Controllers;
 
@@ -12,13 +11,11 @@ namespace TechRiders.Api.Controllers;
 [Produces("application/json")]
 public sealed class AuthController : BaseApiController
 {
-    private readonly TechRidersDbContext _dbContext;
-    private readonly IConfiguration _configuration;
+    private readonly IAuthService _authService;
 
-    public AuthController(TechRidersDbContext dbContext, IConfiguration configuration)
+    public AuthController(IAuthService authService)
     {
-        _dbContext = dbContext;
-        _configuration = configuration;
+        _authService = authService;
     }
 
     [HttpPost("register")]
@@ -34,8 +31,7 @@ public sealed class AuthController : BaseApiController
 
         try
         {
-            var user = await LocalAuthService.RegisterAsync(
-                _dbContext,
+            var user = await _authService.RegisterAsync(
                 request.Nickname,
                 request.Name,
                 request.LastName,
@@ -43,22 +39,15 @@ public sealed class AuthController : BaseApiController
                 request.Password,
                 cancellationToken);
 
-            var profile = LocalAuthService.BuildUserProfile(user);
-            var token = LocalAuthService.CreateToken(user, _configuration);
+            var profile = _authService.BuildUserProfile(user);
+            var token = _authService.CreateToken(user);
 
             return Ok(new RegisterResponse
             {
                 Token = token,
                 Message = "Cuenta creada correctamente.",
                 Email = user.Email,
-                User = new LocalUserProfile
-                {
-                    Id = profile.Id,
-                    Email = profile.Email,
-                    Name = profile.Name,
-                    Role = profile.Role,
-                    Roles = profile.Roles
-                }
+                User = ToUserProfileResponse(profile)
             });
         }
         catch (InvalidOperationException ex)
@@ -73,35 +62,28 @@ public sealed class AuthController : BaseApiController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(LocalLoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<LocalLoginResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
             return ValidationProblem(ModelState);
         }
 
-        var user = await LocalAuthService.AuthenticateAsync(_dbContext, request.Email, request.Password, cancellationToken);
+        var user = await _authService.AuthenticateAsync(request.Email, request.Password, cancellationToken);
         if (user is null)
         {
             return Unauthorized(new { message = "Credenciales inválidas." });
         }
 
-        var profile = LocalAuthService.BuildUserProfile(user);
-        var token = LocalAuthService.CreateToken(user, _configuration);
+        var profile = _authService.BuildUserProfile(user);
+        var token = _authService.CreateToken(user);
 
-        return Ok(new LocalLoginResponse
+        return Ok(new LoginResponse
         {
             Token = token,
-            User = new LocalUserProfile
-            {
-                Id = profile.Id,
-                Email = profile.Email,
-                Name = profile.Name,
-                Role = profile.Role,
-                Roles = profile.Roles
-            }
+            User = ToUserProfileResponse(profile)
         });
     }
 
@@ -115,8 +97,8 @@ public sealed class AuthController : BaseApiController
             return ValidationProblem(ModelState);
         }
 
-        var response = await LocalAuthService.RequestPasswordResetAsync(_dbContext, request.Email, cancellationToken);
-        return Ok(response);
+        var result = await _authService.RequestPasswordResetAsync(request.Email, cancellationToken);
+        return Ok(new ForgotPasswordResponse { Success = result.Success, Message = result.Message, Token = result.Token });
     }
 
     [HttpPost("reset-password")]
@@ -130,7 +112,7 @@ public sealed class AuthController : BaseApiController
             return ValidationProblem(ModelState);
         }
 
-        var success = await LocalAuthService.ResetPasswordAsync(_dbContext, request.Email, request.Token, request.NewPassword, cancellationToken);
+        var success = await _authService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword, cancellationToken);
         if (!success)
         {
             return BadRequest(new { message = "El token es inválido o ha expirado." });
@@ -138,4 +120,18 @@ public sealed class AuthController : BaseApiController
 
         return Ok(new { message = "Contraseña actualizada correctamente." });
     }
+
+    private static UserProfileResponse ToUserProfileResponse(AuthUserProfile profile) => new()
+    {
+        Id = profile.Id,
+        Email = profile.Email,
+        Name = profile.Name,
+        Role = profile.Role,
+        Roles = profile.Roles,
+        LinkedIn = profile.LinkedIn,
+        Instagram = profile.Instagram,
+        X = profile.X,
+        YouTube = profile.YouTube,
+        Github = profile.Github
+    };
 }

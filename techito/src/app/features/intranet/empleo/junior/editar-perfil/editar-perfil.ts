@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PublicContentService } from '@core/content/public-content.service';
+import { JUNIOR_SKILL_OPTIONS, JUNIOR_AVAILABILITY_OPTIONS } from '../junior.content';
 import { UiTextField  } from '@shared/ui/text-field/text-field';
 import { UiTextarea  } from '@shared/ui/textarea/textarea';
 import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
@@ -17,9 +16,6 @@ import { PerfilPrivado, PerfilPublico } from '../models/junior.models';
   styleUrl: './editar-perfil.scss'
 })
 export class EditarPerfil {
-  private readonly publicContentService = inject(PublicContentService);
-  private readonly publicContent = toSignal(this.publicContentService.getPublicContent(), { initialValue: null });
-
   readonly tabActiva = signal<'publico' | 'privado'>('publico');
 
   readonly perfilPublico = signal<PerfilPublico>({
@@ -42,16 +38,14 @@ export class EditarPerfil {
     pretensionSalarial: '24.000 - 30.000€'
   });
 
-  readonly habilidadesDisponibles = computed(() => this.publicContent()?.intranet.juniorSkillOptions ?? []);
+  readonly habilidadesDisponibles = computed(() => JUNIOR_SKILL_OPTIONS);
 
   readonly habilidadesOptions = computed<UiSelectOption[]>(() => [
     { label: 'Selecciona una habilidad...', value: '' },
     ...this.habilidadesDisponibles().map(hab => ({ label: hab, value: hab }))
   ]);
 
-  readonly disponibilidadOptions = computed<UiSelectOption[]>(
-    () => this.publicContent()?.intranet.juniorAvailabilityOptions ?? []
-  );
+  readonly disponibilidadOptions = computed<UiSelectOption[]>(() => JUNIOR_AVAILABILITY_OPTIONS);
 
   readonly nuevaHabilidad = signal('');
 

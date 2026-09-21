@@ -22,39 +22,39 @@ namespace TechRiders.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Candidatura", b =>
+            modelBuilder.Entity("TechRiders.Domain.Entities.Capability", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("EmailJunior")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaSolicitud")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("JuniorId")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
 
-                    b.Property<string>("NombreJunior")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("RequiresValidation")
+                        .HasColumnType("bit");
 
-                    b.Property<Guid>("OfertaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Candidaturas");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Capabilities", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Category", b =>
@@ -97,167 +97,6 @@ namespace TechRiders.Infrastructure.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Center", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContactPerson")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Instagram")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("LinkedIn")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("Locality")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Parking")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("ParkingInfo")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Specialty")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email");
-
-                    b.HasIndex("IsActive");
-
-                    b.HasIndex("Locality");
-
-                    b.ToTable("Centers", (string)null);
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.CenterContact", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CenterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("Role")
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CenterId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CenterContacts", (string)null);
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.CenterStudy", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CenterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<string>("Specialty")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CenterId");
-
-                    b.ToTable("CenterStudies", (string)null);
-                });
-
             modelBuilder.Entity("TechRiders.Domain.Entities.Community", b =>
                 {
                     b.Property<Guid>("Id")
@@ -273,6 +112,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Github")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Instagram")
                         .HasMaxLength(512)
@@ -300,6 +142,12 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<string>("Website")
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("X")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YouTube")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -361,59 +209,262 @@ namespace TechRiders.Infrastructure.Migrations
                     b.ToTable("CommunityMembers", (string)null);
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Company", b =>
+            modelBuilder.Entity("TechRiders.Domain.Entities.CommunityPartnerApplication", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ContactUserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CollaborationIdeas")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                    b.Property<string>("Github")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Instagram")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("LinkedIn")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("LogoUrl")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Mission")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Motivation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(180)
-                        .HasColumnType("nvarchar(180)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("pending");
+
+                    b.Property<string>("Topics")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Website")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("WhatYouDo")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("WhoYouAre")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("X")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("YouTube")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContactUserId");
+                    b.HasIndex("ContactEmail");
 
-                    b.ToTable("Companies", (string)null);
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("Website");
+
+                    b.ToTable("CommunityPartnerApplications", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.Consent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Evidence")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("LegalBasisId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Origin")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<Guid>("PurposeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RegisteredByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextVersion")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("WithdrawnAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LegalBasisId");
+
+                    b.HasIndex("PurposeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Consents", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.ConsentPurpose", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("ConsentPurposes", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.ContentClassification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ContentKind")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DimensionValueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DimensionValueId");
+
+                    b.HasIndex("ContentKind", "ContentId", "DimensionValueId")
+                        .IsUnique();
+
+                    b.ToTable("ContentClassifications", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CenterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -451,6 +502,9 @@ namespace TechRiders.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<Guid?>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -469,11 +523,11 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CenterId");
-
                     b.HasIndex("EventTypeId");
 
                     b.HasIndex("IsActive");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("StartDateTime");
 
@@ -581,9 +635,6 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<Guid>("AmbassadorUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CenterId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -601,6 +652,9 @@ namespace TechRiders.Infrastructure.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset?>("PlannedDate")
                         .HasColumnType("datetimeoffset");
 
@@ -614,11 +668,11 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasIndex("AmbassadorUserId");
 
-                    b.HasIndex("CenterId");
-
                     b.HasIndex("HasScheduledDate");
 
                     b.HasIndex("IsActive");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("StatusId");
 
@@ -668,6 +722,58 @@ namespace TechRiders.Infrastructure.Migrations
                     b.ToTable("FPTourTasks", (string)null);
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.GpfPersonLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CodUnico")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastQueriedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LinkMethod")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CodUnico")
+                        .IsUnique()
+                        .HasFilter("[Status] = 1");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 1");
+
+                    b.ToTable("GpfPersonLinks", (string)null);
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.IntranetAuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -678,11 +784,24 @@ namespace TechRiders.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ActorUserId")
+                    b.Property<string>("ActorEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ActorUserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Detail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Module")
                         .IsRequired()
@@ -691,6 +810,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<string>("Result")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -702,6 +824,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -718,11 +843,15 @@ namespace TechRiders.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -749,6 +878,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -764,63 +896,6 @@ namespace TechRiders.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IntranetUserCategories");
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.JobOffer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("ClosingAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContractType")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
-
-                    b.Property<DateTimeOffset?>("PublishedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(180)
-                        .HasColumnType("nvarchar(180)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Url")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("JobOffers", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.KnowledgeArticle", b =>
@@ -903,6 +978,108 @@ namespace TechRiders.Infrastructure.Migrations
                     b.ToTable("KnowledgeArticleSkills", (string)null);
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.LegalBasis", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("LegalBases", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.LegalText", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PurposeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextType")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurposeId");
+
+                    b.HasIndex("TextType", "Version")
+                        .IsUnique();
+
+                    b.ToTable("LegalTexts", (string)null);
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.MT_Category", b =>
                 {
                     b.Property<int>("Id")
@@ -916,17 +1093,8 @@ namespace TechRiders.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("FatherId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1093,51 +1261,154 @@ namespace TechRiders.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Oferta", b =>
+            modelBuilder.Entity("TechRiders.Domain.Entities.Membership", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ActivatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Empresa")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaPublicacion")
+                    b.Property<DateTime?>("EndedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Modalidad")
+                    b.Property<string>("Origin")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Requisitos")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("SuspendedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Salario")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Ubicacion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ofertas");
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Memberships", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrganizationType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Origin")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Province")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("TaxId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.OrganizationGpfLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GpfReference")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkMethod")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GpfReference")
+                        .IsUnique()
+                        .HasFilter("[Status] = 1 AND [GpfReference] IS NOT NULL");
+
+                    b.HasIndex("OrganizationId")
+                        .IsUnique();
+
+                    b.ToTable("OrganizationGpfLinks", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Permission", b =>
@@ -1170,6 +1441,255 @@ namespace TechRiders.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Permissions", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PersonOrganization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrimaryContact")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Position")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("RelationType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PersonOrganizations", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PersonStudy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Specialty")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("StudyType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PersonStudies", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PreferenceDimension", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("PreferenceDimensions", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PreferenceDimensionValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DimensionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<Guid?>("ParentValueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentValueId");
+
+                    b.HasIndex("DimensionId", "Code")
+                        .IsUnique();
+
+                    b.ToTable("PreferenceDimensionValues", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PrivacyRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Channel")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InternalNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequestType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ResponsibleUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PrivacyRequests", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.Profile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Profiles", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Role", b =>
@@ -1225,9 +1745,6 @@ namespace TechRiders.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CenterId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -1246,6 +1763,9 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("ExpectedAttendees")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -1257,6 +1777,9 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.Property<int?>("MaxCapacity")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("OrganizationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Room")
                         .HasMaxLength(100)
@@ -1288,11 +1811,11 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CenterId");
-
                     b.HasIndex("EventId");
 
                     b.HasIndex("IsActive");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("Speaker");
 
@@ -1459,47 +1982,6 @@ namespace TechRiders.Infrastructure.Migrations
                     b.ToTable("Statuses", (string)null);
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Tutorial", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Autor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CategoriasJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Extracto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaPublicacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tutoriales");
-                });
-
             modelBuilder.Entity("TechRiders.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1517,10 +1999,6 @@ namespace TechRiders.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("GPFId")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
 
                     b.Property<string>("Github")
                         .HasMaxLength(300)
@@ -1577,11 +2055,22 @@ namespace TechRiders.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("SpeakerTopics")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("StatusId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("X")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("YouTube")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.HasKey("Id");
 
@@ -1593,6 +2082,56 @@ namespace TechRiders.Infrastructure.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserCapability", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CapabilityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ValidatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CapabilityId");
+
+                    b.HasIndex("UserId", "CapabilityId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 2");
+
+                    b.ToTable("UserCapabilities", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.UserCategory", b =>
@@ -1608,6 +2147,159 @@ namespace TechRiders.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("UserCategories", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserFieldVisibility", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FieldKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "FieldKey")
+                        .IsUnique();
+
+                    b.ToTable("UserFieldVisibilities", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserOrientationScope", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OtherDetail")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Scope")
+                        .IsUnique();
+
+                    b.ToTable("UserOrientationScopes", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserPreference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DimensionValueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Origin")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int?>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DimensionValueId");
+
+                    b.HasIndex("UserId", "DimensionValueId")
+                        .IsUnique();
+
+                    b.ToTable("UserPreferences", (string)null);
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserProfileHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[IsCurrent] = 1");
+
+                    b.ToTable("UserProfileHistories", (string)null);
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.UserRole", b =>
@@ -1647,35 +2339,6 @@ namespace TechRiders.Infrastructure.Migrations
                     b.HasIndex("SkillId");
 
                     b.ToTable("UserSkills", (string)null);
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.CenterContact", b =>
-                {
-                    b.HasOne("TechRiders.Domain.Entities.Center", "Center")
-                        .WithMany("Contacts")
-                        .HasForeignKey("CenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TechRiders.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Center");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.CenterStudy", b =>
-                {
-                    b.HasOne("TechRiders.Domain.Entities.Center", "Center")
-                        .WithMany("Studies")
-                        .HasForeignKey("CenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Center");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Community", b =>
@@ -1725,36 +2388,63 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Company", b =>
+            modelBuilder.Entity("TechRiders.Domain.Entities.Consent", b =>
                 {
-                    b.HasOne("TechRiders.Domain.Entities.User", "ContactUser")
+                    b.HasOne("TechRiders.Domain.Entities.LegalBasis", "LegalBasisEntity")
                         .WithMany()
-                        .HasForeignKey("ContactUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("LegalBasisId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("ContactUser");
+                    b.HasOne("TechRiders.Domain.Entities.ConsentPurpose", "Purpose")
+                        .WithMany()
+                        .HasForeignKey("PurposeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("Consents")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LegalBasisEntity");
+
+                    b.Navigation("Purpose");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.ContentClassification", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.PreferenceDimensionValue", "DimensionValue")
+                        .WithMany("ContentClassifications")
+                        .HasForeignKey("DimensionValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DimensionValue");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Event", b =>
                 {
-                    b.HasOne("TechRiders.Domain.Entities.Center", "Center")
-                        .WithMany("Events")
-                        .HasForeignKey("CenterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("TechRiders.Domain.Entities.EventType", "EventType")
                         .WithMany("Events")
                         .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("TechRiders.Domain.Entities.Organization", "Organization")
+                        .WithMany("Events")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("TechRiders.Domain.Entities.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId");
 
-                    b.Navigation("Center");
-
                     b.Navigation("EventType");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Status");
                 });
@@ -1805,9 +2495,9 @@ namespace TechRiders.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TechRiders.Domain.Entities.Center", "Center")
+                    b.HasOne("TechRiders.Domain.Entities.Organization", "Organization")
                         .WithMany("FPTours")
-                        .HasForeignKey("CenterId")
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1817,7 +2507,7 @@ namespace TechRiders.Infrastructure.Migrations
 
                     b.Navigation("Ambassador");
 
-                    b.Navigation("Center");
+                    b.Navigation("Organization");
 
                     b.Navigation("Status");
                 });
@@ -1833,22 +2523,15 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("FPTour");
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.JobOffer", b =>
+            modelBuilder.Entity("TechRiders.Domain.Entities.GpfPersonLink", b =>
                 {
-                    b.HasOne("TechRiders.Domain.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("TechRiders.Domain.Entities.Company", "Company")
-                        .WithMany("JobOffers")
-                        .HasForeignKey("CompanyId")
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithOne("GpfLink")
+                        .HasForeignKey("TechRiders.Domain.Entities.GpfPersonLink", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
-                    b.Navigation("Company");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.KnowledgeArticle", b =>
@@ -1906,6 +2589,16 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.LegalText", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.ConsentPurpose", "Purpose")
+                        .WithMany()
+                        .HasForeignKey("PurposeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Purpose");
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.MT_Category", b =>
                 {
                     b.HasOne("TechRiders.Domain.Entities.MT_Category", "Main")
@@ -1914,6 +2607,87 @@ namespace TechRiders.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Main");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.Membership", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithOne("Membership")
+                        .HasForeignKey("TechRiders.Domain.Entities.Membership", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.OrganizationGpfLink", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.Organization", "Organization")
+                        .WithOne("GpfLink")
+                        .HasForeignKey("TechRiders.Domain.Entities.OrganizationGpfLink", "OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PersonOrganization", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.Organization", "Organization")
+                        .WithMany("PersonRelations")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("OrganizationRelations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PersonStudy", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("Studies")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PreferenceDimensionValue", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.PreferenceDimension", "Dimension")
+                        .WithMany("Values")
+                        .HasForeignKey("DimensionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.PreferenceDimensionValue", "ParentValue")
+                        .WithMany("ChildValues")
+                        .HasForeignKey("ParentValueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Dimension");
+
+                    b.Navigation("ParentValue");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PrivacyRequest", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("PrivacyRequests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.RolePermission", b =>
@@ -1937,24 +2711,24 @@ namespace TechRiders.Infrastructure.Migrations
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Session", b =>
                 {
-                    b.HasOne("TechRiders.Domain.Entities.Center", "Center")
-                        .WithMany("Sessions")
-                        .HasForeignKey("CenterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("TechRiders.Domain.Entities.Event", "Event")
                         .WithMany("Sessions")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TechRiders.Domain.Entities.Organization", "Organization")
+                        .WithMany("Sessions")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("TechRiders.Domain.Entities.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId");
 
-                    b.Navigation("Center");
-
                     b.Navigation("Event");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Status");
                 });
@@ -2054,6 +2828,25 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserCapability", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.Capability", "Capability")
+                        .WithMany("UserCapabilities")
+                        .HasForeignKey("CapabilityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("Capabilities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Capability");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.UserCategory", b =>
                 {
                     b.HasOne("TechRiders.Domain.Entities.Category", "Category")
@@ -2069,6 +2862,66 @@ namespace TechRiders.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserFieldVisibility", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("FieldVisibilities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserOrientationScope", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("OrientationScopes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserPreference", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.PreferenceDimensionValue", "DimensionValue")
+                        .WithMany("UserPreferences")
+                        .HasForeignKey("DimensionValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("Preferences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DimensionValue");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.UserProfileHistory", b =>
+                {
+                    b.HasOne("TechRiders.Domain.Entities.Profile", "Profile")
+                        .WithMany("UserProfileHistories")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechRiders.Domain.Entities.User", "User")
+                        .WithMany("ProfileHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
 
                     b.Navigation("User");
                 });
@@ -2111,6 +2964,11 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.Capability", b =>
+                {
+                    b.Navigation("UserCapabilities");
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.Category", b =>
                 {
                     b.Navigation("EventCategories");
@@ -2122,29 +2980,11 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("UserCategories");
                 });
 
-            modelBuilder.Entity("TechRiders.Domain.Entities.Center", b =>
-                {
-                    b.Navigation("Contacts");
-
-                    b.Navigation("Events");
-
-                    b.Navigation("FPTours");
-
-                    b.Navigation("Sessions");
-
-                    b.Navigation("Studies");
-                });
-
             modelBuilder.Entity("TechRiders.Domain.Entities.Community", b =>
                 {
                     b.Navigation("Collaborations");
 
                     b.Navigation("Members");
-                });
-
-            modelBuilder.Entity("TechRiders.Domain.Entities.Company", b =>
-                {
-                    b.Navigation("JobOffers");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Event", b =>
@@ -2180,9 +3020,41 @@ namespace TechRiders.Infrastructure.Migrations
                     b.Navigation("Secondary");
                 });
 
+            modelBuilder.Entity("TechRiders.Domain.Entities.Organization", b =>
+                {
+                    b.Navigation("Events");
+
+                    b.Navigation("FPTours");
+
+                    b.Navigation("GpfLink");
+
+                    b.Navigation("PersonRelations");
+
+                    b.Navigation("Sessions");
+                });
+
             modelBuilder.Entity("TechRiders.Domain.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PreferenceDimension", b =>
+                {
+                    b.Navigation("Values");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.PreferenceDimensionValue", b =>
+                {
+                    b.Navigation("ChildValues");
+
+                    b.Navigation("ContentClassifications");
+
+                    b.Navigation("UserPreferences");
+                });
+
+            modelBuilder.Entity("TechRiders.Domain.Entities.Profile", b =>
+                {
+                    b.Navigation("UserProfileHistories");
                 });
 
             modelBuilder.Entity("TechRiders.Domain.Entities.Role", b =>
@@ -2216,13 +3088,35 @@ namespace TechRiders.Infrastructure.Migrations
 
             modelBuilder.Entity("TechRiders.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Capabilities");
+
+                    b.Navigation("Consents");
+
                     b.Navigation("EventRegistrations");
 
                     b.Navigation("FPTours");
 
+                    b.Navigation("FieldVisibilities");
+
+                    b.Navigation("GpfLink");
+
+                    b.Navigation("Membership");
+
+                    b.Navigation("OrganizationRelations");
+
+                    b.Navigation("OrientationScopes");
+
+                    b.Navigation("Preferences");
+
+                    b.Navigation("PrivacyRequests");
+
+                    b.Navigation("ProfileHistories");
+
                     b.Navigation("SessionRegistrations");
 
                     b.Navigation("SpeakerSessions");
+
+                    b.Navigation("Studies");
 
                     b.Navigation("UserCategories");
 

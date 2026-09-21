@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '@core/auth/auth.service';
 import { catchError, interval, of, startWith, switchMap } from 'rxjs';
 import { IntranetLayoutTraceService } from './services/intranet-layout-trace.service';
-import { INTRANET_NAV_SECTIONS, IntranetNavItem, IntranetNavSection } from './intranet-nav.config';
+import { IntranetNavItem, IntranetNavSection, resolveIntranetWorkspace } from './intranet-nav.config';
 
 @Component({
   selector: 'app-intranet-layout',
@@ -20,18 +20,14 @@ export class IntranetLayout {
   private readonly intranetLayoutTraceService = inject(IntranetLayoutTraceService);
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly navSections: IntranetNavSection[] = INTRANET_NAV_SECTIONS;
-
-  readonly userType = computed(() => this.authService.userType() || 'junior');
   readonly currentUserName = computed(() => this.authService.user()?.name || 'Usuario');
-  readonly visibleSections = computed(() =>
-    this.navSections
-      .map(section => ({
-        ...section,
-        items: section.items.filter(item => this.authService.hasRole(item.roles)),
-      }))
-      .filter(section => section.items.length > 0),
-  );
+  readonly workspace = computed(() => {
+    const user = this.authService.user();
+    const roles = user?.roles?.length ? user.roles : user ? [user.role] : [];
+    return resolveIntranetWorkspace(roles);
+  });
+  readonly activeRoleLabel = computed(() => this.workspace().label);
+  readonly visibleSections = computed<readonly IntranetNavSection[]>(() => this.workspace().sections);
 
   constructor() {
     this.startHeartbeatTrace();

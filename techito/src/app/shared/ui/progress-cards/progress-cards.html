@@ -11,11 +11,15 @@
         <strong class="ui-progress-value">{{ item.value }}</strong>
       }
       <p>{{ item.detail }}</p>
-      <div class="ui-progress-track" aria-hidden="true">
-        <div class="ui-progress-fill" [style.width.%]="item.progress"></div>
-      </div>
+      @if (item.progress !== undefined) {
+        <div class="ui-progress-track" aria-hidden="true">
+          <div class="ui-progress-fill" [style.width.%]="item.progress"></div>
+        </div>
+      }
       <div class="ui-progress-meta">
-        <span>{{ item.progress }}% listo</span>
+        @if (item.progress !== undefined) {
+          <span>{{ item.progress }}% listo</span>
+        }
         @if (item.ctaLabel && item.ctaLink) {
           <a [routerLink]="item.ctaLink">{{ item.ctaLabel }}</a>
         }

@@ -37,9 +37,9 @@ public class FPTourService : IFPTourService
         return _mapper.Map<FPTourResponse>(tour);
     }
 
-    public async Task<IEnumerable<FPTourResponse>> GetFPToursByCenterAsync(Guid centerId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FPTourResponse>> GetFPToursByOrganizationAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var tours = await _unitOfWork.FPTours.GetFPToursByCenterAsync(centerId, cancellationToken);
+        var tours = await _unitOfWork.FPTours.GetFPToursByOrganizationAsync(organizationId, cancellationToken);
         return _mapper.Map<IEnumerable<FPTourResponse>>(tours);
     }
 
@@ -57,29 +57,23 @@ public class FPTourService : IFPTourService
 
     public async Task<FPTourResponse> CreateFPTourAsync(CreateFPTourRequest request, CancellationToken cancellationToken = default)
     {
-        var centerExists = await _unitOfWork.Centers.ExistsAsync(c => c.Id == request.CenterId && c.IsActive, cancellationToken);
         var ambassadorExists = await _unitOfWork.Ambassadors.IsAmbassadorAsync(request.AmbassadorId, cancellationToken);
 
-        if (!centerExists) throw new InvalidOperationException($"Center with ID {request.CenterId} does not exist");
         if (!ambassadorExists) throw new InvalidOperationException($"Ambassador with ID {request.AmbassadorId} does not exist");
 
         var tour = _mapper.Map<FPTour>(request);
         await _unitOfWork.FPTours.AddAsync(tour, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<FPTourResponse>(await _unitOfWork.FPTours.GetFPTourWithDetailsAsync(tour.Id, cancellationToken));
+        var createdTour = await _unitOfWork.FPTours.GetFPTourWithDetailsAsync(tour.Id, cancellationToken)
+            ?? throw new InvalidOperationException("No se pudo cargar el FP Tour creado.");
+        return _mapper.Map<FPTourResponse>(createdTour);
     }
 
     public async Task<FPTourResponse?> UpdateFPTourAsync(Guid id, UpdateFPTourRequest request, CancellationToken cancellationToken = default)
     {
         var tour = await _unitOfWork.FPTours.GetByIdAsync(id, cancellationToken);
         if (tour == null || !tour.IsActive) return null;
-
-        if (request.CenterId.HasValue)
-        {
-            var centerExists = await _unitOfWork.Centers.ExistsAsync(c => c.Id == request.CenterId.Value && c.IsActive, cancellationToken);
-            if (!centerExists) throw new InvalidOperationException($"Center with ID {request.CenterId.Value} does not exist");
-        }
 
         if (request.AmbassadorId.HasValue)
         {
@@ -92,7 +86,9 @@ public class FPTourService : IFPTourService
         await _unitOfWork.FPTours.UpdateAsync(tour, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<FPTourResponse>(await _unitOfWork.FPTours.GetFPTourWithDetailsAsync(tour.Id, cancellationToken));
+        var updatedTour = await _unitOfWork.FPTours.GetFPTourWithDetailsAsync(tour.Id, cancellationToken)
+            ?? throw new InvalidOperationException("No se pudo cargar el FP Tour actualizado.");
+        return _mapper.Map<FPTourResponse>(updatedTour);
     }
 
     public async Task<bool> DeleteFPTourAsync(Guid id, CancellationToken cancellationToken = default)

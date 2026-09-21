@@ -1,7 +1,7 @@
 <div class="admin-staff">
   <div class="page-header">
     <a routerLink="/intranet/admin" class="btn-back">← Volver</a>
-    <h1>Panel Staff Superadmin</h1>
+    <h1>Panel Staff</h1>
     <p>Gobierno de usuarios, roles y estado operativo de intranet.</p>
   </div>
 
@@ -16,8 +16,8 @@
         <p>{{activeCount()}}</p>
     </div>
     <div class="stat">
-      <span>Superadmins activos</span>
-      <p>{{superAdminCount()}}</p>
+      <span>Admins activos</span>
+      <p>{{adminCount()}}</p>
     </div>
   </div>
 
@@ -69,6 +69,180 @@
     <span>Cargando datos de gobierno...</span>
   </div>
   }
+
+  <!-- Solicitudes de rol pendientes -->
+  <div class="card">
+    <h2>Solicitudes de rol pendientes</h2>
+    @if (!pendingRequests().length) {
+      <p>No hay solicitudes pendientes.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Rol solicitado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of pendingRequests(); track item.id) {
+            <tr>
+              <td><strong>{{item.userName}}</strong><br>{{item.userEmail}}</td>
+              <td><span class="role-badge" [class]="item.capabilityName">{{item.capabilityName}}</span></td>
+              <td>{{item.requestedAt | date:'short'}}</td>
+              <td>
+                <app-ui-button class="btn-sm" [disabled]="resolvingRequestId() === item.id" (click)="resolveRequest(item.id, 'approve')">✅ Aprobar</app-ui-button>
+                <app-ui-button class="btn-sm delete" [disabled]="resolvingRequestId() === item.id" (click)="resolveRequest(item.id, 'reject')">❌ Rechazar</app-ui-button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Vínculo manual con GPF -->
+  <div class="card">
+    <h2>Vinculación manual con GPF</h2>
+    <p>Vincula una persona Tech Riders con su CodUnico de GPF. Máximo un vínculo activo por persona y por CodUnico.</p>
+    <div class="action-bar">
+      <app-ui-select label="Persona" [options]="staffUserOptions()" [value]="gpfLinkUserId()" (valueChange)="updateGpfLinkUserId($event)"></app-ui-select>
+      <app-ui-text-field label="CodUnico" type="text" name="gpf-cod-unico" [value]="gpfLinkCodUnico()" (valueChange)="updateGpfLinkCodUnico($event)"></app-ui-text-field>
+      <app-ui-button class="btn-primary" [disabled]="gpfLinkSaving()" (click)="crearVinculoGpf()">Vincular</app-ui-button>
+    </div>
+    @if (!gpfLinks().length) {
+      <p>No hay vínculos registrados.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>CodUnico</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (link of gpfLinks(); track link.id) {
+            <tr>
+              <td><strong>{{link.userName}}</strong><br>{{link.userEmail}}</td>
+              <td>{{link.codUnico}}</td>
+              <td><span class="badge" [class]="link.status">{{link.status}}</span></td>
+              <td>
+                @if (link.status === 'Activo') {
+                  <app-ui-button class="btn-sm delete" (click)="desvincularGpf(link.id)">Desvincular</app-ui-button>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Historial y revocación de capacidades (Ambassadors y otros roles de comunidad) -->
+  <div class="card">
+    <h2>Historial de capacidades (Ambassadors y otros roles)</h2>
+    <div class="action-bar">
+      <app-ui-select label="Rol" [options]="capabilityFilterOptions" [value]="capabilityHistoryFilter()" (valueChange)="updateCapabilityHistoryFilter($event)"></app-ui-select>
+    </div>
+    @if (!capabilityHistory().length) {
+      <p>No hay histórico para este rol.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Estado</th>
+              <th>Solicitado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of capabilityHistory(); track item.id) {
+            <tr>
+              <td><strong>{{item.userName}}</strong><br>{{item.userEmail}}</td>
+              <td><span class="badge" [class]="item.status">{{item.status}}</span></td>
+              <td>{{item.requestedAt | date:'short'}}</td>
+              <td>
+                @if (item.status === 'Activa') {
+                  <app-ui-button class="btn-sm delete" [disabled]="revokingId() === item.id" (click)="revokeCapability(item.id)">Revocar</app-ui-button>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Organizaciones -->
+  <div class="card">
+    <h2>Nueva organización</h2>
+    <p>Empresa, centro o comunidad se gestionan como organizaciones, nunca como roles de usuario.</p>
+    <div class="action-bar">
+      <app-ui-select
+        label="Tipo de organización"
+        [options]="[
+          { label: 'Empresa', value: 'Empresa' },
+          { label: 'Centro de formación', value: 'CentroFormacion' },
+          { label: 'Centro educativo', value: 'CentroEducativo' },
+          { label: 'Comunidad tecnológica', value: 'ComunidadTecnologica' },
+          { label: 'Entidad colaboradora', value: 'EntidadColaboradora' },
+          { label: 'Proveedor de formación', value: 'ProveedorFormacion' },
+          { label: 'Tajamar', value: 'Tajamar' },
+          { label: 'Otra organización', value: 'Otra' }
+        ]"
+        [value]="organizationType()"
+        (valueChange)="updateOrganizationType($event)"
+      ></app-ui-select>
+      <app-ui-text-field label="Nombre" type="text" name="organization-name" [value]="organizationName()" (valueChange)="updateOrganizationName($event)"></app-ui-text-field>
+      <app-ui-button class="btn-primary" [disabled]="organizationSaving()" (click)="crearOrganizacion()">Crear organización</app-ui-button>
+    </div>
+  </div>
+
+  <!-- Relaciones con organizaciones pendientes -->
+  <div class="card">
+    <h2>Relaciones con organizaciones pendientes</h2>
+    @if (!pendingOrgRelations().length) {
+      <p>No hay relaciones pendientes.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Organización</th>
+              <th>Tipo de relación</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (relation of pendingOrgRelations(); track relation.id) {
+            <tr>
+              <td>{{relation.userName}}</td>
+              <td>{{relation.organizationName}}</td>
+              <td>{{relation.relationType}}</td>
+              <td>{{relation.requestedAt | date:'short'}}</td>
+              <td>
+                <app-ui-button class="btn-sm" [disabled]="resolvingOrgRelationId() === relation.id" (click)="resolveOrgRelation(relation.id, 'approve')">✅ Aprobar</app-ui-button>
+                <app-ui-button class="btn-sm delete" [disabled]="resolvingOrgRelationId() === relation.id" (click)="resolveOrgRelation(relation.id, 'reject')">❌ Rechazar</app-ui-button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
 
   <!-- Staff Table -->
   <div class="card">

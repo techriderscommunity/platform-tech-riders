@@ -1,9 +1,9 @@
 # Glossary
 
 <!-- AUTO-GENERATED:START -->
-- updated_at: 2026-08-24T13:45:12.717614+00:00
+- updated_at: 2026-09-19T18:05:04.719643+00:00
 - fallback_rate: porcentaje de rutas en fallback. valor_actual=41.67%.
-- grounded_rate: porcentaje de rutas con fuentes validas. valor_actual=68.75%.
+- grounded_rate: porcentaje de rutas con fuentes validas. valor_actual=66.67%.
 - confirmed_success_rate: tasa de exito con feedback confirmado. valor_actual=100.0%.
 - metrics_coverage_rate: porcentaje de eventos con metricas. valor_actual=0.0%.
 - tokens_per_confirmed_success: tokens medios por exito confirmado. valor_actual=0.0.

@@ -1,0 +1,136 @@
+<section class="events-page">
+  <div class="events-inner">
+    <header class="events-header">
+      <span class="section-label">eventos</span>
+      <h1>Participación comunitaria TechRiders</h1>
+      <p>
+        Descubre próximos encuentros, histórico de talks, galerías y calendario de actividades para conectar con la comunidad.
+      </p>
+      <div class="events-featured-banner" aria-labelledby="events-featured-title">
+        <div class="events-featured-grid">
+          @for (event of featuredEvents; track event.title) {
+          <a class="events-featured-card" [class]="'events-featured-card--' + event.accent" [href]="event.href" [attr.target]="event.href.startsWith('http') ? '_blank' : null" [attr.rel]="event.href.startsWith('http') ? 'noopener noreferrer' : null">
+            <span class="events-featured-eyebrow">{{ event.eyebrow }}</span>
+            <h3>{{ event.title }}</h3>
+            <p>{{ event.description }}</p>
+            <span class="events-featured-link">Ver Evento<span aria-hidden="true">↗</span></span>
+          </a>
+          }
+        </div>
+      </div>
+    </header>
+
+
+<section id="calendario-publico">
+  <div class="event-agenda-shell">
+    <aside class="event-filters" aria-label="Filtros de agenda">
+      <h3>Filtros <small>({{ filteredEvents().length }} resultados)</small></h3>
+
+      <app-ui-text-field
+        label="Buscar"
+        type="search"
+        name="search-agenda"
+        class="event-search"
+        placeholder="Buscar eventos..."
+        [value]="searchText()"
+        (valueChange)="updateSearch($event)"
+      ></app-ui-text-field>
+
+      <div class="filter-group">
+        <p>Tipo</p>
+        <button type="button" class="filter-chip" [class.active]="selectedType() === ''" (click)="setType('')">Todos</button>
+        @for (type of agendaTypes; track type) {
+          <button type="button" class="filter-chip" [class.active]="selectedType() === type" (click)="setType(type)">
+            {{ type }}
+          </button>
+        }
+      </div>
+
+      <div class="filter-group">
+        <p>Modalidad</p>
+        <button type="button" class="filter-chip" [class.active]="selectedModality() === ''" (click)="setModality('')">Todas</button>
+        @for (modality of agendaModalities; track modality) {
+          <button type="button" class="filter-chip" [class.active]="selectedModality() === modality" (click)="setModality(modality)">
+            {{ modality }}
+          </button>
+        }
+      </div>
+
+      <div class="filter-group">
+        <p>Temática</p>
+        <button type="button" class="filter-chip" [class.active]="selectedTopic() === ''" (click)="setTopic('')">Todas</button>
+        @for (topic of agendaTopics; track topic) {
+          <button type="button" class="filter-chip" [class.active]="selectedTopic() === topic" (click)="setTopic(topic)">
+            {{ topic }}
+          </button>
+        }
+      </div>
+    </aside>
+
+    <div class="event-results">
+      <div class="event-toolbar">
+        <p>Filtrado por</p>
+        <span class="active-filter">{{ activeFilterLabel() }}</span>
+        <button type="button" class="clear-filters" (click)="clearFilters()">Borrar todo</button>
+      </div>
+
+      <p class="event-meta">{{ filteredEvents().length }} eventos encontrados</p>
+
+      @if (filteredEvents().length === 0) {
+        <p class="event-feedback">No hay eventos para los filtros actuales.</p>
+      } @else {
+        <app-ui-resource-cards [items]="eventCards()"></app-ui-resource-cards>
+      }
+    </div>
+  </div>
+</section>
+
+    <section class="events-panel">
+      <div class="panel-head">
+        <h2>Galerías de eventos</h2>
+      </div>
+
+      <div class="gallery-list">
+        @for (galeria of galerias; track galeria.title) {
+        <article class="gallery-group">
+          <h3>{{ galeria.title }}</h3>
+          <p>{{ galeria.subtitle }}</p>
+          <div class="gallery-grid">
+            @for (item of galeria.items; track item.src + item.alt) {
+            <figure>
+              <img [src]="item.src" [alt]="item.alt" loading="lazy" />
+            </figure>
+            }
+          </div>
+        </article>
+        }
+      </div>
+    </section>
+
+    <section class="events-panel">
+      <div class="panel-head">
+        <h2>Calendario de eventos</h2>
+      </div>
+      @if (showLumaCalendar()) {
+        <div class="calendar-shell">
+          <iframe
+            src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
+            title="Calendario de eventos TechRiders"
+            loading="lazy"
+            frameborder="0"
+            allowfullscreen=""
+            aria-hidden="false"
+            tabindex="0"
+          ></iframe>
+        </div>
+      } @else {
+        <div class="calendar-shell">
+          <p>Consulta nuestras actividades y reserva plaza desde el calendario oficial de TechRiders.</p>
+          <a class="btn btn-primary" href="https://luma.com/calendar/cal-24k3WtXkbkzA2tg/events" target="_blank" rel="noopener noreferrer">
+            Ver calendario
+          </a>
+        </div>
+      }
+    </section>
+  </div>
+</section>

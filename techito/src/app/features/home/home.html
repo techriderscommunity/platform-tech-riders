@@ -14,8 +14,8 @@
       Porque las mejores oportunidades nacen cuando conectamos conocimiento, ideas y personas.
     </p>
     <div class="hero-actions">
-      <a routerLink="/tutorials" class="btn btn-primary">Explore tutorials</a>
-      <a routerLink="/about-us" class="btn btn-secondary">About us</a>
+      <a routerLink="/knowledge" class="btn btn-primary">Conocimiento</a>
+      <a routerLink="/about-us" class="btn btn-secondary">Sobre nosotros</a>
     </div>
 
     <app-ui-metrics-strip class="home-metrics-strip" [items]="stats"></app-ui-metrics-strip>
@@ -64,7 +64,7 @@
         } @else if (proximosEventos().length === 0) {
         <div class="community-empty">
           <span class="proximamente-icon">📅</span>
-          <p>Estamos cerrando nuevas fechas. <a routerLink="/contact">Escríbenos</a> para mantenerte al día.</p>
+          <p>Estamos cerrando nuevas fechas. <a routerLink="/join">Escríbenos</a> para mantenerte al día.</p>
         </div>
         } @else {
         <div class="community-events-list">
@@ -86,17 +86,26 @@
       <aside class="community-panel community-register">
         <h3 class="community-title">Registro directo</h3>
         <p class="community-register-text">Reserva tu plaza desde nuestro calendario oficial de Luma.</p>
-        <div class="luma-shell">
-          <iframe
-            src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
-            title="Calendario de eventos TechRiders en Luma"
-            loading="lazy"
-            frameborder="0"
-            allowfullscreen=""
-            aria-hidden="false"
-            tabindex="0"
-          ></iframe>
-        </div>
+        @if (showLumaCalendar()) {
+          <div class="luma-shell">
+            <iframe
+              src="https://luma.com/embed/calendar/cal-24k3WtXkbkzA2tg/events"
+              title="Calendario de eventos TechRiders en Luma"
+              loading="lazy"
+              frameborder="0"
+              allowfullscreen=""
+              aria-hidden="false"
+              tabindex="0"
+            ></iframe>
+          </div>
+        } @else {
+          <div class="luma-shell">
+            <p>Consulta y reserva plaza desde el calendario oficial de TechRiders.</p>
+            <a class="btn btn-primary" href="https://luma.com/calendar/cal-24k3WtXkbkzA2tg/events" target="_blank" rel="noopener noreferrer">
+              Abrir calendario
+            </a>
+          </div>
+        }
       </aside>
     </div>
 

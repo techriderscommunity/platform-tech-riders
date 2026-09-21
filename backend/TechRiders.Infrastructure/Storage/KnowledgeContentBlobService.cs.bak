@@ -1,0 +1,36 @@
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Options;
+using TechRiders.Application.Interfaces;
+
+namespace TechRiders.Infrastructure.Storage;
+
+/// <summary>
+/// Implementaci\u00f3n con Azure.Storage.Blobs + Managed Identity (DefaultAzureCredential).
+/// No hay connection strings ni claves compartidas en configuraci\u00f3n.
+/// </summary>
+public sealed class KnowledgeContentBlobService : IKnowledgeContentBlobService
+{
+    private readonly BlobContainerClient _containerClient;
+
+    public KnowledgeContentBlobService(IOptions<KnowledgeStorageOptions> options)
+    {
+        var settings = options.Value;
+        var serviceClient = new BlobServiceClient(new Uri(settings.AccountUrl), new DefaultAzureCredential());
+        _containerClient = serviceClient.GetBlobContainerClient(settings.KnowledgeContainer);
+    }
+
+    public async Task<bool> ExistsAsync(string blobPath, CancellationToken cancellationToken = default)
+    {
+        var blobClient = _containerClient.GetBlobClient(blobPath);
+        var response = await blobClient.ExistsAsync(cancellationToken);
+        return response.Value;
+    }
+
+    public async Task<string> ReadContentAsync(string blobPath, CancellationToken cancellationToken = default)
+    {
+        var blobClient = _containerClient.GetBlobClient(blobPath);
+        var download = await blobClient.DownloadContentAsync(cancellationToken);
+        return download.Value.Content.ToString();
+    }
+}

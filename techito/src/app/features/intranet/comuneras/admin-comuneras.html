@@ -24,6 +24,41 @@
   <div class="feedback-banner" role="status" aria-live="polite">{{ feedback() }}</div>
   }
 
+  <div class="card">
+    <h2>Solicitudes de comunera pendientes (formulario público)</h2>
+    @if (!pendingApplications().length) {
+      <p>No hay solicitudes pendientes.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Web</th>
+              <th>Contacto</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (application of pendingApplications(); track application.Id) {
+            <tr>
+              <td>{{application.Name}}</td>
+              <td><a [href]="application.Website" target="_blank" rel="noopener">{{application.Website}}</a></td>
+              <td>{{application.ContactName}}<br>{{application.ContactEmail}}</td>
+              <td>{{application.RequestedAt | date:'short'}}</td>
+              <td>
+                <app-ui-button class="btn-sm" [disabled]="resolvingApplicationId() === application.Id" (click)="resolveApplication(application, 'approve')">✅ Aprobar</app-ui-button>
+                <app-ui-button class="btn-sm delete" [disabled]="resolvingApplicationId() === application.Id" (click)="resolveApplication(application, 'reject')">❌ Rechazar</app-ui-button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
   <div class="filters-bar">
     <app-ui-text-field
       label="Buscar"
@@ -113,6 +148,10 @@
         [required]="true"
         (valueChange)="editMission.set($event)"
       ></app-ui-textarea>
+      <div class="logo-editor">
+        <app-ui-file-input label="Logo de la Comuñera" accept="image/jpeg,image/png,image/webp" (fileSelected)="onLogoSelected($event)"></app-ui-file-input>
+        <app-ui-button type="button" variant="secondary" [disabled]="logoBusy()" (click)="deleteLogo()">Eliminar logo</app-ui-button>
+      </div>
       <div class="modal-actions">
         <app-ui-button type="button" variant="secondary" (click)="closeEdit()">Cancelar</app-ui-button>
         <app-ui-button type="submit">Guardar</app-ui-button>

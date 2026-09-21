@@ -25,12 +25,14 @@ public sealed class Session : BaseEntity
     public string? Level { get; set; }
     public int? MaxCapacity { get; set; }
     public int? StudentCount { get; set; }
+    /// <summary>Alumnos esperados segun el centro solicitante, distinto de MaxCapacity.</summary>
+    public int? ExpectedAttendees { get; set; }
 
     public Guid EventId { get; set; }
     public Event Event { get; set; } = default!;
 
-    public Guid? CenterId { get; set; }
-    public Center? Center { get; set; }
+    public Guid? OrganizationId { get; set; }
+    public Organization? Organization { get; set; }
 
     public Guid? StatusId { get; set; }
     public Status? Status { get; set; }

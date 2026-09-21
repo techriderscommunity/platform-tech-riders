@@ -21,7 +21,16 @@
 }
 
 .ui-metric-icon {
-  font-size: 1.25rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  color: var(--tr-blue);
+}
+
+.ui-metric-icon--text {
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.35rem;
+  line-height: 1;
 }
 
 .ui-metric-value {

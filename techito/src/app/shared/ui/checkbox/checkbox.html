@@ -1,0 +1,16 @@
+<button
+  class="ui-checkbox"
+  type="button"
+  role="checkbox"
+  [attr.aria-checked]="checked"
+  [disabled]="disabled"
+  [class.ui-checkbox-checked]="checked"
+  (click)="toggle()"
+>
+  <span class="ui-checkbox-box" aria-hidden="true">
+    @if (checked) {
+      <span class="ui-checkbox-check">✓</span>
+    }
+  </span>
+  <span class="ui-checkbox-label">{{ label }}</span>
+</button>

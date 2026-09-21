@@ -17,15 +17,17 @@ public class UnitOfWork : IUnitOfWork
     private IEventRepository? _events;
     private ISessionRepository? _sessions;
     private IAmbassadorRepository? _ambassadors;
-    private ICenterRepository? _centers;
     private IFPTourRepository? _fpTours;
     private ICategoryRepository? _categories;
-    private IOfertaRepository? _ofertas;
-    private ICandidaturaRepository? _candidaturas;
-    private ITutorialRepository? _tutoriales;
     private IIntranetAuditLogRepository? _intranetAuditLogs;
     private IIntranetSettingRepository? _intranetSettings;
     private IIntranetUserCategoryRepository? _intranetUserCategories;
+    private ICommunityPartnerApplicationRepository? _communityPartnerApplications;
+    private IOrganizationRepository? _organizations;
+    private IUserRepository? _users;
+    private ICommunityRepository? _communities;
+    private IKnowledgeArticleRepository? _knowledgeArticles;
+
 
     public UnitOfWork(TechRidersDbContext context)
     {
@@ -38,23 +40,27 @@ public class UnitOfWork : IUnitOfWork
 
     public IAmbassadorRepository Ambassadors => _ambassadors ??= new AmbassadorRepository(_context);
 
-    public ICenterRepository Centers => _centers ??= new CenterRepository(_context);
-
     public IFPTourRepository FPTours => _fpTours ??= new FPTourRepository(_context);
 
     public ICategoryRepository Categories => _categories ??= new CategoryRepository(_context);
-
-    public IOfertaRepository Ofertas => _ofertas ??= new OfertaRepository(_context);
-
-    public ICandidaturaRepository Candidaturas => _candidaturas ??= new CandidaturaRepository(_context);
-
-    public ITutorialRepository Tutoriales => _tutoriales ??= new TutorialRepository(_context);
 
     public IIntranetAuditLogRepository IntranetAuditLogs => _intranetAuditLogs ??= new IntranetAuditLogRepository(_context);
 
     public IIntranetSettingRepository IntranetSettings => _intranetSettings ??= new IntranetSettingRepository(_context);
 
     public IIntranetUserCategoryRepository IntranetUserCategories => _intranetUserCategories ??= new IntranetUserCategoryRepository(_context);
+
+    public ICommunityPartnerApplicationRepository CommunityPartnerApplications =>
+        _communityPartnerApplications ??= new CommunityPartnerApplicationRepository(_context);
+
+    public IOrganizationRepository Organizations => _organizations ??= new OrganizationRepository(_context);
+
+    public IUserRepository Users => _users ??= new UserRepository(_context);
+
+    public ICommunityRepository Communities => _communities ??= new CommunityRepository(_context);
+
+    public IKnowledgeArticleRepository KnowledgeArticles =>
+        _knowledgeArticles ??= new KnowledgeArticleRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

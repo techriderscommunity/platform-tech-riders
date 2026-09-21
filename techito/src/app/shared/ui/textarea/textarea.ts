@@ -10,14 +10,27 @@ import { FormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiTextarea {
+  private static nextId = 0;
+
   @Input() label = '';
+  @Input() id = '';
   @Input() name = '';
   @Input() placeholder = '';
   @Input() rows = 4;
   @Input() required = false;
+  @Input() disabled = false;
+  @Input() invalid = false;
+  @Input() describedBy = '';
+  @Input() errorMessage = '';
   @Input() value = '';
 
   @Output() readonly valueChange = new EventEmitter<string>();
+
+  readonly generatedId = `ui-textarea-${UiTextarea.nextId++}`;
+
+  get controlId(): string {
+    return this.id || this.name || this.generatedId;
+  }
 }
 
 

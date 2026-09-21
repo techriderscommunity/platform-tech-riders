@@ -1,0 +1,84 @@
+<div class="admin-centros">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver</a>
+    <h1>Centros</h1>
+    <p>Gestión de centros educativos y de formación participantes en Tech Riders (actualmente centrada en Madrid).</p>
+  </div>
+
+  <div class="action-bar">
+    <app-ui-button class="btn-secondary" (click)="load()">↻ Recargar</app-ui-button>
+    <app-ui-button class="btn-primary" (click)="toggleCreateForm()">➕ Alta de centro</app-ui-button>
+  </div>
+
+  @if (showCreateForm()) {
+  <div class="card">
+    <h2>Nuevo centro</h2>
+    <div class="action-bar">
+      <app-ui-select label="Tipo" [options]="typeOptions" [value]="newType()" (valueChange)="updateNewType($event)"></app-ui-select>
+      <app-ui-text-field label="Nombre" [value]="newName()" (valueChange)="updateNewName($event)"></app-ui-text-field>
+      <app-ui-text-field label="Web" [value]="newWebsite()" (valueChange)="updateNewWebsite($event)"></app-ui-text-field>
+      <app-ui-text-field label="Dirección" [value]="newAddress()" (valueChange)="updateNewAddress($event)"></app-ui-text-field>
+      <app-ui-text-field label="Provincia" [value]="newProvince()" (valueChange)="updateNewProvince($event)"></app-ui-text-field>
+    </div>
+    <app-ui-textarea label="Observaciones" [value]="newNotes()" (valueChange)="updateNewNotes($event)"></app-ui-textarea>
+    <app-ui-button class="btn-primary" [disabled]="creating()" (click)="createCenter()">Crear centro</app-ui-button>
+  </div>
+  }
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+    <app-ui-button class="btn-sm" type="button" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
+  <div class="card">
+    <h2>Centros pendientes de aprobación</h2>
+    @if (!pending().length) {
+      <p>No hay centros pendientes.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Nombre</th><th>Tipo</th><th>Observaciones</th><th>Acciones</th></tr></thead>
+          <tbody>
+            @for (item of pending(); track item.Id) {
+            <tr>
+              <td>{{item.Name}}</td>
+              <td>{{item.OrganizationType}}</td>
+              <td>{{item.Notes}}</td>
+              <td>
+                <app-ui-button class="btn-sm" [disabled]="savingId() === item.Id" (click)="approvePending(item)">✅ Aprobar</app-ui-button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+  <p>Cargando centros...</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Nombre</th><th>Tipo</th><th>Provincia</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        @for (item of centers(); track item.Id) {
+        <tr>
+          <td>{{item.Name}}</td>
+          <td>{{item.OrganizationType}}</td>
+          <td>{{item.Province}}</td>
+          <td><span class="badge" [class]="item.IsActive ? 'active' : 'pending'">{{item.IsActive ? 'Activo' : 'Inactivo'}}</span></td>
+          <td>
+            <app-ui-button class="btn-sm" [disabled]="savingId() === item.Id" (click)="toggleActivation(item)">
+              {{item.IsActive ? 'Suspender' : 'Activar'}}
+            </app-ui-button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

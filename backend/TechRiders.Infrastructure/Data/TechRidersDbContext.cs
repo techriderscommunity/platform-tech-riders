@@ -38,21 +38,6 @@ public class TechRidersDbContext : DbContext
     public DbSet<User> Ambassadors => Set<User>();
 
     /// <summary>
-    /// DbSet de Centros
-    /// </summary>
-    public DbSet<Center> Centers => Set<Center>();
-
-    /// <summary>
-    /// DbSet de estudios de centros
-    /// </summary>
-    public DbSet<CenterStudy> CenterStudies => Set<CenterStudy>();
-
-    /// <summary>
-    /// DbSet de contactos de centros
-    /// </summary>
-    public DbSet<CenterContact> CenterContacts => Set<CenterContact>();
-
-    /// <summary>
     /// DbSet de Tours FP
     /// </summary>
     public DbSet<FPTour> FPTours => Set<FPTour>();
@@ -61,21 +46,6 @@ public class TechRidersDbContext : DbContext
     /// DbSet de Categorías
     /// </summary>
     public DbSet<MT_Category> Categories => Set<MT_Category>();
-
-    /// <summary>
-    /// DbSet de Ofertas de Empleo
-    /// </summary>
-    public DbSet<Oferta> Ofertas => Set<Oferta>();
-
-    /// <summary>
-    /// DbSet de Candidaturas
-    /// </summary>
-    public DbSet<Candidatura> Candidaturas => Set<Candidatura>();
-
-    /// <summary>
-    /// DbSet de Tutoriales
-    /// </summary>
-    public DbSet<Tutorial> Tutoriales => Set<Tutorial>();
 
     /// <summary>
     /// DbSet de Audit Logs de Intranet
@@ -91,6 +61,134 @@ public class TechRidersDbContext : DbContext
     /// DbSet de Categorías de Usuario de Intranet
     /// </summary>
     public DbSet<IntranetUserCategory> IntranetUserCategories => Set<IntranetUserCategory>();
+
+    public DbSet<CommunityPartnerApplication> CommunityPartnerApplications => Set<CommunityPartnerApplication>();
+
+    /// <summary>
+    /// DbSet de Artículos de conocimiento (tutoriales)
+    /// </summary>
+    public DbSet<KnowledgeArticle> KnowledgeArticles => Set<KnowledgeArticle>();
+
+    /// <summary>
+    /// Categorías (Guid) usadas por KnowledgeArticle/Event/Session/User. Distinta de la
+    /// tabla legacy MT_Category (int) expuesta como <see cref="Categories"/>.
+    /// </summary>
+    public DbSet<Category> ContentCategories => Set<Category>();
+
+    /// <summary>
+    /// Skills jerárquicos usados por KnowledgeArticle/Session/User.
+    /// </summary>
+    public DbSet<Skill> Skills => Set<Skill>();
+
+    /// <summary>
+    /// Estados reutilizables (p.ej. Scope = "KnowledgeArticle").
+    /// </summary>
+    public DbSet<Status> Statuses => Set<Status>();
+
+    /// <summary>
+    /// Membresía a la comunidad Tech Riders (1:1 con Usuario, separada de perfil y capacidades).
+    /// </summary>
+    public DbSet<Membership> Memberships => Set<Membership>();
+
+    /// <summary>
+    /// Catálogo de perfiles principales (Visitante, Estudiante Tech Activo, Profesor Tech, Orientador, etc.).
+    /// </summary>
+    public DbSet<Profile> Profiles => Set<Profile>();
+
+    /// <summary>
+    /// Histórico de perfil principal por persona.
+    /// </summary>
+    public DbSet<UserProfileHistory> UserProfileHistories => Set<UserProfileHistory>();
+
+    /// <summary>
+    /// Catálogo de capacidades acumulables (Tech Rider, Mentor, Creador de contenido, etc.).
+    /// </summary>
+    public DbSet<Capability> Capabilities => Set<Capability>();
+
+    /// <summary>
+    /// Capacidades concretas concedidas o solicitadas por persona.
+    /// </summary>
+    public DbSet<UserCapability> UserCapabilities => Set<UserCapability>();
+
+    /// <summary>
+    /// Estudios actuales de la persona (Estudiante Tech Activo).
+    /// </summary>
+    public DbSet<PersonStudy> PersonStudies => Set<PersonStudy>();
+
+    /// <summary>
+    /// Ámbitos de orientación de la persona (perfil Orientador).
+    /// </summary>
+    public DbSet<UserOrientationScope> UserOrientationScopes => Set<UserOrientationScope>();
+
+    /// <summary>
+    /// Organizaciones (centro, empresa, comunidad, etc.). No es una persona ni un rol de usuario.
+    /// </summary>
+    public DbSet<Organization> Organizations => Set<Organization>();
+
+    /// <summary>
+    /// Relación histórica persona-organización (cargo, tipo, vigencia).
+    /// </summary>
+    public DbSet<PersonOrganization> PersonOrganizations => Set<PersonOrganization>();
+
+    /// <summary>
+    /// Vínculo opcional de una organización con GPF.
+    /// </summary>
+    public DbSet<OrganizationGpfLink> OrganizationGpfLinks => Set<OrganizationGpfLink>();
+
+    /// <summary>
+    /// Vínculo manual y opcional de una persona con su equivalente en GPF (CodUnico).
+    /// </summary>
+    public DbSet<GpfPersonLink> GpfPersonLinks => Set<GpfPersonLink>();
+
+    /// <summary>
+    /// Dimensiones de la taxonomía multidimensional de preferencias.
+    /// </summary>
+    public DbSet<PreferenceDimension> PreferenceDimensions => Set<PreferenceDimension>();
+
+    /// <summary>
+    /// Valores de cada dimensión de preferencia.
+    /// </summary>
+    public DbSet<PreferenceDimensionValue> PreferenceDimensionValues => Set<PreferenceDimensionValue>();
+
+    /// <summary>
+    /// Preferencias de una persona sobre valores de dimensión.
+    /// </summary>
+    public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
+
+    /// <summary>
+    /// Clasificación de contenidos/actividades con la misma taxonomía de preferencias.
+    /// </summary>
+    public DbSet<ContentClassification> ContentClassifications => Set<ContentClassification>();
+
+    /// <summary>
+    /// Catálogo de finalidades de tratamiento.
+    /// </summary>
+    public DbSet<ConsentPurpose> ConsentPurposes => Set<ConsentPurpose>();
+
+    /// <summary>
+    /// Catálogo de bases jurídicas.
+    /// </summary>
+    public DbSet<LegalBasis> LegalBases => Set<LegalBasis>();
+
+    /// <summary>
+    /// Versiones de textos legales.
+    /// </summary>
+    public DbSet<LegalText> LegalTexts => Set<LegalText>();
+
+    /// <summary>
+    /// Consentimientos otorgados o retirados por finalidad.
+    /// </summary>
+    public DbSet<Consent> Consents => Set<Consent>();
+
+    /// <summary>
+    /// Solicitudes de ejercicio de derechos de privacidad.
+    /// </summary>
+    public DbSet<PrivacyRequest> PrivacyRequests => Set<PrivacyRequest>();
+
+    /// <summary>
+    /// Visibilidad configurada por campo de perfil.
+    /// </summary>
+    public DbSet<UserFieldVisibility> UserFieldVisibilities => Set<UserFieldVisibility>();
 
     /// <summary>
     /// Configuración del modelo usando Fluent API y Entity Type Configurations
@@ -275,55 +373,41 @@ public class TechRidersDbContext : DbContext
             entity.Property(u => u.About).HasMaxLength(2000);
             entity.Property(u => u.LinkedIn).HasMaxLength(300);
             entity.Property(u => u.Instagram).HasMaxLength(300);
+            entity.Property(u => u.X).HasMaxLength(300);
+            entity.Property(u => u.YouTube).HasMaxLength(300);
             entity.Property(u => u.Github).HasMaxLength(300);
 
             entity.HasIndex(u => u.Email);
             entity.HasIndex(u => u.IsWorking);
         });
 
-        // Configuración de Center
-        modelBuilder.Entity<Center>(entity =>
+        modelBuilder.Entity<CommunityPartnerApplication>(entity =>
         {
-            entity.ToTable("Centers");
-            entity.HasKey(c => c.Id);
+            entity.ToTable("CommunityPartnerApplications");
+            entity.HasKey(application => application.Id);
 
-            entity.Property(c => c.Name).IsRequired().HasMaxLength(200);
-            entity.Property(c => c.ContactPerson).HasMaxLength(200);
-            entity.Property(c => c.Email).IsRequired().HasMaxLength(200);
-            entity.Property(c => c.Phone).HasMaxLength(20);
-            entity.Property(c => c.Locality).HasMaxLength(200);
-            entity.Property(c => c.Specialty).HasMaxLength(500);
-            entity.Property(c => c.Location).HasMaxLength(500);
-            entity.Property(c => c.Parking).HasMaxLength(500);
-            entity.Property(c => c.LinkedIn).HasMaxLength(300);
-            entity.Property(c => c.Instagram).HasMaxLength(300);
+            entity.Property(application => application.Name).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.Website).IsRequired().HasMaxLength(300);
+            entity.Property(application => application.LogoUrl).HasMaxLength(300);
+            entity.Property(application => application.ContactEmail).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.ContactName).IsRequired().HasMaxLength(200);
+            entity.Property(application => application.WhoYouAre).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.WhatYouDo).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.Mission).IsRequired().HasMaxLength(2000);
+            entity.Property(application => application.Topics).IsRequired().HasMaxLength(1000);
+            entity.Property(application => application.Scope).IsRequired().HasMaxLength(30);
+            entity.Property(application => application.LinkedIn).HasMaxLength(300);
+            entity.Property(application => application.Instagram).HasMaxLength(300);
+            entity.Property(application => application.X).HasMaxLength(300);
+            entity.Property(application => application.YouTube).HasMaxLength(300);
+            entity.Property(application => application.Github).HasMaxLength(300);
+            entity.Property(application => application.Status).IsRequired().HasMaxLength(30).HasDefaultValue("pending");
+            entity.Property(application => application.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
 
-            entity.HasMany(c => c.Studies)
-                .WithOne(s => s.Center)
-                .HasForeignKey(s => s.CenterId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasMany(c => c.Contacts)
-                .WithOne(contact => contact.Center)
-                .HasForeignKey(contact => contact.CenterId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasMany(c => c.FPTours)
-                .WithOne(t => t.Center)
-                .HasForeignKey(t => t.CenterId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.Property(c => c.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()");
-
-            entity.Property(c => c.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true);
-
-            entity.HasIndex(c => c.Email);
-            entity.HasIndex(c => c.Locality);
-            entity.HasIndex(c => c.IsActive);
+            entity.HasIndex(application => application.Name);
+            entity.HasIndex(application => application.Website);
+            entity.HasIndex(application => application.ContactEmail);
+            entity.HasIndex(application => application.Status);
         });
 
         // Configuración de FPTour
@@ -332,7 +416,7 @@ public class TechRidersDbContext : DbContext
             entity.ToTable("FPTours");
             entity.HasKey(t => t.Id);
 
-            entity.Property(t => t.CenterId).IsRequired();
+            entity.Property(t => t.OrganizationId).IsRequired();
             entity.Property(t => t.AmbassadorUserId).IsRequired();
 
             entity.Property(t => t.CreatedAt)
@@ -343,9 +427,9 @@ public class TechRidersDbContext : DbContext
                 .IsRequired()
                 .HasDefaultValue(true);
 
-            entity.HasOne(t => t.Center)
+            entity.HasOne(t => t.Organization)
                 .WithMany(c => c.FPTours)
-                .HasForeignKey(t => t.CenterId)
+                .HasForeignKey(t => t.OrganizationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(t => t.Ambassador)
@@ -353,16 +437,10 @@ public class TechRidersDbContext : DbContext
                 .HasForeignKey(t => t.AmbassadorUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasIndex(t => t.CenterId);
+            entity.HasIndex(t => t.OrganizationId);
             entity.HasIndex(t => t.AmbassadorUserId);
             entity.HasIndex(t => t.HasScheduledDate);
             entity.HasIndex(t => t.IsActive);
-        });
-
-        modelBuilder.Entity<Oferta>(entity =>
-        {
-            entity.Property(o => o.Salario)
-                .HasPrecision(18, 2);
         });
 
         // Configuraciones de entidades migrables gestionadas directamente en este DbContext.

@@ -12,7 +12,7 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
     public async Task<IEnumerable<FPTour>> GetActiveFPToursAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(t => t.Center)
+            .Include(t => t.Organization)
             .Include(t => t.Ambassador)
             .Where(t => t.IsActive)
             .OrderByDescending(t => t.CreatedAt)
@@ -22,17 +22,17 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
     public async Task<FPTour?> GetFPTourWithDetailsAsync(Guid tourId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(t => t.Center)
+            .Include(t => t.Organization)
             .Include(t => t.Ambassador)
             .FirstOrDefaultAsync(t => t.Id == tourId, cancellationToken);
     }
 
-    public async Task<IEnumerable<FPTour>> GetFPToursByCenterAsync(Guid centerId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FPTour>> GetFPToursByOrganizationAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(t => t.Center)
+            .Include(t => t.Organization)
             .Include(t => t.Ambassador)
-            .Where(t => t.IsActive && t.CenterId == centerId)
+            .Where(t => t.IsActive && t.OrganizationId == organizationId)
             .OrderByDescending(t => t.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -40,7 +40,7 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
     public async Task<IEnumerable<FPTour>> GetFPToursByAmbassadorAsync(Guid ambassadorId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(t => t.Center)
+            .Include(t => t.Organization)
             .Include(t => t.Ambassador)
             .Where(t => t.IsActive && t.AmbassadorUserId == ambassadorId)
             .OrderByDescending(t => t.CreatedAt)
@@ -50,7 +50,7 @@ public class FPTourRepository : Repository<FPTour>, IFPTourRepository
     public async Task<IEnumerable<FPTour>> GetPendingFPToursAsync(CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(t => t.Center)
+            .Include(t => t.Organization)
             .Include(t => t.Ambassador)
             .Where(t => t.IsActive && !t.PlannedDate.HasValue)
             .OrderBy(t => t.CreatedAt)

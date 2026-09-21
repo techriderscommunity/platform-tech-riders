@@ -1,7 +1,32 @@
 <app-ui-modal (close)="closeLogin($event)">
-	<span modal-title>Inicia sesión en Techito</span>
+	<span modal-title>{{ mode() === 'register' ? 'Crea tu cuenta Tech Riders' : 'Inicia sesión en Tech Riders' }}</span>
+
+	<div class="login-mode-tabs" role="tablist" aria-label="Acceso">
+		<button type="button" [class.active]="mode() === 'login'" (click)="setMode('login')">Entrar</button>
+		<button type="button" [class.active]="mode() === 'register'" (click)="setMode('register')">Registrarme</button>
+	</div>
 
 	<form class="login-form" (submit)="onSubmit($event)" #loginForm="ngForm">
+		@if (mode() === 'register') {
+		<app-ui-text-field
+			label="Nombre"
+			type="text"
+			name="name"
+			autocomplete="given-name"
+			[value]="name()"
+			(valueChange)="name.set($event)"
+			[required]="true"
+		></app-ui-text-field>
+		<app-ui-text-field
+			label="Apellidos"
+			type="text"
+			name="lastName"
+			autocomplete="family-name"
+			[value]="lastName()"
+			(valueChange)="lastName.set($event)"
+			[required]="true"
+		></app-ui-text-field>
+		}
 		<app-ui-text-field
 			label="Email"
 			type="email"
@@ -20,22 +45,14 @@
 			(valueChange)="password.set($event)"
 			[required]="true"
 		></app-ui-text-field>
-		<app-ui-button type="submit">Entrar</app-ui-button>
+		<app-ui-button type="submit" [disabled]="loading()">
+			{{ loading() ? 'Procesando...' : (mode() === 'register' ? 'Crear cuenta' : 'Entrar') }}
+		</app-ui-button>
 	</form>
 
 	@if (error()) {
 	<div class="login-error">{{ error() }}</div>
 	}
 
-	<div class="login-divider">o</div>
-	<div class="login-social">
-		<app-ui-button type="button" variant="secondary" class="social-btn google">
-			<img src="../../assets/google.svg" alt="Google" />
-			Accede con Google
-		</app-ui-button>
-		<app-ui-button type="button" variant="secondary" class="social-btn microsoft">
-			<img src="../../assets/microsoft.svg" alt="Microsoft" />
-			Accede con Microsoft
-		</app-ui-button>
-	</div>
+	<p class="login-helper">Las solicitudes de charlas, roles o colaboraciones se gestionan desde tu panel tras acceder.</p>
 </app-ui-modal>

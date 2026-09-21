@@ -3,15 +3,12 @@
     <span class="section-label">Comunidad</span>
     <h1 class="section-heading">Comuñeras</h1>
     <p class="section-subheading">{{ subtitle }}</p>
-
-    <section class="join-cta join-cta-hero">
-      <h2>¿Tienes una comunidad?</h2>
       <p>
         Nos encanta colaborar con personas y comunidades que comparten nuestros valores y
         nuestra pasión por ayudar a crecer a otras personas.
       </p>
-      <a class="btn btn-secondary" routerLink="/community-partners/apply" (click)="onApplyClick()">Quiero ser Comuñera</a>
-    </section>
+      <span>¿Tienes una comunidad?</span>
+      <app-ui-button type="button" variant="secondary" routerLink="/login" [queryParams]="{ authMode: 'register', returnUrl: '/intranet/community-partner' }">Quiero ser Comuñera</app-ui-button>
 
     <ul class="topic-chips" aria-label="Temáticas del ecosistema">
       @for (topic of topicSummary(); track topic) {
@@ -40,7 +37,7 @@
     @for (partner of filteredPartners(); track partner.id) {
     <article class="comunera-card">
       <header class="card-header">
-        <img [src]="partner.logoUrl" [alt]="'Logo de ' + partner.name" loading="lazy" />
+        <img [src]="partner.logoUrl" [alt]="'Logo de ' + partner.name" loading="lazy" (error)="onLogoError($event)" />
         <div>
           <h2>{{ partner.name }}</h2>
           <p>{{ partner.cityOrScope }}</p>
@@ -71,11 +68,8 @@
         @if (partner.youtube) {
         <a [href]="partner.youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
         }
-        @if (partner.discord) {
-        <a [href]="partner.discord" target="_blank" rel="noopener noreferrer">Discord</a>
-        }
-        @if (partner.telegram) {
-        <a [href]="partner.telegram" target="_blank" rel="noopener noreferrer">Telegram</a>
+        @if (partner.github) {
+        <a [href]="partner.github" target="_blank" rel="noopener noreferrer">GitHub</a>
         }
       </div>
 

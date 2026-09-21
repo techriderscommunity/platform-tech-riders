@@ -1,0 +1,53 @@
+<div class="admin-asignaciones">
+  <div class="page-header">
+    <a routerLink="/intranet" class="btn-back">← Volver</a>
+    <h1>Asignaciones</h1>
+    <p>Encuentra candidatos para sesiones, eventos o FPTour según skills, disponibilidad y experiencia previa. La asignación final es siempre manual, desde el módulo correspondiente.</p>
+  </div>
+
+  <div class="action-bar">
+    <app-ui-select label="Skill" [options]="skillOptions()" [value]="selectedSkillId()" (valueChange)="updateSelectedSkillId($event)"></app-ui-select>
+    <app-ui-select label="Disponibilidad" [options]="availabilityOptions()" [value]="selectedAvailabilityValueId()" (valueChange)="updateSelectedAvailabilityValueId($event)"></app-ui-select>
+    <app-ui-button class="btn-primary" (click)="search()">Buscar candidatos</app-ui-button>
+  </div>
+
+  @if (feedback()) {
+  <div class="feedback-banner" role="status" aria-live="polite">
+    <span>{{feedback()}}</span>
+    <app-ui-button class="btn-sm" type="button" (click)="limpiarFeedback()">Cerrar</app-ui-button>
+  </div>
+  }
+
+  @if (loading()) {
+  <p>Buscando candidatos...</p>
+  } @else if (!candidates().length) {
+  <p>No hay candidatos que coincidan con los filtros.</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Persona</th>
+          <th>Nivel de skill</th>
+          <th>Disponibilidad</th>
+          <th>Sesiones como ponente</th>
+          <th>Eventos</th>
+          <th>FPTour</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (candidate of candidates(); track candidate.UserId) {
+        <tr>
+          <td><strong>{{candidate.Name}}</strong><br>{{candidate.Email}}</td>
+          <td>{{candidate.SkillLevel ?? '—'}}</td>
+          <td><span class="badge" [class]="candidate.HasRequestedAvailability ? 'success' : 'warning'">{{candidate.HasRequestedAvailability ? 'Sí' : 'No indicada'}}</span></td>
+          <td>{{candidate.SessionsAsSpeaker}}</td>
+          <td>{{candidate.EventsParticipated}}</td>
+          <td>{{candidate.FPToursAsAmbassador}}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

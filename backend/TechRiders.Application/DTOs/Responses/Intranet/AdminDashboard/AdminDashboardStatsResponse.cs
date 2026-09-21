@@ -6,7 +6,7 @@ public sealed class AdminDashboardStatsResponse
 
     public int ActiveUsers { get; init; }
 
-    public int SuperAdmins { get; init; }
+    public int Admins { get; init; }
 
     public int Events { get; init; }
 

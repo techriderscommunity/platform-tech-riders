@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, computed, inject, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { PublicContentService } from '@core/content/public-content.service';
+import { STAFF_PERIOD_OPTIONS } from './embajadores.content';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -19,11 +19,10 @@ import { UiSelect, UiSelectOption  } from '@shared/ui/select/select';
 })
 export class Staff {
   private readonly embajadoresService = inject(EmbajadoresService);
-  private readonly publicContentService = inject(PublicContentService);
   private readonly destroyRef = inject(DestroyRef);
 
-  periodOptions: Array<{ label: string; value: string }> = [];
-  periodSelectOptions: UiSelectOption[] = [];
+  periodOptions: Array<{ label: string; value: string }> = STAFF_PERIOD_OPTIONS;
+  periodSelectOptions: UiSelectOption[] = STAFF_PERIOD_OPTIONS;
   readonly selectedPeriod = signal('month');
   readonly loading = signal(true);
   readonly talks = signal<TalkItem[]>([]);
@@ -67,21 +66,6 @@ export class Staff {
   readonly colorScheme = 'vivid';
 
   constructor() {
-    this.publicContentService
-      .getPublicContent()
-      .pipe(
-        tap((content) => {
-          this.periodSelectOptions = content.intranet.staffPeriodOptions;
-          this.periodOptions = content.intranet.staffPeriodOptions.map((option) => ({
-            label: option.label,
-            value: option.value,
-          }));
-        }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-
     this.loadTalks();
   }
 

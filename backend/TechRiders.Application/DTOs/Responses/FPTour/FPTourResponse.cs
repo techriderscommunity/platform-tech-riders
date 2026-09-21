@@ -11,14 +11,14 @@ public class FPTourResponse
     public Guid Id { get; set; }
 
     /// <summary>
-    /// ID del centro educativo
+    /// ID de la organización educativa
     /// </summary>
-    public Guid CenterId { get; set; }
+    public Guid OrganizationId { get; set; }
 
     /// <summary>
-    /// Nombre del centro
+    /// Nombre de la organización
     /// </summary>
-    public string CenterName { get; set; } = string.Empty;
+    public string OrganizationName { get; set; } = string.Empty;
 
     /// <summary>
     /// ID del ambassador asignado

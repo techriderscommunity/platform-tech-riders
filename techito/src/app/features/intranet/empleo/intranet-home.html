@@ -1,25 +1,4 @@
 <div class="intranet-home">
-  <header class="home-topbar" aria-label="Barra de utilidades intranet">
-    <div class="search-wrap">
-      <span aria-hidden="true">⌕</span>
-      <app-ui-text-field
-        label="Buscar"
-        type="search"
-        name="intranet-search"
-        placeholder="Buscar en TechRiders..."
-        [value]="searchTerm()"
-        (valueChange)="searchTerm.set($event)"
-      ></app-ui-text-field>
-      <kbd>Ctrl K</kbd>
-    </div>
-
-    <div class="topbar-actions" aria-hidden="true">
-      <button type="button">🔔</button>
-      <button type="button">✉</button>
-      <button type="button">⚙</button>
-    </div>
-  </header>
-
   <section class="hero-card" aria-labelledby="home-title">
     <div class="hero-content">
       <h1 id="home-title">¡Bienvenido, {{ userName() }}! 👋</h1>
@@ -27,171 +6,69 @@
       <small class="role-chip">{{ roleHero().contextLabel }} · Rol activo: {{ activeRoleLabel() }}</small>
 
       <div class="hero-ctas">
-        <a class="hero-cta hero-cta--violet" [routerLink]="talkRequestRoute()">
-          <span aria-hidden="true">🎙</span>
-          <span>Solicitar nueva charla</span>
+        @if (primaryAction(); as action) {
+        <a class="hero-cta hero-cta--blue" [routerLink]="action.route">
+          <span>Ir a {{ action.label }}</span>
         </a>
-        <a class="hero-cta hero-cta--blue" [routerLink]="resourcesRoute()">
-          <span aria-hidden="true">📘</span>
-          <span>Explorar recursos</span>
-        </a>
-        <a class="hero-cta hero-cta--teal" [routerLink]="'/intranet/calendar'">
-          <span aria-hidden="true">🗓</span>
-          <span>Ver próximos eventos</span>
-        </a>
+        }
       </div>
     </div>
-
-    <aside class="hero-visual" aria-hidden="true"></aside>
   </section>
 
   <section class="dashboard-grid">
-    <div class="main-column">
-      <article class="panel" aria-labelledby="modules-title-main">
-        <div class="panel-head">
-          <h2 id="modules-title-main">Módulos prioritarios</h2>
-          <a [routerLink]="resourcesRoute()">Ir al módulo principal</a>
-        </div>
-        <div class="module-list">
-          @for (module of dashboardModules(); track module.route) {
-          <a class="module-card" [routerLink]="module.route">
-            <h3>{{ module.title }}</h3>
-            <p>{{ module.description }}</p>
-          </a>
-          }
-        </div>
-      </article>
+    <article class="panel" aria-labelledby="modules-title-main">
+      <div class="panel-head">
+        <h2 id="modules-title-main">Operaciones prioritarias</h2>
+      </div>
+      @if (dashboardModules().length === 0) {
+      <p class="empty-state">No hay módulos operativos asignados a este perfil.</p>
+      } @else {
+      <div class="module-list">
+        @for (module of dashboardModules(); track module.route) {
+        <a class="module-card" [routerLink]="module.route">
+          <h3>{{ module.title }}</h3>
+          <p>{{ module.description }}</p>
+        </a>
+        }
+      </div>
+      }
+    </article>
 
-      <article class="panel table-panel" aria-labelledby="eventos-title">
-        <div class="panel-head">
-          <h2 id="eventos-title">Pendientes por módulo</h2>
-          <a [routerLink]="requestsRoute()">Gestionar pendientes</a>
-        </div>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Módulo</th>
-                <th>Pendiente</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of activitySummary(); track item.module) {
-              <tr>
-                <td>{{ item.module }}</td>
-                <td>{{ item.pending }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </article>
+    @if (totalPendingApprovals() > 0 || upcomingEvents().length || upcomingSessions().length) {
+    <article class="panel" aria-labelledby="dashboard-summary-title">
+      <div class="panel-head">
+        <h2 id="dashboard-summary-title">Resumen operativo</h2>
+      </div>
 
-      <article class="panel table-panel" aria-labelledby="knowledge-title">
-        <div class="panel-head">
-          <h2 id="knowledge-title">Notificaciones operativas</h2>
-          <a [routerLink]="requestsRoute()">Ver flujo completo</a>
-        </div>
-        <ul class="ops-list">
-          @for (item of notifications(); track item.title) {
-          <li>
-            <strong>{{ item.title }}</strong>
-            <span>{{ item.detail }}</span>
-          </li>
-          }
-        </ul>
-      </article>
+      @if (pendingApprovals().length) {
+      <div class="module-list">
+        @for (item of pendingApprovals(); track item.type) {
+        <a class="module-card" routerLink="/intranet/administration/approvals">
+          <h3>{{ item.count }}</h3>
+          <p>Pendientes: {{ item.type }}</p>
+        </a>
+        }
+      </div>
+      }
 
-      <article class="panel activity-panel" aria-labelledby="activity-title">
-        <div class="panel-head">
-          <h2 id="activity-title">Actividad reciente</h2>
-        </div>
-        <ul>
-          @for (activity of recentActivity(); track activity.label + activity.time) {
-          <li>
-            <span class="activity-dot"></span>
-            <div>
-              <p>{{ activity.label }}</p>
-              <small>{{ activity.detail }}</small>
-            </div>
-            <time>{{ activity.time }}</time>
-          </li>
-          }
-        </ul>
-      </article>
-    </div>
+      @if (upcomingEvents().length) {
+      <h3>Próximos eventos</h3>
+      <ul>
+        @for (event of upcomingEvents(); track event.id) {
+        <li>{{ event.title }} — {{ event.startDateTime | date:'short' }}</li>
+        }
+      </ul>
+      }
 
-    <aside class="side-column">
-      <article class="panel profile-panel" aria-labelledby="profile-title">
-        <div class="avatar">{{ userInitials() }}</div>
-        <div>
-          <h2 id="profile-title">{{ userName() }}</h2>
-          <p>{{ activeRoleLabel() }}</p>
-          <small>{{ userEmail() }}</small>
-        </div>
-        <a class="edit-profile" [routerLink]="profileRoute()">Editar perfil</a>
-      </article>
-
-      <article class="panel interests-panel" aria-labelledby="interests-title">
-        <div class="panel-head">
-          <h2 id="interests-title">Mis intereses</h2>
-          <a [routerLink]="profileRoute()">Editar</a>
-        </div>
-        <div class="chips">
-          @for (tag of interestTags; track tag) {
-          <span>{{ tag }}</span>
-          }
-        </div>
-      </article>
-
-      <article class="panel modules-panel" aria-labelledby="modules-title">
-        <div class="panel-head">
-          <h2 id="modules-title">Submenús disponibles</h2>
-          <span>{{ totalVisibleModules() }} módulos</span>
-        </div>
-        <div class="submenu-groups">
-          @for (section of visibleSubmenuSections(); track section.title) {
-          <section>
-            <h3>{{ section.icon }} {{ section.title }}</h3>
-            <ul>
-              @for (item of section.items; track item.route) {
-              <li>
-                <a [routerLink]="item.route!">{{ item.label }}</a>
-              </li>
-              }
-            </ul>
-          </section>
-          }
-        </div>
-      </article>
-
-      <article class="panel" aria-labelledby="context-title">
-        <div class="panel-head">
-          <h2 id="context-title">Contexto actual</h2>
-        </div>
-        <div class="context-box">
-          <p><strong>Ruta:</strong> {{ currentRoute() }}</p>
-          <p><strong>Sección activa:</strong> {{ currentSection()?.title || 'Inicio' }}</p>
-        </div>
-      </article>
-
-      <article class="panel featured-panel" aria-labelledby="featured-title">
-        <h2 id="featured-title">Resumen operativo</h2>
-        <div class="kpi-grid">
-          <div>
-            <small>Notificaciones</small>
-            <strong>{{ notifications().length }}</strong>
-          </div>
-          <div>
-            <small>Secciones activas</small>
-            <strong>{{ visibleSubmenuSections().length }}</strong>
-          </div>
-          <div>
-            <small>Módulos visibles</small>
-            <strong>{{ totalVisibleModules() }}</strong>
-          </div>
-        </div>
-      </article>
-    </aside>
+      @if (upcomingSessions().length) {
+      <h3>Próximas sesiones</h3>
+      <ul>
+        @for (session of upcomingSessions(); track session.id) {
+        <li>{{ session.title }} — {{ session.startDateTime | date:'short' }}</li>
+        }
+      </ul>
+      }
+    </article>
+    }
   </section>
 </div>

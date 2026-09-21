@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 import { EventoResumen } from '@core/events/public-events.models';
 import { PublicEventsService } from '@core/events/public-events.service';
-import { PublicContentService } from '@core/content/public-content.service';
-import { HomePastEventPhotoItem, HomeProfileCardItem, MetricItem } from '@core/content/public-content.models';
+import { HomeStatsService } from './home-stats.service';
+import { HOME_STATS_META, HOME_PROFILE_PANEL_CARDS, HOME_PAST_EVENT_PHOTOS } from './home.content';
+import { HomePastEventPhotoItem, HomeProfileCardItem, MetricItem } from '@shared/ui/public-content.types';
 import { UiCarouselItem, UiMediaCarousel  } from '@shared/ui/media-carousel/media-carousel';
 import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 
@@ -20,13 +22,15 @@ import { UiMetricsStrip } from '@shared/ui/metrics-strip/metrics-strip';
 })
 export class Home implements OnInit {
   private readonly publicEventsService = inject(PublicEventsService);
-  private readonly publicContentService = inject(PublicContentService);
+  private readonly homeStatsService = inject(HomeStatsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly eventos = signal<EventoResumen[]>([]);
   readonly loadingEventos = signal(false);
+  readonly showLumaCalendar = signal(false);
   readonly proximosEventos = computed(() => this.eventos().filter(evento => !evento.esPasado).slice(0, 6));
-  eventosPasadosFotos: HomePastEventPhotoItem[] = [];
+  eventosPasadosFotos: HomePastEventPhotoItem[] = HOME_PAST_EVENT_PHOTOS;
   readonly eventosPasadosSlides = computed<UiCarouselItem[]>(() => this.eventosPasadosFotos.map(foto => ({
     kind: 'image',
     src: foto.src,
@@ -34,16 +38,21 @@ export class Home implements OnInit {
     title: foto.label,
   })));
   stats: MetricItem[] = [];
-  profilePanelCards: HomeProfileCardItem[] = [];
+  profilePanelCards: HomeProfileCardItem[] = HOME_PROFILE_PANEL_CARDS;
 
   ngOnInit(): void {
-    this.publicContentService
-      .getPublicContent()
+    this.showLumaCalendar.set(isPlatformBrowser(this.platformId));
+
+    this.homeStatsService
+      .getStats()
       .pipe(
-        tap((content) => {
-          this.stats = content.home.stats;
-          this.profilePanelCards = content.home.profilePanelCards;
-          this.eventosPasadosFotos = content.home.pastEventPhotos;
+        tap((stats) => {
+          const values = [stats.activeAmbassadors, stats.activeEvents, stats.activeSessions, stats.activeTrainingCenters];
+          this.stats = HOME_STATS_META.map((meta, index) => ({
+            icon: meta.icon,
+            label: meta.label,
+            value: String(values[index]),
+          }));
         }),
         catchError(() => EMPTY),
         takeUntilDestroyed(this.destroyRef)
@@ -66,6 +75,7 @@ export class Home implements OnInit {
       )
       .subscribe();
   }
+
 }
 
 

@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AppRole, AuthService } from './auth.service';
+import { AppPermission, AppRole, AuthService } from './auth.service';
 
 function toLoginModal(router: Router, returnUrl: string) {
   return router.createUrlTree(['/'], {
@@ -35,8 +35,23 @@ export function roleGuard(requiredRole: AppRole | AppRole[]): CanActivateFn {
       return true;
     }
 
-    // Autenticado pero rol incorrecto → redirigir a su área
-    return router.parseUrl(auth.getDefaultRoute());
+    // Autenticado pero rol incorrecto → redirigir a su área por perfil.
+    return router.parseUrl(auth.getRoleHomeRoute());
+  };
+}
+
+export function permissionGuard(requiredPermission: AppPermission | AppPermission[]): CanActivateFn {
+  return (_, state) => {
+    const auth = inject(AuthService);
+    const router = inject(Router);
+
+    if (!auth.isAuthenticated()) {
+      return toLoginModal(router, state.url || '/');
+    }
+
+    return auth.hasPermission(requiredPermission)
+      ? true
+      : router.parseUrl(auth.getRoleHomeRoute());
   };
 }
 

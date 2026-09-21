@@ -90,6 +90,33 @@ describe('AuthService', () => {
     expect(reloaded.userType()).toBe('admin');
   });
 
+  it('should resolve the default route from the highest priority role', () => {
+    localStorage.setItem('user', JSON.stringify({
+      ...mockUser,
+      role: 'member',
+      roles: ['ambassador', 'admin'],
+    }));
+
+    const reloaded = new AuthService({} as any);
+
+    expect(reloaded.user()?.role).toBe('admin');
+    expect(reloaded.getDefaultRoute()).toBe('/intranet');
+    expect(reloaded.getRoleHomeRoute()).toBe('/intranet');
+  });
+
+  it('should resolve the center workspace as the default route', () => {
+    localStorage.setItem('user', JSON.stringify({
+      ...mockUser,
+      role: 'center',
+      roles: ['center'],
+    }));
+
+    const reloaded = new AuthService({} as any);
+
+    expect(reloaded.getDefaultRoute()).toBe('/intranet/center');
+    expect(reloaded.getRoleHomeRoute()).toBe('/intranet/center');
+  });
+
   it('should not fall back to demo credentials when the backend rejects the login', () => {
     service.login('admin@techriders.es', 'wrong-password').subscribe({
       next: () => fail('Expected login to fail when backend rejects the credentials'),
