@@ -1,0 +1,83 @@
+name: Deploy Backend
+
+on:
+  workflow_run:
+    workflows: [Version]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-backend-main
+  cancel-in-progress: false
+
+env:
+  AZURE_RESOURCE_GROUP: RG-PlataformaTechRiders
+  AZURE_WEBAPP_NAME: apitetxito
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Validate backend
+        shell: pwsh
+        run: |
+          dotnet restore .\backend\TechRiders.slnx
+          dotnet build .\backend\TechRiders.slnx --configuration Release --no-restore
+          dotnet test .\backend\TechRiders.Tests\TechRiders.Tests.csproj --configuration Release --logger "console;verbosity=minimal"
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Publish backend
+        shell: pwsh
+        run: |
+          dotnet publish .\backend\TechRiders.API\TechRiders.Api.csproj `
+            --configuration Release `
+            --output .\artifacts\backend
+
+      - name: Package backend
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path .\artifacts\backend\* `
+            -DestinationPath .\artifacts\backend.zip `
+            -Force
+
+      - name: Deploy backend
+        shell: pwsh
+        run: |
+          az webapp deploy `
+            --resource-group $env:AZURE_RESOURCE_GROUP `
+            --name $env:AZURE_WEBAPP_NAME `
+            --src-path .\artifacts\backend.zip `
+            --type zip
+
+      - name: Smoke backend
+        shell: pwsh
+        run: |
+          $response = Invoke-WebRequest -Uri "https://$env:AZURE_WEBAPP_NAME.azurewebsites.net/swagger" -UseBasicParsing -TimeoutSec 30
+          if ($response.StatusCode -ne 200) {
+            throw "Backend smoke check failed with status $($response.StatusCode)."
+          }
